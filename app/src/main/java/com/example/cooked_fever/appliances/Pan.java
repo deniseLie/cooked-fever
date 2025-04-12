@@ -14,8 +14,10 @@ public class Pan implements Appliance {
     private FoodItem currentItem = null;
 
     private boolean isCooking = false;
+    private boolean isBurnt = false;
     private long cookingStartTime;
-    private final long cookingDuration = 8000; // 8 seconds
+    private final long cookingDuration = 10000; // 10 seconds
+    private final long burntDuration = 30000; // 30 seconds
 
     private final Paint paint = new Paint();
     private final Paint textPaint = new Paint();
@@ -35,9 +37,17 @@ public class Pan implements Appliance {
     public void update() {
         if (isCooking && currentItem != null) {
             long now = System.currentTimeMillis();
+
+            // Cooking
             if (now - cookingStartTime >= cookingDuration) {
                 isCooking = false; // Cooking done
 //                currentItem.setState("Cooked");
+            }
+
+            // Burnt
+            if (now - cookingStartTime >= cookingDuration) {
+                isBurnt = true;
+                // currentItem.setState("Burnt");
             }
         }
     }
@@ -48,10 +58,12 @@ public class Pan implements Appliance {
         canvas.drawRect(hitbox, paint);
 
         // Food status
-        if (acceptedFood == null) {
+        if (currentItem == null) {
             canvas.drawText("Empty", hitbox.left + 20, hitbox.top + 60, textPaint);
         } else if (isCooking) {
             canvas.drawText("Cooking " + acceptedFood, hitbox.left + 10, hitbox.top + 60, textPaint);
+        } else if (isBurnt) {
+            canvas.drawText("Burnt " + acceptedFood, hitbox.left + 10, hitbox.top + 60, textPaint);
         } else {
             canvas.drawText("Cooked " + acceptedFood, hitbox.left + 10, hitbox.top + 60, textPaint);
         }
@@ -60,7 +72,10 @@ public class Pan implements Appliance {
     @Override
     public boolean onClick(int x, int y) {
         if (hitbox.contains(x, y)) {
-            return isReady(); // true if ready to be taken
+            if (currentItem != null) {
+                takeFood(); // Take the food when tapped
+                return true;
+            }
         }
         return false;
     }
@@ -86,7 +101,11 @@ public class Pan implements Appliance {
 
     @Override
     public boolean isReady() {
-        return currentItem == null;
+        return currentItem != null && !isCooking;
+    }
+
+    public boolean accepts(String foodName) {
+        return acceptedFood.equals(foodName);
     }
 
     // METHOD
@@ -112,14 +131,4 @@ public class Pan implements Appliance {
         }
         return null;
     }
-
-    // Call when user drags from pan to pick up item
-//    public GameItem tryPickupItem() {
-//        if (isReady()) {
-//            GameItem cooked = new GameItem(currentItem + " (Cooked)");
-//            isOnPan = false;
-//            return cooked;
-//        }
-//        return null;
-//    }
 }

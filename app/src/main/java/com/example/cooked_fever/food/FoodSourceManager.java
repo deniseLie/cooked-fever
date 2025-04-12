@@ -8,8 +8,10 @@ public class FoodSourceManager {
     private final List<FoodSource> sources = new ArrayList<>();
 
     public FoodSourceManager(int screenWidth, int screenHeight) {
-        addFoodSource(950, screenHeight - 650, "Burger");
-        addFoodSource(1800, screenHeight - 650, "Patty");
+        addFoodSource(1050, screenHeight - 650, "Burger");
+        addFoodSource(1350, screenHeight - 650, "Hotdog");
+        addFoodSource(1900, screenHeight - 650, "Patty");
+        addFoodSource(2200, screenHeight - 650, "Sausage");
     }
 
     public void addFoodSource(int x, int y, String name) {

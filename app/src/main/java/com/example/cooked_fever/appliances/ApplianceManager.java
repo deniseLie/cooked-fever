@@ -115,7 +115,41 @@ public class ApplianceManager {
                 }
             }
 
-            //
+            // Hotdog -> Tabletop
+            if (foodItemName.equals("Hotdog")) {
+                if (appliance instanceof TableTop) {
+                    TableTop tableTop = (TableTop) appliance;   // Tabletop
+                    if (tableTop.accepts(foodItemName) && tableTop.isEmpty()) {
+                        tableTop.placeFood(foodItem);
+                        Log.d("Game", "Placed " + foodItemName + " on TableTop " + tableTop.getId());
+                        break;
+                    }
+                }
+            }
+
+            // Patty -> Pan
+            if (foodItemName.equals("Patty")) {
+                if (appliance instanceof Pan) {
+                    Pan pan = (Pan) appliance;   // Tabletop
+                    if (pan.accepts(foodItemName) && pan.isEmpty()) {
+                        pan.placeFood(foodItem);
+                        Log.d("Game", "Placed " + foodItemName + " on Pan " + pan.getId());
+                        break;
+                    }
+                }
+            }
+
+            // Sausage -> Pan
+            if (foodItemName.equals("Sausage")) {
+                if (appliance instanceof Pan) {
+                    Pan pan = (Pan) appliance;   // Tabletop
+                    if (pan.accepts(foodItemName) && pan.isEmpty()) {
+                        pan.placeFood(foodItem);
+                        Log.d("Game", "Placed " + foodItemName + " on Pan " + pan.getId());
+                        break;
+                    }
+                }
+            }
         }
     }
 }
