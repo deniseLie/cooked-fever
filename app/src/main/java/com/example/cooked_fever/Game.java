@@ -4,6 +4,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.view.MotionEvent;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -27,9 +28,6 @@ public class Game {
     private final Paint appliancePaint = new Paint();
     private final Paint textPaint = new Paint();
 
-    private final List<Customer> customers = new ArrayList<>();
-    private final List<Appliance> appliances = new ArrayList<>();
-
     private long lastUpdateTime = System.currentTimeMillis();
     private long lastCustomerSpawn = System.currentTimeMillis();
 
@@ -37,11 +35,27 @@ public class Game {
     private int screenHeight = 1920;
 
     private final Random random = new Random();
+    private final String LOG_TAG = this.getClass().getSimpleName();
+
+    // Var game Logic
+    private final String[] foodItems = {"Cola"};
+
+    // Customer Static Variables
+    private final int MAX_CUSTOMER = 5;
+    private final int CUSTOMER_SPACING = 220;
+    private final int START_X = 200;
+    private final int CUSTOMER_Y = 200;
+
+    // List
+    private final List<Customer> customers = new ArrayList<>();
+    private final List<Appliance> appliances = new ArrayList<>();
+    private boolean[] customerSlots = new boolean[MAX_CUSTOMER];
 
     public Game(Runnable sendNotification, Consumer<Consumer<Canvas>> canvasUser) {
         this.sendNotification = sendNotification;
         this.canvasUser = canvasUser;
 
+        // Pain sprites
         customerPaint.setColor(Color.MAGENTA);
         appliancePaint.setColor(Color.BLUE);
         textPaint.setColor(Color.WHITE);
@@ -64,23 +78,21 @@ public class Game {
         long deltaTime = now - lastUpdateTime;
         lastUpdateTime = now;
 
-        // Move customers across the screen (real-time element)
-        for (Customer c : customers) {
-            c.x += (deltaTime / 10.0f);  // Speed based on time
-        }
-
-        // Remove customers who exit screen
+       // Update customers
         Iterator<Customer> iter = customers.iterator();
         while (iter.hasNext()) {
             Customer c = iter.next();
-            if (c.x > screenWidth) {
+            c.update();
+
+            // If Customer need to leave
+            if (c.shouldLeave()) {
+                customerSlots[c.getSlotIndex()] = false;
                 iter.remove();
-                sendNotification.run(); // Send a notification when a customer leaves
             }
         }
 
-        // Spawn new customer every 5 seconds (interval-based)
-        if (now - lastCustomerSpawn >= 5000) {
+        // Spawn new customer every 5 seconds and have enough space
+        if (now - lastCustomerSpawn >= 5000 && customers.size() < MAX_CUSTOMER) {
             spawnCustomer();
             lastCustomerSpawn = now;
         }
@@ -104,8 +116,7 @@ public class Game {
 
             // Draw customers
             for (Customer customer : customers) {
-                canvas.drawRect(customer.x, customer.y, customer.x + 100, customer.y + 100, customerPaint);
-                canvas.drawText("😋", customer.x + 25, customer.y + 65, textPaint);
+                customer.draw(canvas);
             }
 
             canvas.drawText("Customers: " + customers.size(), 30, 60, textPaint);
@@ -121,6 +132,15 @@ public class Game {
                 appliance.startCooking(); // Start cooking asynchronously
             }
         }
+
+        for (Customer customer : customers) {
+            if (x >= customer.getX() && x <= customer.getX() + 100 &&
+                    y >= customer.getY() && y <= customer.getY() + 100) {
+                Log.d("Game", "Serve Customer");
+                customer.serveItem("Cola"); // Assuming you’ll implement this method
+                break;
+            }
+        }
     }
 
     public long getSleepTime() {
@@ -128,7 +148,35 @@ public class Game {
     }
 
     private void spawnCustomer() {
-        int y = 100 + random.nextInt(screenHeight - 500);
-        customers.add(new Customer(0, y));
+
+        // Get slot index
+        int slotIndex = getNextAvailableSlot();
+        if (slotIndex == -1) return;    // No available slots
+
+        // Customer spawn
+        int x = START_X + slotIndex * CUSTOMER_SPACING;
+        int y = CUSTOMER_Y;
+
+        // Random number of items between 1–3
+        int orderCount = 1 + random.nextInt(3);
+        List<String> order = new ArrayList<>();
+
+        for (int i = 0; i < orderCount; i++) {
+            order.add(foodItems[random.nextInt(foodItems.length)]);
+        }
+
+        Customer customer = new Customer(x, y, order);
+        customer.setSlotIndex(slotIndex);   // save slot index
+        customerSlots[slotIndex] = true;
+
+        customers.add(customer);
+    }
+
+    // Helper function to find empty slot index
+    private int getNextAvailableSlot() {
+        for (int i = 0; i < MAX_CUSTOMER; i++) {
+            if (!customerSlots[i]) return i;
+        }
+        return -1;
     }
 }

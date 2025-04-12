@@ -27,8 +27,13 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         setKeepScreenOn(true);
         getHolder().addCallback(this);
         setFocusable(View.FOCUSABLE);
+
+        // On touch listener
         setOnTouchListener((view, event) -> {
-            game.click(event);
+            Log.d("TouchEvent", "Action: " + event.getAction());
+            if (event.getAction() == android.view.MotionEvent.ACTION_DOWN) {
+                game.click(event);
+            }
             return true;
         });
     }
