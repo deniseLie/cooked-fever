@@ -1,4 +1,4 @@
-package com.example.cooked_fever;
+package com.example.cooked_fever.game;
 
 import android.app.Notification;
 import android.app.NotificationChannel;
@@ -9,6 +9,9 @@ import android.content.Intent;
 import android.graphics.Color;
 
 import androidx.core.app.NotificationCompat;
+
+import com.example.cooked_fever.MainActivity;
+import com.example.cooked_fever.R;
 
 /**
  * A class for displaying system notifications.

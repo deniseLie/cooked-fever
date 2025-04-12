@@ -14,7 +14,7 @@ public class Pan implements Appliance {
     private final long cookingDuration = 8000; // 8 seconds
 
     private final Paint paint = new Paint();
-    private final Paint text = new Paint();
+    private final Paint textPaint = new Paint();
 
     public Pan(int x, int y, int width, int height) {
         this.hitbox = new Rect(x, y, x + width, y + height);
@@ -26,7 +26,7 @@ public class Pan implements Appliance {
 
     @Override
     public void update() {
-        if (isCooking && currentItem != null) {
+        if (isCooking && itemType != null) {
             long now = System.currentTimeMillis();
             if (now - cookingStartTime >= cookingDuration) {
                 isCooking = false; // Finished cooking
@@ -41,12 +41,12 @@ public class Pan implements Appliance {
         canvas.drawRect(hitbox, paint);
 
         // Food status
-        if (currentItem == null) {
+        if (itemType == null) {
             canvas.drawText("Empty", hitbox.left + 20, hitbox.top + 60, textPaint);
         } else if (isCooking) {
-            canvas.drawText("Cooking " + currentItem, hitbox.left + 10, hitbox.top + 60, textPaint);
+            canvas.drawText("Cooking " + itemType, hitbox.left + 10, hitbox.top + 60, textPaint);
         } else {
-            canvas.drawText("Cooked " + currentItem, hitbox.left + 10, hitbox.top + 60, textPaint);
+            canvas.drawText("Cooked " + itemType, hitbox.left + 10, hitbox.top + 60, textPaint);
         }
     }
 
@@ -65,7 +65,7 @@ public class Pan implements Appliance {
         return false;
     }
 
-    public grillItem() {
+    public void grillItem() {
         isOnPan = true;
         cookingStartTime = System.currentTimeMillis();
     }

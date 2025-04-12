@@ -12,10 +12,10 @@ import java.util.List;
 import java.util.Random;
 import java.util.function.Consumer;
 
-import com.example.cooked_fever.appliances.TableTop;
-import com.example.cooked_fever.customers.Customer;
-import com.example.cooked_fever.Appliance;
-import com.example.cooked_fever.CocaColaMaker;
+import com.example.cooked_fever.appliances.*;
+import com.example.cooked_fever.customers.*;
+import com.example.cooked_fever.food.*;
+import com.example.cooked_fever.game.*;
 
 /**
  * A class representing the main logic of this demo
@@ -53,6 +53,9 @@ public class Game {
     private boolean[] customerSlots = new boolean[MAX_CUSTOMER];
     private final List<Appliance> appliances = new ArrayList<>();
     private final List<TableTop> tableTops = new ArrayList<>();
+
+    // Managers
+    private final FoodSourceManager foodSourceManager = new FoodSourceManager(screenWidth, screenHeight);
 
     public Game(Runnable sendNotification, Consumer<Consumer<Canvas>> canvasUser) {
         this.sendNotification = sendNotification;
@@ -146,6 +149,8 @@ public class Game {
                 customer.draw(canvas);
             }
 
+            foodSourceManager.draw(canvas);
+
             canvas.drawText("Customers: " + customers.size(), 30, 60, textPaint);
         });
     }
@@ -174,13 +179,21 @@ public class Game {
 
         // TableTop interaction
         for (TableTop tabletop : tableTops) {
+//            if (x >= customer.getX() && x <= customer.getX() + 100 &&
+//                    y >= customer.getY() && y <= customer.getY() + 100) {
+//                Log.d("Game", "Serve Customer");
+//                customer.serveItem("Cola"); // Assuming you’ll implement this method
+//                break;
+//            }
+        }
 
-            if (x >= customer.getX() && x <= customer.getX() + 100 &&
-                    y >= customer.getY() && y <= customer.getY() + 100) {
-                Log.d("Game", "Serve Customer");
-                customer.serveItem("Cola"); // Assuming you’ll implement this method
-                break;
-            }
+        // Food Source interaction
+        FoodSource source = foodSourceManager.getTouchedSource(event.getX(), event.getY());
+        if (source != null) {
+            // intialize fooditem - pass in foodsource name
+            // FoodItem foodItem = new FoodItem(source.foodSourceName);
+            // ApplianceManager.assign(foodItem)
+            // take food item -> check available slot -> tagged to appliace (cook / store)
         }
     }
 
