@@ -51,10 +51,10 @@ public class Game {
     // List
     private final List<Customer> customers = new ArrayList<>();
     private boolean[] customerSlots = new boolean[MAX_CUSTOMER];
-    private final List<Appliance> appliances = new ArrayList<>();
     private final List<TableTop> tableTops = new ArrayList<>();
 
     // Managers
+    private final ApplianceManager applianceManager = new ApplianceManager(screenWidth, screenHeight);
     private final FoodSourceManager foodSourceManager = new FoodSourceManager(screenWidth, screenHeight);
 
     public Game(Runnable sendNotification, Consumer<Consumer<Canvas>> canvasUser) {
@@ -74,9 +74,8 @@ public class Game {
         screenWidth = width;
         screenHeight = height;
 
-        // Create kitches appliance
-        appliances.clear();
-        appliances.add(new CocaColaMaker(200, screenHeight - 300));
+        // Resize manager
+        applianceManager.resize(width, height);
 
         // Create tabletops in 2 columns (3 rows)
         int leftX = 900;
@@ -122,10 +121,8 @@ public class Game {
             lastCustomerSpawn = now;
         }
 
-        // Update appliances (cooking timers)
-        for (Appliance appliance : appliances) {
-            appliance.update();
-        }
+        // Managers update
+        applianceManager.update();
     }
 
     public void draw() {
@@ -133,11 +130,6 @@ public class Game {
             if (canvas == null) return;
 
             canvas.drawColor(Color.DKGRAY); // Background
-
-            // Draw appliances
-            for (Appliance appliance : appliances) {
-                appliance.draw(canvas);
-            }
 
             // Draw TableTops
             for (TableTop tableTop : tableTops) {
@@ -149,6 +141,8 @@ public class Game {
                 customer.draw(canvas);
             }
 
+            // Managers draw
+            applianceManager.draw(canvas);
             foodSourceManager.draw(canvas);
 
             canvas.drawText("Customers: " + customers.size(), 30, 60, textPaint);
@@ -158,14 +152,6 @@ public class Game {
     public void click(MotionEvent event) {
         float x = event.getX();
         float y = event.getY();
-
-        // Appliance interaction
-        for (Appliance appliance : appliances) {
-            if (appliance.onClick(x, y)) {
-                // If the appliance interacted, stop checking others
-                return;
-            }
-        }
 
         // Customer interaction
         for (Customer customer : customers) {
