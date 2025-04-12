@@ -61,7 +61,7 @@ public class Pan implements Appliance {
     }
 
     @Override
-    public boolean onClick(float x, float y) {
+    public boolean onClick(int x, int y) {
         return false;
     }
 

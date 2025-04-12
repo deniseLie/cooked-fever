@@ -51,7 +51,6 @@ public class Game {
     // List
     private final List<Customer> customers = new ArrayList<>();
     private boolean[] customerSlots = new boolean[MAX_CUSTOMER];
-    private final List<TableTop> tableTops = new ArrayList<>();
 
     // Managers
     private final ApplianceManager applianceManager = new ApplianceManager(screenWidth, screenHeight);
@@ -76,25 +75,6 @@ public class Game {
 
         // Resize manager
         applianceManager.resize(width, height);
-
-        // Create tabletops in 2 columns (3 rows)
-        int leftX = 900;
-        int rightX = 1300; // Adjust as needed for spacing between columns
-        int plateWidth = 400;
-        int plateHeight = 250;
-        int baseY = screenHeight - 500;
-        int rowGap = 250;
-
-        tableTops.clear();
-
-        for (int i = 0; i < 6; i++) {
-            int row = i % 3; // 0-2
-
-            int x = i < 3 ? leftX : rightX;
-            int y = baseY - row * rowGap;
-
-            tableTops.add(new TableTop(x, y, plateWidth, plateHeight, i));
-        }
     }
 
     public void update() {
@@ -131,11 +111,6 @@ public class Game {
 
             canvas.drawColor(Color.DKGRAY); // Background
 
-            // Draw TableTops
-            for (TableTop tableTop : tableTops) {
-                tableTop.draw(canvas);
-            }
-
             // Draw customers
             for (Customer customer : customers) {
                 customer.draw(canvas);
@@ -163,24 +138,20 @@ public class Game {
             }
         }
 
-        // TableTop interaction
-        for (TableTop tabletop : tableTops) {
-//            if (x >= customer.getX() && x <= customer.getX() + 100 &&
-//                    y >= customer.getY() && y <= customer.getY() + 100) {
-//                Log.d("Game", "Serve Customer");
-//                customer.serveItem("Cola"); // Assuming you’ll implement this method
-//                break;
-//            }
+        // Food Source interaction
+        FoodSource source = foodSourceManager.getTouchedSource(x, y);
+        if (source != null) {
+            Log.d("Game", "FoodSource clicked: " + source.getFoodSourceName());
+
+            // Initialize food item
+            FoodItem foodItem = new FoodItem(source.getFoodSourceName());
+
+            // Take Food Item -> Tagged to an appliance
+            applianceManager.assign(foodItem);
         }
 
-        // Food Source interaction
-        FoodSource source = foodSourceManager.getTouchedSource(event.getX(), event.getY());
-        if (source != null) {
-            // intialize fooditem - pass in foodsource name
-            // FoodItem foodItem = new FoodItem(source.foodSourceName);
-            // ApplianceManager.assign(foodItem)
-            // take food item -> check available slot -> tagged to appliace (cook / store)
-        }
+        // Appliance interaction
+        applianceManager.handleTouch(event);
     }
 
     public long getSleepTime() {

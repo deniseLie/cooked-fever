@@ -2,6 +2,7 @@ package com.example.cooked_fever.food;
 
 import android.graphics.*;
 import java.util.*;
+
 public class FoodSourceManager {
 
     private final List<FoodSource> sources = new ArrayList<>();
