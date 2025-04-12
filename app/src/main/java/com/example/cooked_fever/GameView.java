@@ -33,7 +33,12 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
             Log.d("TouchEvent", "Action: " + event.getAction());
             if (event.getAction() == android.view.MotionEvent.ACTION_DOWN) {
                 game.click(event);
+            }else if (event.getAction() == android.view.MotionEvent.ACTION_MOVE) {
+                game.drag(event);  // Update drag position
+            } else if (event.getAction() == android.view.MotionEvent.ACTION_UP) {
+                game.release(event);  // Handle drop
             }
+            invalidate(); // Refresh the view to show updated positions
             return true;
         });
     }

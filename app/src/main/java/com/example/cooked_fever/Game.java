@@ -49,7 +49,8 @@ public class Game {
     // List
     private final List<Customer> customers = new ArrayList<>();
     private final List<Appliance> appliances = new ArrayList<>();
-    private final List<FoodSource> foodSources = new ArrayList<>();
+    private List<FoodItem> createdfoodItems = new ArrayList<>(); // List of all food items in the game
+
     private boolean[] customerSlots = new boolean[MAX_CUSTOMER];
 
     // User Interaction
@@ -69,20 +70,6 @@ public class Game {
         textPaint.setTextSize(48f);
         textPaint.setAntiAlias(true);
 
-        canvasUser.accept(new Consumer<Canvas>() {
-            @Override
-            public void accept(Canvas canvas) {
-                // Draw food items only if they are initialized
-                if (foodItem != null) {
-                    foodItem.draw(canvas, paint, textPaint);  // Drawing only if food item is initialized
-                }
-
-                // Similarly, check and draw appliances only if they are initialized
-                if (appliance != null) {
-                    appliance.draw(canvas, paint, textPaint); // Drawing appliance if initialized
-                }
-            }
-        });
 
     }
 
@@ -136,9 +123,9 @@ public class Game {
                 appliance.draw(canvas);
             }
 
-            for (FoodSource foodSource : foodSources) {
-                foodSource.draw(canvas);
-            }
+//            for (FoodSource foodSource : foodSources) {
+//                foodSource.draw(canvas);
+//            }
 
             // Draw customers
             for (Customer customer : customers) {
@@ -164,6 +151,7 @@ public class Game {
                 draggedFoodItem = foodItem;  // Set the dragged food item
                 offsetX = x - foodItem.getX();  // Calculate offset to drag smoothly
                 offsetY = y - foodItem.getY();
+//                draggedFoodItem.startDrag();
                 return; // Stop checking other food items once we've found the one being dragged
             }
         }
@@ -190,8 +178,23 @@ public class Game {
     public void release(MotionEvent event) {
         if (draggedFoodItem != null) {
             // Handle what happens when the food item is dropped (e.g., check if it’s dropped on a valid location)
-            draggedFoodItem = null;  // Reset the dragged item
+            // Check if the food item was dropped on a valid destination
+            if (isValidDropLocation(draggedFoodItem, event.getX(), event.getY())) {
+                // Drop the food item at the new location
+                draggedFoodItem.stopDrag();  // Mark it as not being dragged anymore
+            } else {
+                // Invalid drop location, remove the food item
+                draggedFoodItem = null;
+            }
+            invalidate();  // Refresh the canvas after release
         }
+    }
+
+    private boolean isValidDropLocation(FoodItem draggedFoodItem, float x, float y) {
+        // Define the valid region (e.g., a specific area on the screen, like an appliance area)
+        // Call managers to check if I am in any valid hitboxes
+
+        return x > 100 && y > 100 && x < 500 && y < 500; // Example bounds
     }
 
 

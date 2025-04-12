@@ -34,6 +34,10 @@ public class FoodItem {
     public float getX() {
         return x;
     }
+    public float getY() {
+        return y;
+    }
+    private boolean isDragged = false; // Track if the item is being dragged
 
     // Interaction
     // Method to check if the user clicked on this food item
@@ -52,6 +56,13 @@ public class FoodItem {
     public void setPosition(float x, float y) {
         this.x = x;
         this.y = y;
+    }
+    public void stopDrag() {
+        isDragged = false;  // Mark the item as not being dragged anymore
+    }
+    // Start dragging
+    public void startDrag() {
+        isDragged = true;
     }
 
     // Draw
