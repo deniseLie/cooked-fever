@@ -12,9 +12,8 @@ import java.util.List;
 import java.util.Random;
 import java.util.function.Consumer;
 
-import com.example.cooked_fever.Customer;
-import com.example.cooked_fever.Appliance;
-import com.example.cooked_fever.CocaColaMaker;
+import com.example.cooked_fever.*;
+
 
 /**
  * A class representing the main logic of this demo
@@ -38,8 +37,8 @@ public class Game {
     private final Random random = new Random();
     private final String LOG_TAG = this.getClass().getSimpleName();
 
-    // Var game Logic
-    private final String[] foodItems = {"Cola"};
+    // Var game Logic Menu
+    private final String[] availableMenu = {"Cola"};
 
     // Customer Static Variables
     private final int MAX_CUSTOMER = 5;
@@ -50,7 +49,14 @@ public class Game {
     // List
     private final List<Customer> customers = new ArrayList<>();
     private final List<Appliance> appliances = new ArrayList<>();
+    private final List<FoodSource> foodSources = new ArrayList<>();
     private boolean[] customerSlots = new boolean[MAX_CUSTOMER];
+
+    // User Interaction
+    private FoodItem draggedFoodItem = null;  // Track which food item is being dragged
+    private float offsetX, offsetY;  // Track where the user clicked on the food item to ensure smooth dragging
+
+
 
     public Game(Runnable sendNotification, Consumer<Consumer<Canvas>> canvasUser) {
         this.sendNotification = sendNotification;
@@ -115,6 +121,10 @@ public class Game {
                 appliance.draw(canvas);
             }
 
+            for (FoodSource foodSource : foodSources) {
+                foodSource.draw(canvas);
+            }
+
             // Draw customers
             for (Customer customer : customers) {
                 customer.draw(canvas);
@@ -134,6 +144,14 @@ public class Game {
                 return;
             }
         }
+        for (FoodItem foodItem : createdfoodItems) {
+            if (foodItem.onClick(x, y)) {  // Check if the click is within the bounds of the food item
+                draggedFoodItem = foodItem;  // Set the dragged food item
+                offsetX = x - foodItem.getX();  // Calculate offset to drag smoothly
+                offsetY = y - foodItem.getY();
+                return; // Stop checking other food items once we've found the one being dragged
+            }
+        }
 
         for (Customer customer : customers) {
             if (x >= customer.getX() && x <= customer.getX() + 100 &&
@@ -144,6 +162,24 @@ public class Game {
             }
         }
     }
+
+    public void drag(MotionEvent event) {
+        float x = event.getX();
+        float y = event.getY();
+
+        // Check if the click is on a food item (e.g., cup, raw food, etc.)
+        for (FoodItem foodItem : foodItems) {
+            if (foodItem.onClick(x, y)) {  // Check if the click is within the bounds of the food item
+                draggedFoodItem = foodItem;  // Set the dragged food item
+                offsetX = x - foodItem.getX();  // Calculate offset to drag smoothly
+                offsetY = y - foodItem.getY();
+                return; // Stop checking other food items once we've found the one being dragged
+            }
+        }
+
+        // Optionally, check for other game interactions (appliances, etc.)
+    }
+
 
     public long getSleepTime() {
         return 16; // ~60fps
@@ -164,7 +200,7 @@ public class Game {
         List<String> order = new ArrayList<>();
 
         for (int i = 0; i < orderCount; i++) {
-            order.add(foodItems[random.nextInt(foodItems.length)]);
+            order.add(availableMenu[random.nextInt(availableMenu.length)]);
         }
 
         Customer customer = new Customer(x, y, order);
