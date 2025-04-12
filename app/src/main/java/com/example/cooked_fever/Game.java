@@ -14,6 +14,7 @@ import java.util.function.Consumer;
 
 import com.example.cooked_fever.Customer;
 import com.example.cooked_fever.Appliance;
+import com.example.cooked_fever.CocaColaMaker;
 
 /**
  * A class representing the main logic of this demo
@@ -62,15 +63,15 @@ public class Game {
         textPaint.setTextSize(48f);
         textPaint.setAntiAlias(true);
 
-        // Create 3 fake kitchen appliances
-        for (int i = 0; i < 3; i++) {
-            appliances.add(new Appliance(200 + i * 300, screenHeight - 300));
-        }
     }
 
     public void resize(int width, int height) {
         screenWidth = width;
         screenHeight = height;
+
+        // Create kitches appliance
+        appliances.clear();
+        appliances.add(new CocaColaMaker(200, screenHeight - 300));
     }
 
     public void update() {
@@ -128,8 +129,9 @@ public class Game {
         float y = event.getY();
 
         for (Appliance appliance : appliances) {
-            if (appliance.hitbox.contains((int) x, (int) y)) {
-                appliance.startCooking(); // Start cooking asynchronously
+            if (appliance.onClick(x, y)) {
+                // If the appliance interacted, stop checking others
+                return;
             }
         }
 
