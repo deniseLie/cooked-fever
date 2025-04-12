@@ -1,4 +1,6 @@
-package com.example.cooked_fever;
+package com.example.cooked_fever.game;
+
+import com.example.cooked_fever.Game;
 
 /**
  * A class representing the game loop of the demo.

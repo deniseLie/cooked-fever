@@ -1,4 +1,4 @@
-package com.example.cooked_fever;
+package com.example.cooked_fever.food;
 
 public class FoodOrder {
     private String itemName;

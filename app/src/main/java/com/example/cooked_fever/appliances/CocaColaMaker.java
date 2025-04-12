@@ -1,11 +1,11 @@
-package com.example.cooked_fever;
+package com.example.cooked_fever.appliances;
 
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 
-import com.example.cooked_fever.Appliance;
+import com.example.cooked_fever.appliances.Appliance;
 
 public class CocaColaMaker implements Appliance {
 

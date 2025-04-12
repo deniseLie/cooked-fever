@@ -1,9 +1,11 @@
-package com.example.cooked_fever;
+package com.example.cooked_fever.customers;
 
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.util.Log;
+
+import com.example.cooked_fever.food.FoodOrder;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,4 +1,4 @@
-package com.example.cooked_fever;
+package com.example.cooked_fever.appliances;
 
 import android.graphics.Canvas;
 import android.graphics.Rect;

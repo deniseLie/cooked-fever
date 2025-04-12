@@ -12,10 +12,10 @@ import java.util.List;
 import java.util.Random;
 import java.util.function.Consumer;
 
-import com.example.cooked_fever.Customer;
+import com.example.cooked_fever.appliances.TableTop;
+import com.example.cooked_fever.customers.Customer;
 import com.example.cooked_fever.Appliance;
 import com.example.cooked_fever.CocaColaMaker;
-import com.example.cooked_fever.TableTop;
 
 /**
  * A class representing the main logic of this demo
