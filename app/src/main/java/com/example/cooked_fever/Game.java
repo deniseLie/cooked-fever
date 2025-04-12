@@ -172,7 +172,7 @@ public class Game {
             float newX = event.getX() - offsetX;  // Adjust for initial click offset
             float newY = event.getY() - offsetY;
             draggedFoodItem.setPosition(newX, newY);  // Update the food item’s position
-            invalidate();  // Redraw the canvas to update the new position of the food item
+//            invalidate();  // Redraw the canvas to update the new position of the food item
         }
     }
     public void release(MotionEvent event) {
@@ -186,7 +186,7 @@ public class Game {
                 // Invalid drop location, remove the food item
                 draggedFoodItem = null;
             }
-            invalidate();  // Refresh the canvas after release
+//            invalidate();  // Refresh the canvas after release
         }
     }
 
