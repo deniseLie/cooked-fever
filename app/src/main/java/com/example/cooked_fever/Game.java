@@ -15,6 +15,7 @@ import java.util.function.Consumer;
 import com.example.cooked_fever.Customer;
 import com.example.cooked_fever.Appliance;
 import com.example.cooked_fever.CocaColaMaker;
+import com.example.cooked_fever.TableTop;
 
 /**
  * A class representing the main logic of this demo
@@ -49,8 +50,10 @@ public class Game {
 
     // List
     private final List<Customer> customers = new ArrayList<>();
-    private final List<Appliance> appliances = new ArrayList<>();
     private boolean[] customerSlots = new boolean[MAX_CUSTOMER];
+    private final List<Appliance> appliances = new ArrayList<>();
+    private final List<TableTop> tableTops = new ArrayList<>();
+    private final List<Shelf> tableTops = new ArrayList<>();
 
     public Game(Runnable sendNotification, Consumer<Consumer<Canvas>> canvasUser) {
         this.sendNotification = sendNotification;
@@ -72,6 +75,25 @@ public class Game {
         // Create kitches appliance
         appliances.clear();
         appliances.add(new CocaColaMaker(200, screenHeight - 300));
+
+        // Create tabletops in 2 columns (3 rows)
+        int leftX = 900;
+        int rightX = 1300; // Adjust as needed for spacing between columns
+        int plateWidth = 400;
+        int plateHeight = 250;
+        int baseY = screenHeight - 500;
+        int rowGap = 250;
+
+        tableTops.clear();
+
+        for (int i = 0; i < 6; i++) {
+            int row = i % 3; // 0-2
+
+            int x = i < 3 ? leftX : rightX;
+            int y = baseY - row * rowGap;
+
+            tableTops.add(new TableTop(x, y, plateWidth, plateHeight, i));
+        }
     }
 
     public void update() {
@@ -115,6 +137,11 @@ public class Game {
                 appliance.draw(canvas);
             }
 
+            // Draw TableTops
+            for (TableTop tableTop : tableTops) {
+                tableTop.draw(canvas);
+            }
+
             // Draw customers
             for (Customer customer : customers) {
                 customer.draw(canvas);
@@ -128,6 +155,7 @@ public class Game {
         float x = event.getX();
         float y = event.getY();
 
+        // Appliance interaction
         for (Appliance appliance : appliances) {
             if (appliance.onClick(x, y)) {
                 // If the appliance interacted, stop checking others
@@ -135,7 +163,19 @@ public class Game {
             }
         }
 
+        // Customer interaction
         for (Customer customer : customers) {
+            if (x >= customer.getX() && x <= customer.getX() + 100 &&
+                    y >= customer.getY() && y <= customer.getY() + 100) {
+                Log.d("Game", "Serve Customer");
+                customer.serveItem("Cola"); // Assuming you’ll implement this method
+                break;
+            }
+        }
+
+        // TableTop interaction
+        for (TableTop tabletop : tableTops) {
+
             if (x >= customer.getX() && x <= customer.getX() + 100 &&
                     y >= customer.getY() && y <= customer.getY() + 100) {
                 Log.d("Game", "Serve Customer");
