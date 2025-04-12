@@ -12,9 +12,8 @@ import java.util.List;
 import java.util.Random;
 import java.util.function.Consumer;
 
-import com.example.cooked_fever.Customer;
-import com.example.cooked_fever.Appliance;
-import com.example.cooked_fever.CocaColaMaker;
+import com.example.cooked_fever.appliances.Appliance;
+import com.example.cooked_fever.appliances.CocaColaMaker;
 
 /**
  * A class representing the main logic of this demo
@@ -131,6 +130,18 @@ public class Game {
         for (Appliance appliance : appliances) {
             if (appliance.onClick(x, y)) {
                 // If the appliance interacted, stop checking others
+                return;
+            }
+        }
+
+        // FOOD SOURCE
+        for (FoodSource foodSource : foodSources) {
+            if (foodSource.onClick(x, y)) {
+
+                // intialize fooditem - pass in foodsource name
+                // ApplianceManager.assign(foodItem)
+                // take food item -> check available slot -> tagged to appliace (cook / store)
+
                 return;
             }
         }
