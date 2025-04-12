@@ -3,14 +3,19 @@ package com.example.cooked_fever;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Rect;
 
 public class FoodItem {
     private String foodItemName;
     private Boolean isPrepared;
     private Boolean isBadlyCooked;
+    private final Rect hitbox;
     private float x, y;
+    private final Paint paint = new Paint();
+    private final Paint text = new Paint();
 
     public FoodItem (float x, float y, String foodItemName) {
+        hitbox = new Rect((int)x, (int)y, (int)x + 200, (int)y + 200);
         this.x = x;
         this.y = y;
         this.foodItemName = foodItemName;
@@ -29,10 +34,27 @@ public class FoodItem {
     public float getX() {
         return x;
     }
-    public float getY() {
-        return y;
+
+    // Interaction
+    // Method to check if the user clicked on this food item
+//    public boolean onClick(float clickX, float clickY) {
+//        return clickX >= x && clickX <= x + width && clickY >= y && clickY <= y + height;
+//    }
+    public boolean onClick(float clickX, float clickY) {
+        // Calculate the distance from the clicked point to the center of the circle (x, y)
+        float dx = clickX - this.x; // x coordinate of the circle's center
+        float dy = clickY - this.y; // y coordinate of the circle's center
+        float distance = (float) Math.sqrt(dx * dx + dy * dy); // Euclidean distance
+
+        // Check if the click is within the circle's radius
+        return distance <= 50; // 50 is the radius of the circle
+    }
+    public void setPosition(float x, float y) {
+        this.x = x;
+        this.y = y;
     }
 
+    // Draw
     public void draw(Canvas canvas) {
         Paint paint = new Paint();
         paint.setColor(Color.GREEN);
@@ -44,12 +66,7 @@ public class FoodItem {
         text.setAntiAlias(true);
 
         canvas.drawText(this.foodItemName, x - 60, y + 80, text);
-
-
-        // Draw the food's cooked status (e.g., "Cooking" or "Cooked")
         canvas.drawText("Status: " + this.isPrepared, x - 60, y + 80, text);  // Adjust y position (y + 80)
-
-        // Draw whether the food is cooked well or badly
         canvas.drawText("Cooked: " + (this.isBadlyCooked ? "Well" : "Badly"), x - 60, y + 120, text);  // Adjust y position (y + 120)
     }
 }

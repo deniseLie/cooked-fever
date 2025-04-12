@@ -69,6 +69,21 @@ public class Game {
         textPaint.setTextSize(48f);
         textPaint.setAntiAlias(true);
 
+        canvasUser.accept(new Consumer<Canvas>() {
+            @Override
+            public void accept(Canvas canvas) {
+                // Draw food items only if they are initialized
+                if (foodItem != null) {
+                    foodItem.draw(canvas, paint, textPaint);  // Drawing only if food item is initialized
+                }
+
+                // Similarly, check and draw appliances only if they are initialized
+                if (appliance != null) {
+                    appliance.draw(canvas, paint, textPaint); // Drawing appliance if initialized
+                }
+            }
+        });
+
     }
 
     public void resize(int width, int height) {
@@ -164,21 +179,23 @@ public class Game {
     }
 
     public void drag(MotionEvent event) {
-        float x = event.getX();
-        float y = event.getY();
-
-        // Check if the click is on a food item (e.g., cup, raw food, etc.)
-        for (FoodItem foodItem : foodItems) {
-            if (foodItem.onClick(x, y)) {  // Check if the click is within the bounds of the food item
-                draggedFoodItem = foodItem;  // Set the dragged food item
-                offsetX = x - foodItem.getX();  // Calculate offset to drag smoothly
-                offsetY = y - foodItem.getY();
-                return; // Stop checking other food items once we've found the one being dragged
-            }
+        if (draggedFoodItem != null) {  // Ensure there’s a food item being dragged
+            // Calculate the new position for the dragged food item based on mouse/finger movement
+            float newX = event.getX() - offsetX;  // Adjust for initial click offset
+            float newY = event.getY() - offsetY;
+            draggedFoodItem.setPosition(newX, newY);  // Update the food item’s position
+            invalidate();  // Redraw the canvas to update the new position of the food item
         }
-
-        // Optionally, check for other game interactions (appliances, etc.)
     }
+    public void release(MotionEvent event) {
+        if (draggedFoodItem != null) {
+            // Handle what happens when the food item is dropped (e.g., check if it’s dropped on a valid location)
+            draggedFoodItem = null;  // Reset the dragged item
+        }
+    }
+
+
+
 
 
     public long getSleepTime() {
