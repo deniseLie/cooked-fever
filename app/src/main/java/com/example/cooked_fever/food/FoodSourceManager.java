@@ -9,7 +9,7 @@ public class FoodSourceManager {
 
     public FoodSourceManager(int screenWidth, int screenHeight) {
         addFoodSource(950, screenHeight - 650, "Burger");
-        addFoodSource(1900, screenHeight - 650, "Patty");
+        addFoodSource(1800, screenHeight - 650, "Patty");
     }
 
     public void addFoodSource(int x, int y, String name) {

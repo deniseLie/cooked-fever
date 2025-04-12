@@ -66,24 +66,31 @@ public class TableTop implements Appliance {
         return false;
     }
 
+    // GET METHOD
     @Override
     public Rect getHitbox() {
         return hitbox;
-    }
-
-    @Override
-    public boolean isReady() {
-        return currentItem != null;
     }
 
     public int getId() {
         return id;
     }
 
+    // CHECK METHOD
+    @Override
+    public boolean isReady() {
+        return currentItem != null;
+    }
+
     public boolean isEmpty() {
         return currentItem == null;
     }
 
+    public boolean accepts(String foodName) {
+        return acceptedFood.equals(foodName);
+    }
+
+    // METHOD
     public void placeFood(FoodItem foodItem) {
         this.currentItem = foodItem;
     }
@@ -98,7 +105,5 @@ public class TableTop implements Appliance {
         return taken;
     }
 
-    public boolean accepts(String foodName) {
-        return acceptedFood.equals(foodName);
-    }
+
 }

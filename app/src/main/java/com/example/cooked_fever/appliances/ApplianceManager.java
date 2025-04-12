@@ -28,12 +28,12 @@ public class ApplianceManager {
         appliances.add(new CocaColaMaker(200, screenHeight - 300));
 
         // Add 6 TableTops: 2 columns x 3 rows
-        int plateWidth = 400;
-        int plateHeight = 250;
+        int plateWidth = 300;
+        int plateHeight = 200;
         int baseY = screenHeight - 500;
         int leftX = 900;
-        int rightX = 1300;
-        int rowGap = 250;
+        int rightX = leftX + plateWidth;
+        int rowGap = 200;
 
         for (int i = 0; i < 6; i++) {
             int row = i % 3;
@@ -41,6 +41,19 @@ public class ApplianceManager {
             int y = baseY - row * rowGap;
             String acceptedFood = (i < 3) ? "Burger" : "Hotdog";
             appliances.add(new TableTop(x, y, plateWidth, plateHeight, i, acceptedFood));
+        }
+
+        // Add 6 Pans: 2 columns x 3 rows
+        int panWidth = 300;
+        int panHeight = 200;
+        leftX = 1700;
+        rightX = leftX + panWidth;
+        for (int i = 0; i < 6; i++) {
+            int row = i % 3;
+            int x = i < 3 ? leftX : rightX;
+            int y = screenHeight - 500 - row * 200;
+            String type = (i < 3) ? "Patty" : "Sausage";
+            appliances.add(new Pan(x, y, panWidth, panHeight, i, type));
         }
 
         Log.d("Appliance Manager", "222");
