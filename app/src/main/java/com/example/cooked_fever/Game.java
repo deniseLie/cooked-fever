@@ -53,7 +53,6 @@ public class Game {
     private boolean[] customerSlots = new boolean[MAX_CUSTOMER];
     private final List<Appliance> appliances = new ArrayList<>();
     private final List<TableTop> tableTops = new ArrayList<>();
-    private final List<Shelf> tableTops = new ArrayList<>();
 
     public Game(Runnable sendNotification, Consumer<Consumer<Canvas>> canvasUser) {
         this.sendNotification = sendNotification;
