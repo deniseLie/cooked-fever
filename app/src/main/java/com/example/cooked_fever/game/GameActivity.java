@@ -1,4 +1,4 @@
-package com.example.cooked_fever;
+package com.example.cooked_fever.game;
 
 import android.app.Activity;
 import android.os.Build;

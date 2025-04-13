@@ -9,6 +9,8 @@ import android.view.View;
 import android.view.WindowInsets;
 import android.view.WindowInsetsController;
 
+import com.example.cooked_fever.game.GameActivity;
+
 /**
  * A class representing an activity of the main menu.
  */

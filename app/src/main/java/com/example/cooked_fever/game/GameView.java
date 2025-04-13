@@ -1,4 +1,4 @@
-package com.example.cooked_fever;
+package com.example.cooked_fever.game;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -8,8 +8,9 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 import android.util.Log;
-
 import java.util.function.Consumer;
+
+import com.example.cooked_fever.*;
 
 /**
  * A class representing a view for the game activity.

@@ -1,4 +1,4 @@
-package com.example.cooked_fever;
+package com.example.cooked_fever.appliances;
 
 import android.graphics.Canvas;
 import android.graphics.Rect;
@@ -8,6 +8,6 @@ public interface Appliance {
     void draw(Canvas canvas);
 
     boolean isReady();
-    boolean onClick(float x, float y);  // return true if this appliance was interacted with
+    boolean onClick(int x, int y);  // return true if this appliance was interacted with
     Rect getHitbox();
 }

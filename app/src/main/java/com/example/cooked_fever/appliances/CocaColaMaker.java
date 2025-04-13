@@ -1,11 +1,8 @@
-package com.example.cooked_fever;
+package com.example.cooked_fever.appliances;
 
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.Rect;
+import android.graphics.*;
 
-import com.example.cooked_fever.Appliance;
+import com.example.cooked_fever.appliances.Appliance;
 
 public class CocaColaMaker implements Appliance {
 
@@ -115,8 +112,8 @@ public class CocaColaMaker implements Appliance {
     }
 
     @Override
-    public boolean onClick(float x, float y) {
-        if (hitbox.contains((int) x, (int) y)) {
+    public boolean onClick(int x, int y) {
+        if (hitbox.contains(x, y)) {
             takeGlass();
             return true;
         }

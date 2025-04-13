@@ -12,8 +12,10 @@ import java.util.List;
 import java.util.Random;
 import java.util.function.Consumer;
 
-import com.example.cooked_fever.*;
-
+import com.example.cooked_fever.appliances.*;
+import com.example.cooked_fever.customers.*;
+import com.example.cooked_fever.food.*;
+import com.example.cooked_fever.game.*;
 
 /**
  * A class representing the main logic of this demo
@@ -48,10 +50,13 @@ public class Game {
 
     // List
     private final List<Customer> customers = new ArrayList<>();
-    private final List<Appliance> appliances = new ArrayList<>();
     private List<FoodItem> createdfoodItems = new ArrayList<>(); // List of all food items in the game
 
     private boolean[] customerSlots = new boolean[MAX_CUSTOMER];
+
+    // Managers
+    private final ApplianceManager applianceManager = new ApplianceManager(screenWidth, screenHeight);
+    private final FoodSourceManager foodSourceManager = new FoodSourceManager(screenWidth, screenHeight);
 
     // User Interaction
     private FoodItem draggedFoodItem = null;  // Track which food item is being dragged
@@ -77,9 +82,8 @@ public class Game {
         screenWidth = width;
         screenHeight = height;
 
-        // Create kitches appliance
-        appliances.clear();
-        appliances.add(new CocaColaMaker(200, screenHeight - 300));
+        // Resize manager
+        applianceManager.resize(width, height);
     }
 
     public void update() {
@@ -106,10 +110,8 @@ public class Game {
             lastCustomerSpawn = now;
         }
 
-        // Update appliances (cooking timers)
-        for (Appliance appliance : appliances) {
-            appliance.update();
-        }
+        // Managers update
+        applianceManager.update();
     }
 
     public void draw() {
@@ -119,10 +121,6 @@ public class Game {
             canvas.drawColor(Color.DKGRAY); // Background
 
             // Draw appliances
-            for (Appliance appliance : appliances) {
-                appliance.draw(canvas);
-            }
-
             for (FoodItem foodItem : createdfoodItems) {
                     foodItem.draw(canvas);
             }
@@ -132,6 +130,10 @@ public class Game {
                 customer.draw(canvas);
             }
 
+            // Managers draw
+            applianceManager.draw(canvas);
+            foodSourceManager.draw(canvas);
+
             canvas.drawText("Customers: " + customers.size(), 30, 60, textPaint);
         });
     }
@@ -140,16 +142,16 @@ public class Game {
         float x = event.getX();
         float y = event.getY();
 
-        for (Appliance appliance : appliances) {
-            if (appliance.onClick(x, y)) {
-                FoodItem newColaDrink = new FoodItem(100, 135, "Cola");
-                createdfoodItems.add(newColaDrink);
-
-                Log.d("createdFoodItemsList" ,"createdfoodItems List: " + createdfoodItems.get(0).getFoodItemName());
-                // If the appliance interacted, stop checking others
-                return;
-            }
-        }
+//        for (Appliance appliance : appliances) {
+//            if (appliance.onClick(x, y)) {
+//                FoodItem newColaDrink = new FoodItem(100, 135, "Cola");
+//                createdfoodItems.add(newColaDrink);
+//
+//                Log.d("createdFoodItemsList" ,"createdfoodItems List: " + createdfoodItems.get(0).getFoodItemName());
+//                // If the appliance interacted, stop checking others
+//                return;
+//            }
+//        }
         for (FoodItem foodItem : createdfoodItems) {
             if (foodItem.onClick(x, y)) {  // Check if the click is within the bounds of the food item
                 draggedFoodItem = foodItem;  // Set the dragged food item
@@ -169,6 +171,21 @@ public class Game {
                 break;
             }
         }
+
+        // Food Source interaction
+        FoodSource source = foodSourceManager.getTouchedSource(x, y);
+        if (source != null) {
+            Log.d("Game", "FoodSource clicked: " + source.getFoodSourceName());
+
+            // Initialize food item
+            FoodItem foodItem = new FoodItem(source.getFoodSourceName());
+
+            // Take Food Item -> Tagged to an appliance
+            applianceManager.assign(foodItem);
+        }
+
+        // Appliance interaction
+        applianceManager.handleTouch(event);
     }
 
     public void drag(MotionEvent event) {
