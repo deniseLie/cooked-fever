@@ -1,6 +1,7 @@
 package com.example.cooked_fever.appliances;
 
 import android.graphics.*;
+import android.util.Log;
 
 import com.example.cooked_fever.appliances.Appliance;
 import com.example.cooked_fever.food.*;
@@ -8,14 +9,19 @@ import com.example.cooked_fever.food.*;
 public class CocaColaMaker implements Appliance {
 
     private final Rect hitbox;
-    // Ready = hasGlass = true, isFilling = false
+    // Preparing = hasGlass, isFilling, !isFilled
+    // Ready = hasGlass, !isFilling, isFilled
+    // Serving = !hasGlass, !isFilling, isFilled
+    // Serving complete = hasGlass, !isFilling, !isFilled
     private boolean hasGlass = true;
     private boolean isFilling = false;
+    private boolean isFilled = true;
     private long refillStartTime;
     private final int refillDuration = 5000; // 10 seconds
 
     private final Paint paint = new Paint();
     private final Paint text = new Paint();
+    private final FoodItemManager foodItemManager = new FoodItemManager();
 
     public CocaColaMaker(int x, int y) {
         hitbox = new Rect(x, y, x + 200, y + 200);
@@ -26,25 +32,58 @@ public class CocaColaMaker implements Appliance {
 
     @Override
     public void update() {
-        // No glass, nothing to do
-        if (!hasGlass && !isFilling) {
-            return;
-        }
+//        // No glass, nothing to do
+//        if (!isFilled && !hasGlass && !isFilling) {
+//            hasGlass = true;
+//            return;
+//        }
 
-        // Start filling
-        if (hasGlass && !isFilling) {
+//        // Start filling
+//        if (hasGlass && !isFilling && !isFilled) {
 //            isFilling = true;
 //            refillStartTime = System.currentTimeMillis();
-        }
+//        }
 
-        // Filling coke
-        if (isFilling) {
-            long now = System.currentTimeMillis();
-
-            // stop filling if time
-            if (now - refillStartTime >= refillDuration) {
-                isFilling = false;
+        // Preparing coke
+        if (hasGlass && isFilling && !isFilled) {
+            try {
+                Log.d("CokeMachine" ,"Filling");
+                Thread.sleep(refillDuration); // Pauses the thread for 2 seconds (2000 milliseconds)
+            } catch (InterruptedException e) {
+//                e.printStackTrace();
+                Log.d("CokeMachine" ,"Coke Spilled: " + e.toString());
             }
+            isFilled = true;
+            isFilling = false;
+            Log.d("CokeMachine" ,"Filled");
+
+//            long now = System.currentTimeMillis();
+//
+//            // stop filling if time
+//            if (now - refillStartTime >= refillDuration) {
+//                isFilling = false;
+//                isFilled = true;
+//                return;
+//            }
+        }
+        // Ready
+        if (hasGlass && !isFilling && isFilled) {
+            return;
+        }
+        // Serving
+        if (!hasGlass && !isFilling && isFilled) {
+            return;
+        }
+        // Serving Complete
+        if (hasGlass && !isFilling && !isFilled) {
+            try {
+                Log.d("CokeMachine" ,"Returning Glass");
+                Thread.sleep(2000); // Pauses the thread for 2 seconds (2000 milliseconds)
+            } catch (InterruptedException e) {
+//                e.printStackTrace();
+                Log.d("CokeMachine" ,"Filling error: " + e.toString());
+            }
+            isFilling = true;
         }
     }
 
@@ -60,12 +99,14 @@ public class CocaColaMaker implements Appliance {
         // Draw glass area
         Rect glassRect = new Rect(hitbox.left + 60, hitbox.top + 100, hitbox.right - 60, hitbox.bottom - 30);
 
-        if (!hasGlass) {
-            paint.setColor(Color.LTGRAY); // Empty
-        } else if (isFilling) {
-            paint.setColor(Color.YELLOW); // Filling
-        } else {
-            paint.setColor(Color.BLUE); // Full
+        if (hasGlass && isFilling && !isFilled) {
+            paint.setColor(Color.YELLOW); // Preparing
+        } else if (hasGlass && !isFilling && isFilled) {
+            paint.setColor(Color.GREEN); // Ready
+        } else if (!hasGlass && !isFilling && isFilled){
+            paint.setColor(Color.BLUE); // Serving
+        } else { // hasGlass && !isFilling && !isFilled
+            paint.setColor(Color.LTGRAY); // Serving complete
         }
         canvas.drawRect(glassRect, paint);
 
@@ -83,28 +124,41 @@ public class CocaColaMaker implements Appliance {
 
         // Draw status
         text.setTextSize(28f);
-        if (!hasGlass) {
-            canvas.drawText("Glass Taken", hitbox.left + 30, hitbox.bottom - 10, text);
-        } else if (isFilling) {
-            canvas.drawText("Filling...", hitbox.left + 40, hitbox.bottom - 10, text);
-        } else {
-            canvas.drawText("Ready", hitbox.left + 60, hitbox.bottom - 10, text);
+        if (hasGlass && isFilling && !isFilled) {
+            canvas.drawText("Preparing", hitbox.left + 30, hitbox.bottom - 10, text);
+        } else if (hasGlass && !isFilling && isFilled) {
+            canvas.drawText("Ready", hitbox.left + 40, hitbox.bottom - 10, text);
+        } else if (!hasGlass && !isFilling && isFilled) {
+            canvas.drawText("Serving", hitbox.left + 60, hitbox.bottom - 10, text);
+        } else { // hasGlass && !isFilling && !isFilled
+            canvas.drawText("Returning Glass", hitbox.left + 60, hitbox.bottom - 10, text); // Serving complete
         }
     }
 
-
     @Override
     public boolean isReady() {
-        return hasGlass && !isFilling;
+        return hasGlass && !isFilling && isFilled;
     }
 
-    public boolean hasGlassReady() {
-        return hasGlass && !isFilling;
+    public boolean hasDrinkReady() {
+        return hasGlass && !isFilling && !isFilled;
     }
 
-    public void takeGlass() {
+//    public void takeGlass() {
+//        hasGlass = false;
+//        isFilled = false;
+//        isFilling = false;
+//    }
+
+    public void serving() {
         hasGlass = false;
-        FoodItem colaDrink = FoodItemManager.createFoodItem(hitbox.centerX(), hitbox.centerY(), "Cola");
+        isFilling = false;
+        isFilled = true;
+    }
+    public void servingComplete() {
+        hasGlass = true;
+        isFilling = false;
+        isFilled = false;
     }
 
     public void returnGlass() {
@@ -115,12 +169,12 @@ public class CocaColaMaker implements Appliance {
     public boolean onClick(int x, int y) {
         if (hitbox.contains(x, y)) {
             if (isReady()) {
-                takeGlass();
+                serving();
+                return true;
             } else {
-
+                return false;
             }
-
-            return true;
+//            return true;
         }
         return false;
     }

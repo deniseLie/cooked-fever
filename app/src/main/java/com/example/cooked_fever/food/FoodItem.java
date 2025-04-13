@@ -69,8 +69,8 @@ public class FoodItem {
 
     // Draw
     public void draw(Canvas canvas) {
-        Log.d("drawItem" ,"cola drawn: " + this.getFoodItemName());
-        Log.d("Location" ,"x: " + this.getX() + " y: " + this.getY());
+//        Log.d("drawItem" ,"cola drawn: " + this.getFoodItemName());
+//        Log.d("Location" ,"x: " + this.getX() + " y: " + this.getY());
         Paint paint = new Paint();
         paint.setColor(Color.RED);
         canvas.drawCircle(x, y, 50, paint);

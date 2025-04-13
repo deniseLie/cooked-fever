@@ -94,6 +94,35 @@ public class ApplianceManager {
         return appliances;
     }
 
+    public Boolean checkColaMachine() {
+        for (Appliance appliance : appliances) {
+            if (appliance instanceof CocaColaMaker) {
+                Boolean status = (((CocaColaMaker) appliance).hasDrinkReady());
+                ((CocaColaMaker) appliance).serving();
+                return status;
+            }
+        }
+        return false;
+//        return appliances.get(); // TEMP
+    }
+
+    public void pauseColaMachine() {
+        for (Appliance appliance : appliances) {
+            if (appliance instanceof CocaColaMaker) {
+                ((CocaColaMaker) appliance).serving();
+                return;
+            }
+        }
+    }
+    public void resumeColaMachine() {
+        for (Appliance appliance : appliances) {
+            if (appliance instanceof CocaColaMaker) {
+                ((CocaColaMaker) appliance).servingComplete();
+                return;
+            }
+        }
+    }
+
     // Assign Food Item to appliance
     public void assign(FoodItem foodItem) {
 
