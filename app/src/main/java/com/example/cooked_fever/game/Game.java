@@ -38,6 +38,11 @@ public class Game {
     private final Random random = new Random();
     private final String LOG_TAG = this.getClass().getSimpleName();
 
+    private int coins = 0;
+    private final long GAME_DURATION_MS = 20000; //60 seconds
+    private long gameStartTime = System.currentTimeMillis();
+    private boolean isGameOver = false;
+
     // Var game Logic Menu
     private final String[] availableMenu = {"Cola"};
 
@@ -49,8 +54,6 @@ public class Game {
 
     // List
     private final List<Customer> customers = new ArrayList<>();
-//    private List<FoodItem> createdfoodItems = new ArrayList<>(); // List of all food items in the game
-
     private boolean[] customerSlots = new boolean[MAX_CUSTOMER];
 
     // Managers
@@ -86,6 +89,15 @@ public class Game {
 
     public void update() {
         long now = System.currentTimeMillis();
+
+        if (isGameOver) return;
+        if (now - gameStartTime >= GAME_DURATION_MS) {
+            isGameOver = true;
+            Log.d("Game", "Game over!");
+            sendNotification.run();  // Optional: trigger game-end notification
+            return;
+        }
+
         long deltaTime = now - lastUpdateTime;
         lastUpdateTime = now;
 
@@ -134,6 +146,22 @@ public class Game {
             foodItemManager.draw(canvas);
 
             canvas.drawText("Customers: " + customers.size(), 30, 60, textPaint);
+            canvas.drawText("Coins: " + coins, 30, 120, textPaint);
+
+            int rating = getRating();
+            canvas.drawText("Rating: " + rating + " star(s)", 30, 180, textPaint);
+
+            if (isGameOver) {
+                canvas.drawText("Game Over!", 30, 240, textPaint);
+                canvas.drawText("Final Rating: " + getRating() + " star(s)", 30, 300, textPaint);
+                canvas.drawText("Total Coins: " + coins, 30, 360, textPaint);
+
+                Paint restartText = new Paint();
+                restartText.setColor(Color.WHITE);
+                restartText.setTextSize(60f);
+                restartText.setTextAlign(Paint.Align.CENTER);
+                canvas.drawText("Tap to Restart", screenWidth / 2f, screenHeight / 2f + 100, restartText);
+            }
         });
     }
 
@@ -176,6 +204,7 @@ public class Game {
                     y >= customer.getY() && y <= customer.getY() + 100) {
                 Log.d("Game", "Serve Customer");
                 customer.serveItem("Cola"); // Assuming you’ll implement this method
+                coins+=customer.getReward();
                 break;
             }
         }
@@ -285,5 +314,28 @@ public class Game {
             if (!customerSlots[i]) return i;
         }
         return -1;
+    }
+    public int getRating(){
+        if (coins >= 20 ) return 3;
+        else if (coins >= 10 ) return 2;
+        else return 1;
+    }
+    public void restart(){
+        this.gameStartTime = System.currentTimeMillis();
+        this.lastUpdateTime = System.currentTimeMillis();
+        this.lastCustomerSpawn = System.currentTimeMillis();
+        this.isGameOver = false;
+        this.coins = 0;
+
+        customers.clear();
+        for (int i = 0; i < customerSlots.length; i++) {
+            customerSlots[i] = false;
+        }
+
+        applianceManager.reset();
+        foodSourceManager.reset();
+    }
+    public boolean isGameOver() {
+        return isGameOver;
     }
 }
