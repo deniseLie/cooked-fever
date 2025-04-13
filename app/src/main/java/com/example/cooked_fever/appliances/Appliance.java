@@ -10,4 +10,6 @@ public interface Appliance {
     boolean isReady();
     boolean onClick(int x, int y);  // return true if this appliance was interacted with
     Rect getHitbox();
+
+    void reset();
 }

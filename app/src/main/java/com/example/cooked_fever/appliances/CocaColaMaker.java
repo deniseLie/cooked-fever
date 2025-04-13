@@ -124,4 +124,11 @@ public class CocaColaMaker implements Appliance {
     public Rect getHitbox() {
         return hitbox;
     }
+
+    @Override
+    public void reset() {
+        this.hasGlass = true;         // Refill complete – ready for use
+        this.isFilling = false;       // No longer actively filling
+        this.refillStartTime = 0;
+    }
 }

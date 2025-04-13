@@ -131,4 +131,12 @@ public class Pan implements Appliance {
         }
         return null;
     }
+
+    @Override
+    public void reset() {
+        this.currentItem = null;
+        this.isCooking = false;
+        this.isBurnt = false;
+        this.cookingStartTime = 0;
+    }
 }

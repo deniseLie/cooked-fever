@@ -24,6 +24,8 @@ public class Customer {
     private final int MAX_PATIENCE = 30000; // 10 seconds in milliseconds
     private int slotIndex = -1;
 
+    private int reward;
+
     // Log
     private final String LOG_TAG = this.getClass().getSimpleName();
 
@@ -35,7 +37,12 @@ public class Customer {
             orderList.add(new FoodOrder(item));
         }
         this.patience = MAX_PATIENCE;
+        this.reward = 2 * orderList.size();
         this.arrivalTime = System.currentTimeMillis();
+    }
+
+    public int getReward(){
+        return reward;
     }
 
     public void update() {

@@ -42,4 +42,8 @@ public class FoodSource {
     public boolean isTouched(float touchX, float touchY) {
         return hitbox.contains((int) touchX, (int) touchY);
     }
+
+    public void reset(){
+
+    }
 }

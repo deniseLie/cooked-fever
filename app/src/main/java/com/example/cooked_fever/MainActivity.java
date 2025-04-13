@@ -1,58 +1,63 @@
 package com.example.cooked_fever;
 
-import android.app.Activity;
-import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
+import android.os.Handler;
 import android.view.View;
-import android.view.WindowInsets;
-import android.view.WindowInsetsController;
+import android.widget.Button;
+import android.widget.LinearLayout;
 
-import com.example.cooked_fever.game.GameActivity;
+import androidx.appcompat.app.AppCompatActivity;
 
-/**
- * A class representing an activity of the main menu.
- */
-public class MainActivity extends Activity {
-    private final String LOG_TAG = "MainActivity";
+import com.example.cooked_fever.game.GameView;
+
+public class MainActivity extends AppCompatActivity {
+
+    private GameView gameView;
+    private LinearLayout mainMenu;
+    private LinearLayout restartOverlay;
+    private Button startButton;
+    private Button restartButton;
+
+    private final Handler handler = new Handler();
+    private final Runnable checkGameOverRunnable = new Runnable() {
+        @Override
+        public void run() {
+            if (gameView.getGame().isGameOver()) {
+                showRestartOverlay();
+            } else {
+                handler.postDelayed(this, 500); // Check again in 0.5 seconds
+            }
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d(LOG_TAG, "onCreate method called");
+        setContentView(R.layout.activity_main);
 
-        // If layout fails to load, this will help catch it.
-        try {
-            setContentView(R.layout.activity_main);
-            Log.d(LOG_TAG, "Layout set successfully");
-        } catch (Exception e) {
-            Log.e(LOG_TAG, "Failed to set layout", e);
-        }
+        gameView = findViewById(R.id.game_view);
+        mainMenu = findViewById(R.id.main_menu);
+        restartOverlay = findViewById(R.id.restart_overlay);
+        startButton = findViewById(R.id.startButton);
+        restartButton = findViewById(R.id.restart_button);
 
-        // Optional: Uncomment to hide status bar
-        // hideStatusBar();
+        // Start Game
+        startButton.setOnClickListener(v -> {
+            mainMenu.setVisibility(View.GONE);
+            gameView.setVisibility(View.VISIBLE);
+            gameView.getGame().restart(); // just in case
+            handler.post(checkGameOverRunnable); // start polling game over
+        });
+
+        // Restart Game
+        restartButton.setOnClickListener(v -> {
+            gameView.getGame().restart();
+            restartOverlay.setVisibility(View.GONE);
+            handler.post(checkGameOverRunnable); // start polling again
+        });
     }
 
-    private void hideStatusBar() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            WindowInsetsController wic = getWindow().getInsetsController();
-            if (wic != null) {
-                wic.hide(WindowInsets.Type.statusBars());
-                Log.d(LOG_TAG, "Status bar hidden");
-            }
-        }
-    }
-
-    public void buttonClicked(View view) {
-        Log.d(LOG_TAG, "Button clicked: attempting to launch GameActivity");
-
-        try {
-            Intent intent = new Intent(this, GameActivity.class);
-            startActivity(intent);
-            Log.d(LOG_TAG, "GameActivity started");
-        } catch (Exception e) {
-            Log.e(LOG_TAG, "Failed to start GameActivity", e);
-        }
+    private void showRestartOverlay() {
+        restartOverlay.setVisibility(View.VISIBLE);
     }
 }

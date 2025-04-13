@@ -4,6 +4,8 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Rect;
+import android.util.AttributeSet;
+import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
@@ -17,28 +19,48 @@ import com.example.cooked_fever.*;
  */
 public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
-    private final Game game = new Game(this::sendNotification, this::useCanvas);
+    private Game game;
     private GameThread gameThread;
-    private final String LOG_TAG = this.getClass().getSimpleName();
+    private String LOG_TAG = this.getClass().getSimpleName();
+
+
+    public GameView(Context context, AttributeSet attrs) {
+        super(context, attrs);
+        this.game = new Game(this::sendNotification, this::useCanvas);
+        init(context);
+    }
+
+    public GameView(Context context) {
+        super(context);
+        this.game = new Game(this::sendNotification, this::useCanvas);
+        init(context);
+    }
 
     @SuppressLint("ClickableViewAccessibility")
-    GameView(final Context context) {
-        super(context);
-        Log.d("GameView", "Surface created, starting game thread");
+    private void init(Context context) {
+        Log.d("GameView", "Initializing GameView");
         setKeepScreenOn(true);
         getHolder().addCallback(this);
         setFocusable(View.FOCUSABLE);
 
-        // On touch listener
         setOnTouchListener((view, event) -> {
             Log.d("TouchEvent", "Action: " + event.getAction());
-            if (event.getAction() == android.view.MotionEvent.ACTION_DOWN) {
-                game.click(event);
+
+            if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                if (game.isGameOver()) {
+                    Log.d("GameView", "Restarting game...");
+                    game.restart();
+                } else {
+                    game.click(event);
+                }
             }
             return true;
         });
     }
 
+    public Game getGame() {
+        return game;
+    }
     private void sendNotification() {
         NotificationPublisher.showNotification(getContext());
     }
@@ -91,4 +113,5 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         super.draw(canvas);
         game.draw(); //initial draw at the creation of SurfaceView
     }
+
 }
