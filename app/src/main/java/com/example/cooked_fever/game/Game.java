@@ -39,7 +39,7 @@ public class Game {
     private final String LOG_TAG = this.getClass().getSimpleName();
 
     private int coins = 0;
-    private final long GAME_DURATION_MS = 20000; //60 seconds
+    private final long GAME_DURATION_MS = 3600000; // 1 hour
     private long gameStartTime = System.currentTimeMillis();
     private boolean isGameOver = false;
 
