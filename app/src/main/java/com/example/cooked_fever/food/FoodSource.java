@@ -3,7 +3,7 @@ package com.example.cooked_fever.food;
 import android.graphics.*;
 
 public class FoodSource {
-    private String foodSourceName;
+    private String foodSourceName; //Cola, burgerbun, hotdogbun,
     private final Rect hitbox;
     private float x, y;
 

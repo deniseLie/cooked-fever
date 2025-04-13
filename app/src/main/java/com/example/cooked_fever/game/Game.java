@@ -1,4 +1,4 @@
-package com.example.cooked_fever;
+package com.example.cooked_fever.game;
 
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -15,7 +15,6 @@ import java.util.function.Consumer;
 import com.example.cooked_fever.appliances.*;
 import com.example.cooked_fever.customers.*;
 import com.example.cooked_fever.food.*;
-import com.example.cooked_fever.game.*;
 
 /**
  * A class representing the main logic of this demo
@@ -57,6 +56,7 @@ public class Game {
     // Managers
     private final ApplianceManager applianceManager = new ApplianceManager(screenWidth, screenHeight);
     private final FoodSourceManager foodSourceManager = new FoodSourceManager(screenWidth, screenHeight);
+    private final FoodItemManager foodItemManager = new FoodItemManager();
 
     // User Interaction
     private FoodItem draggedFoodItem = null;  // Track which food item is being dragged
@@ -74,8 +74,6 @@ public class Game {
         textPaint.setColor(Color.WHITE);
         textPaint.setTextSize(48f);
         textPaint.setAntiAlias(true);
-
-
     }
 
     public void resize(int width, int height) {
@@ -178,7 +176,8 @@ public class Game {
             Log.d("Game", "FoodSource clicked: " + source.getFoodSourceName());
 
             // Initialize food item
-            FoodItem foodItem = new FoodItem(source.getFoodSourceName());
+             FoodItem foodItem = FoodItemManager.createFoodItem(source.getX(), source.getY(), source.getFoodSourceName());
+//            FoodItem foodItem = new FoodItem(source.getX(), source.getY(), source.getFoodSourceName());
 
             // Take Food Item -> Tagged to an appliance
             applianceManager.assign(foodItem);

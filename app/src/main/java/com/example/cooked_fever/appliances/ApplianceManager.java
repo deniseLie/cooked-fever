@@ -98,7 +98,7 @@ public class ApplianceManager {
     public void assign(FoodItem foodItem) {
 
         // Get food name
-        String foodItemName = foodItem.getName();
+        String foodItemName = foodItem.getFoodItemName();
 
         for (Appliance appliance : appliances) {
             Log.d("AppliManager", "aap" + appliance);

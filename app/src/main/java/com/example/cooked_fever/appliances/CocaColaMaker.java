@@ -3,10 +3,12 @@ package com.example.cooked_fever.appliances;
 import android.graphics.*;
 
 import com.example.cooked_fever.appliances.Appliance;
+import com.example.cooked_fever.food.*;
 
 public class CocaColaMaker implements Appliance {
 
     private final Rect hitbox;
+    // Ready = hasGlass = true, isFilling = false
     private boolean hasGlass = true;
     private boolean isFilling = false;
     private long refillStartTime;
@@ -24,7 +26,6 @@ public class CocaColaMaker implements Appliance {
 
     @Override
     public void update() {
-
         // No glass, nothing to do
         if (!hasGlass && !isFilling) {
             return;
@@ -102,9 +103,8 @@ public class CocaColaMaker implements Appliance {
     }
 
     public void takeGlass() {
-        if (hasGlass && !isFilling) {
-            hasGlass = false;
-        }
+        hasGlass = false;
+        FoodItem colaDrink = FoodItemManager.createFoodItem(hitbox.centerX(), hitbox.centerY(), "Cola");
     }
 
     public void returnGlass() {
@@ -114,7 +114,12 @@ public class CocaColaMaker implements Appliance {
     @Override
     public boolean onClick(int x, int y) {
         if (hitbox.contains(x, y)) {
-            takeGlass();
+            if (isReady()) {
+                takeGlass();
+            } else {
+
+            }
+
             return true;
         }
         return false;

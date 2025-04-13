@@ -10,8 +10,6 @@ import android.view.View;
 import android.util.Log;
 import java.util.function.Consumer;
 
-import com.example.cooked_fever.*;
-
 /**
  * A class representing a view for the game activity.
  */

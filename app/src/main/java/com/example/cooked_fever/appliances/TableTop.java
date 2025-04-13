@@ -49,7 +49,7 @@ public class TableTop implements Appliance {
             int centerX = (hitbox.left + hitbox.right) / 2;
             int centerY = (hitbox.top + hitbox.bottom) / 2;
             canvas.drawCircle(centerX, centerY, 40, itemPaint);
-            canvas.drawText(currentItem.getName(), centerX - 40, centerY + 60, textPaint);
+            canvas.drawText(currentItem.getFoodItemName(), centerX - 40, centerY + 60, textPaint);
         }
     }
 
