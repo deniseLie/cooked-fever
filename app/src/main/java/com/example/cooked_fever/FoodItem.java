@@ -4,6 +4,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.util.Log;
 
 public class FoodItem {
     private String foodItemName;
@@ -21,6 +22,7 @@ public class FoodItem {
         this.foodItemName = foodItemName;
         this.isPrepared = false;
         this.isBadlyCooked = false;
+        Log.d("FoodItemCreation", "Created a new FoodItem: " + this.foodItemName);
     }
 
     // Setter
@@ -67,8 +69,10 @@ public class FoodItem {
 
     // Draw
     public void draw(Canvas canvas) {
+        Log.d("drawItem" ,"cola drawn: " + this.getFoodItemName());
+        Log.d("Location" ,"x: " + this.getX() + " y: " + this.getY());
         Paint paint = new Paint();
-        paint.setColor(Color.GREEN);
+        paint.setColor(Color.RED);
         canvas.drawCircle(x, y, 50, paint);
 
         Paint text = new Paint();

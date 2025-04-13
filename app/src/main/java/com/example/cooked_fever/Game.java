@@ -123,9 +123,9 @@ public class Game {
                 appliance.draw(canvas);
             }
 
-//            for (FoodSource foodSource : foodSources) {
-//                foodSource.draw(canvas);
-//            }
+            for (FoodItem foodItem : createdfoodItems) {
+                    foodItem.draw(canvas);
+            }
 
             // Draw customers
             for (Customer customer : customers) {
@@ -142,6 +142,10 @@ public class Game {
 
         for (Appliance appliance : appliances) {
             if (appliance.onClick(x, y)) {
+                FoodItem newColaDrink = new FoodItem(100, 135, "Cola");
+                createdfoodItems.add(newColaDrink);
+
+                Log.d("createdFoodItemsList" ,"createdfoodItems List: " + createdfoodItems.get(0).getFoodItemName());
                 // If the appliance interacted, stop checking others
                 return;
             }
@@ -149,6 +153,7 @@ public class Game {
         for (FoodItem foodItem : createdfoodItems) {
             if (foodItem.onClick(x, y)) {  // Check if the click is within the bounds of the food item
                 draggedFoodItem = foodItem;  // Set the dragged food item
+                Log.d("startdragItem" ,"item picked up: " + draggedFoodItem.getFoodItemName());
                 offsetX = x - foodItem.getX();  // Calculate offset to drag smoothly
                 offsetY = y - foodItem.getY();
 //                draggedFoodItem.startDrag();
@@ -169,6 +174,7 @@ public class Game {
     public void drag(MotionEvent event) {
         if (draggedFoodItem != null) {  // Ensure there’s a food item being dragged
             // Calculate the new position for the dragged food item based on mouse/finger movement
+            Log.d("draggedItem" ,"draggedItem: " + draggedFoodItem.getFoodItemName());
             float newX = event.getX() - offsetX;  // Adjust for initial click offset
             float newY = event.getY() - offsetY;
             draggedFoodItem.setPosition(newX, newY);  // Update the food item’s position
@@ -177,6 +183,7 @@ public class Game {
     }
     public void release(MotionEvent event) {
         if (draggedFoodItem != null) {
+            Log.d("droppedItem" ,"droppedItem: " + draggedFoodItem.getFoodItemName());
             // Handle what happens when the food item is dropped (e.g., check if it’s dropped on a valid location)
             // Check if the food item was dropped on a valid destination
             if (isValidDropLocation(draggedFoodItem, event.getX(), event.getY())) {
