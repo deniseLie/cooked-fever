@@ -13,7 +13,7 @@ public class FoodItemManager {
 
     }
 
-    public static FoodItem createFoodItem(float x, float y, String foodItemName) {
+    public FoodItem createFoodItem(float x, float y, String foodItemName) {
         FoodItem newFoodItem = new FoodItem(x, y, foodItemName);
         if (foodItemName.equals("Cola")) {
             newFoodItem.prepareFoodItem();
