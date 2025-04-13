@@ -23,7 +23,7 @@ public class FoodItemManager {
 
     public void draw(Canvas canvas) {
         for (FoodItem foodItem : createdFoodItems) {
-            FoodItem.draw(canvas);
+            foodItem.draw(canvas);
         }
     }
 
