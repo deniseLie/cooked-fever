@@ -89,6 +89,12 @@ public class ApplianceManager {
         return false;
     }
 
+    public void reset() {
+        for (Appliance appliance : appliances) {
+            appliance.reset(); // ✅ Reset each appliance
+        }
+    }
+
     // GET METHOD
     public List<Appliance> getAppliances() {
         return appliances;

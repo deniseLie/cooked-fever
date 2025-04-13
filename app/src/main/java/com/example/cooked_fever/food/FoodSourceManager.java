@@ -39,4 +39,11 @@ public class FoodSourceManager {
     public List<FoodSource> getSources() {
         return sources;
     }
+
+    public void reset() {
+        // If you have a list of food sources, reset them one by one
+        for (FoodSource source : sources) {
+            source.reset();
+        }
+    }
 }

@@ -105,5 +105,8 @@ public class TableTop implements Appliance {
         return taken;
     }
 
+    public void reset() {
+        this.currentItem = null; // Clear placed food
+    }
 
 }
