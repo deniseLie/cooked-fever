@@ -3,6 +3,7 @@ package com.example.cooked_fever.customers;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Rect;
 import android.util.Log;
 
 import com.example.cooked_fever.food.FoodOrder;
@@ -23,13 +24,14 @@ public class Customer {
     private long arrivalTime; // To manage patience
     private final int MAX_PATIENCE = 30000; // 10 seconds in milliseconds
     private int slotIndex = -1;
-
+    private final Rect hitbox;
     private int reward;
 
     // Log
     private final String LOG_TAG = this.getClass().getSimpleName();
 
     public Customer(float x, float y, List<String> foodItems) {
+        this.hitbox = new Rect((int)x-12, (int)y-12, (int)x + 25, (int)y + 25);
         this.x = x;
         this.y = y;
         this.orderList = new ArrayList<>();
@@ -97,13 +99,21 @@ public class Customer {
         // Remove from queue or trigger a "leave" animation/state
         isServed = true; // Still mark as served to remove from screen, but with penalty
     }
-
+    public Rect getHitbox() {
+        return hitbox;
+    }
     public float getX() {
         return x;
     }
-
     public float getY() {
         return y;
+    }
+    public boolean isCustomerHitbox(int x, int y) {
+        Log.d("TableTop", "Table " + x);
+        if (hitbox.contains(x, y)) {
+            return true;
+        }
+        return false;
     }
 
     // Draw Customer

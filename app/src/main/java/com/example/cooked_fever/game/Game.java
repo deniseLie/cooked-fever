@@ -53,13 +53,14 @@ public class Game {
     private final int CUSTOMER_Y = 200;
 
     // List
-    private final List<Customer> customers = new ArrayList<>();
+//    private final List<Customer> customers = new ArrayList<>();
     private boolean[] customerSlots = new boolean[MAX_CUSTOMER];
 
     // Managers
     private final ApplianceManager applianceManager = new ApplianceManager(screenWidth, screenHeight);
     private final FoodSourceManager foodSourceManager = new FoodSourceManager(screenWidth, screenHeight);
     private final FoodItemManager foodItemManager = new FoodItemManager();
+    private final CustomerManager customerManager = new CustomerManager();
 
     // User Interaction
     private FoodItem draggedFoodItem = null;  // Track which food item is being dragged
@@ -101,6 +102,7 @@ public class Game {
         long deltaTime = now - lastUpdateTime;
         lastUpdateTime = now;
 
+        List<Customer> customers = customerManager.getCustomerList();
        // Update customers
         Iterator<Customer> iter = customers.iterator();
         while (iter.hasNext()) {
@@ -136,11 +138,12 @@ public class Game {
 //            }
 
             // Draw customers
-            for (Customer customer : customers) {
-                customer.draw(canvas);
-            }
-
+//            for (Customer customer : customers) {
+//                customer.draw(canvas);
+//            }
+            List<Customer> customers = customerManager.getCustomerList();
             // Managers draw
+            customerManager.draw(canvas);
             applianceManager.draw(canvas);
             foodSourceManager.draw(canvas);
             foodItemManager.draw(canvas);
@@ -198,7 +201,7 @@ public class Game {
 //                draggedFoodItem.startDrag();
             return; // Stop checking other food items once we've found the one being dragged
         }
-
+        List<Customer> customers = customerManager.getCustomerList();
         for (Customer customer : customers) {
             if (x >= customer.getX() && x <= customer.getX() + 100 &&
                     y >= customer.getY() && y <= customer.getY() + 100) {
@@ -216,10 +219,10 @@ public class Game {
 
             // Initialize food item
             foodItem = foodItemManager.createFoodItem(source.getX(), source.getY(), source.getFoodSourceName());
-            foodItemManager.addFoodItem(foodItem);
+
             if (foodItem.getFoodItemName().equals("Cola")) {
-                Log.d("Game" ,"foodItem created: " + foodItem.getFoodItemName());
                 if (applianceManager.checkColaMachine()) {
+                    Log.d("Game" ,"foodItem created: " + foodItem.getFoodItemName());
 //                     foodItemManager.draw(canvas);
                     foodItem.prepareFoodItem();
                     draggedFoodItem = foodItem;  // Set the dragged food item
@@ -227,14 +230,20 @@ public class Game {
                     offsetX = x - foodItem.getX();  // Calculate offset to drag smoothly
                     offsetY = y - foodItem.getY();
                     applianceManager.pauseColaMachine();
+//                    foodItemManager.addFoodItem(foodItem); // Effectively draws it on the spot
 //                draggedFoodItem.startDrag();
                     return; // Stop checking other food items once we've found the one being dragged
                 }
             } else {
                  // Take Food Item -> Tagged to an appliance
                 applianceManager.assign(foodItem);
+                // ^ Assigns foodItem to a slot
+                // Get x, y of that hitbox
+//                FoodItem slottedFoodItem = applianceManager.getTableItem();
+//                foodItem.setItemPosition(slottedFoodItem.getX(), slottedFoodItem.getY());
+//                foodItemManager.addFoodItem(foodItem);
             }
-//            FoodItem foodItem = new FoodItem(source.getX(), source.getY(), source.getFoodSourceName());
+            foodItemManager.addFoodItem(foodItem);
         }
 
         // Appliance interaction
@@ -259,14 +268,22 @@ public class Game {
                 applianceManager.resumeColaMachine();
             }
             // Check if the food item was dropped on a valid destination
-            if (isValidDropLocation(draggedFoodItem, event.getX(), event.getY())) {
+//            if (isValidDropLocation(draggedFoodItem, event.getX(), event.getY())) {
                 // Drop the food item at the new location
-                draggedFoodItem.stopDrag();  // Mark it as not being dragged anymore
-            } else {
-                // Invalid drop location, remove the food item
-                foodItemManager.removeFoodItem(draggedFoodItem);
-                draggedFoodItem = null;
-            }
+                Customer customer = customerManager.handleTouch(event);
+                if (customer != null) {
+                    customerManager.receiveItem(customer, draggedFoodItem);
+                }
+
+
+//            } else {
+//                // Invalid drop location, remove the food item
+//
+//            }
+            foodItemManager.removeFoodItem(draggedFoodItem);
+            draggedFoodItem.stopDrag(); // Mark it as not being dragged anymore, I think it don't matter, not sure
+            draggedFoodItem = null;
+
 //            invalidate();  // Refresh the canvas after release
         }
     }
@@ -304,8 +321,8 @@ public class Game {
         Customer customer = new Customer(x, y, order);
         customer.setSlotIndex(slotIndex);   // save slot index
         customerSlots[slotIndex] = true;
-
-        customers.add(customer);
+        customerManager.addCustomer(customer);
+//        customers.add(customer);
     }
 
     // Helper function to find empty slot index
@@ -326,7 +343,7 @@ public class Game {
         this.lastCustomerSpawn = System.currentTimeMillis();
         this.isGameOver = false;
         this.coins = 0;
-
+        List<Customer> customers = customerManager.getCustomerList();
         customers.clear();
         for (int i = 0; i < customerSlots.length; i++) {
             customerSlots[i] = false;

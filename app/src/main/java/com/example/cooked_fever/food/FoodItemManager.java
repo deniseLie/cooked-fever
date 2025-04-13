@@ -44,6 +44,10 @@ public class FoodItemManager {
         createdFoodItems.remove(foodItem);
     }
 
+    public void setFoodPosition (FoodItem foodItem, float x, float y) {
+        foodItem.setItemPosition(x, y);
+    }
+
     public FoodItem handleTouch(MotionEvent event) {
         float x = event.getX();
         float y = event.getY();

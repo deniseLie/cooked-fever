@@ -19,6 +19,7 @@ public class Pan implements Appliance {
     private final long cookingDuration = 10000; // 10 seconds
     private final long burntDuration = 30000; // 30 seconds
 
+    private float x, y;
     private final Paint paint = new Paint();
     private final Paint textPaint = new Paint();
 
@@ -27,6 +28,8 @@ public class Pan implements Appliance {
         this.hitbox = new Rect(x, y, x + width, y + height);
         this.acceptedFood = acceptedFood;
         this.id = index;
+        this.x = (float) x + (float)(width/2);
+        this.y = (float) y + (float)(height/2);
 
         textPaint.setColor(Color.BLACK);
         textPaint.setTextSize(28f);
@@ -85,6 +88,8 @@ public class Pan implements Appliance {
     public Rect getHitbox() {
         return hitbox;
     }
+    public float getX() {return x;}
+    public float getY() {return y;}
 
     public int getId() {
         return id;
@@ -109,8 +114,9 @@ public class Pan implements Appliance {
     }
 
     // METHOD
-    public boolean placeFood(FoodItem item) {
+    public boolean placeFood(FoodItem item, float x, float y) {
         if (isEmpty() && item.getFoodItemName().equals(acceptedFood)) {
+            item.setItemPosition(x, y);
             currentItem = item;
             startCooking();
             return true;
