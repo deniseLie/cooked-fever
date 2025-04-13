@@ -192,7 +192,7 @@ public class Game {
         FoodItem foodItem = foodItemManager.handleTouch(event);
         if (foodItem != null) {
             draggedFoodItem= foodItem;  // Set the dragged food item
-            Log.d("startdragItem" ,"item picked up: " + draggedFoodItem.getFoodItemName());
+            Log.d("Game" ,"item picked up: " + draggedFoodItem.getFoodItemName());
             offsetX = x - foodItem.getX();  // Calculate offset to drag smoothly
             offsetY = y - foodItem.getY();
 //                draggedFoodItem.startDrag();
@@ -218,7 +218,7 @@ public class Game {
             foodItem = foodItemManager.createFoodItem(source.getX(), source.getY(), source.getFoodSourceName());
             foodItemManager.addFoodItem(foodItem);
             if (foodItem.getFoodItemName().equals("Cola")) {
-                Log.d("foodItem" ,"foodItem: " + foodItem.getFoodItemName());
+                Log.d("Game" ,"foodItem created: " + foodItem.getFoodItemName());
                 if (applianceManager.checkColaMachine()) {
 //                     foodItemManager.draw(canvas);
                     foodItem.prepareFoodItem();
