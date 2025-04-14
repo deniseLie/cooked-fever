@@ -32,18 +32,6 @@ public class CocaColaMaker implements Appliance {
 
     @Override
     public void update() {
-//        // No glass, nothing to do
-//        if (!isFilled && !hasGlass && !isFilling) {
-//            hasGlass = true;
-//            return;
-//        }
-
-//        // Start filling
-//        if (hasGlass && !isFilling && !isFilled) {
-//            isFilling = true;
-//            refillStartTime = System.currentTimeMillis();
-//        }
-
         // Preparing coke
         if (hasGlass && isFilling && !isFilled) {
             try {
@@ -141,7 +129,10 @@ public class CocaColaMaker implements Appliance {
     }
 
     public boolean hasDrinkReady() {
-        return hasGlass && !isFilling && !isFilled;
+        Log.d("ColaMaker" ,"hasGlass: " + hasGlass);
+        Log.d("ColaMaker" ,"isFilling: " + isFilling);
+        Log.d("ColaMaker" ,"isFilled: " + isFilled);
+        return hasGlass && !isFilling && isFilled;
     }
 
 //    public void takeGlass() {

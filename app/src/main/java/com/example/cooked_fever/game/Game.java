@@ -147,33 +147,46 @@ public class Game {
         if (source != null) {
             Log.d("Game", "FoodSource clicked: " + source.getFoodSourceName());
 
+
+
             // Initialize food item
             foodItem = foodItemManager.createFoodItem(source.getX(), source.getY(), source.getFoodSourceName());
+            Log.d("Game" ,"foodItem created: " + foodItem.getFoodItemName());
 
             // Cola Interaction
             if (foodItem.getFoodItemName().equals("Cola")) {
                 if (applianceManager.checkColaMachine()) {
-                    Log.d("Game" ,"foodItem created: " + foodItem.getFoodItemName());
+                    Log.d("Game" ,"checkColaMachine: " + foodItem.getFoodItemName());
                     foodItem.prepareFoodItem();
-
+                    Log.d("Game" ,"foodItem ready: " + foodItem.getFoodItemName());
                     // Set the dragged food item
                     draggedFoodItem = foodItem;
                     Log.d("startdragItem" ,"item picked up: " + draggedFoodItem.getFoodItemName());
                     offsetX = x - foodItem.getX();  // Calculate offset to drag smoothly
                     offsetY = y - foodItem.getY();
                     applianceManager.pauseColaMachine();
-
-//                    foodItemManager.addFoodItem(foodItem); // Effectively draws it on the spot
+                    foodItemManager.addFoodItem(foodItem);
 //                draggedFoodItem.startDrag();
                     return; // Stop checking other food items once we've found the one being dragged
                 }
 
             // Other Food Item Interaction
             } else {
-                 // Take Food Item -> Tagged to an appliance -> Assigns foodItem to a slot
-                applianceManager.assign(foodItem);
+                // Check if got space to initialize
+                // If buger, are there any of 3 slots
+                // If Hotdog, are there any of 3 slots
+                if (applianceManager.hasPanSpace(foodItem) || applianceManager.hasTableSpace(foodItem) ) {
+                    // Take Food Item -> Tagged to an appliance -> Assigns foodItem to a slot
+                    applianceManager.assign(foodItem);
+//                    foodItemManager.addFoodItem(foodItem);
+                    Log.d("Game" ,"appliance source: " + foodItem.getFoodItemName());
+                    foodItemManager.addFoodItem(foodItem);
+                    return;
+                }
+
             }
-            foodItemManager.addFoodItem(foodItem);
+            foodItem = null;
+//            foodItemManager.addFoodItem(foodItem);
         }
 
         // Appliance interaction
@@ -217,7 +230,18 @@ public class Game {
                 draggedFoodItem.stopDrag();
                 draggedFoodItem = null;
                 return;
-
+            }
+            // Trash
+            Appliance appliance = applianceManager.handleTouch(event);
+            if (appliance != null) {
+                if (applianceManager.isTrash(appliance)) {
+                    Log.d("Game" ,"Trashed: " + draggedFoodItem.getFoodItemName());
+                    applianceManager.doTrash(applianceManager.getApplianceAtCoord((int)draggedFoodItem.getOriginalX(), (int)draggedFoodItem.getOriginalY()));
+                    foodItemManager.removeFoodItem(draggedFoodItem);
+                    draggedFoodItem.stopDrag();
+                    draggedFoodItem = null;
+                    return;
+                }
             }
 
             // Handle food combination
@@ -229,9 +253,10 @@ public class Game {
                 // Check if the player dragged to combine
                 FoodItem targetItem = foodItemManager.findOtherItemAtTouch(event, draggedFoodItem);
 
-                if (targetItem != null && targetItem != draggedFoodItem) {
+                if (targetItem != null && targetItem != draggedFoodItem && !draggedFoodItem.getIsBadlyCooked()) {
                     // Attempt combination and check success
                     combinationSucceeded = foodItemManager.combine(draggedFoodItem, targetItem);
+                    applianceManager.doTrash(applianceManager.getApplianceAtCoord((int)draggedFoodItem.getOriginalX(), (int)draggedFoodItem.getOriginalY()));
                 }
             }
 

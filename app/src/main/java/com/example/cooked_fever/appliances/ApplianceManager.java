@@ -26,6 +26,7 @@ public class ApplianceManager {
 
         // Add Coca cola maker
         appliances.add(new CocaColaMaker(200, screenHeight - 300));
+        appliances.add(new TrashBin(550, screenHeight - 250));
 
         // Add 6 TableTops: 2 columns x 3 rows
         int plateWidth = 300;
@@ -78,16 +79,36 @@ public class ApplianceManager {
         }
     }
 
-    public boolean handleTouch(MotionEvent event) {
+    public Appliance handleTouch(MotionEvent event) {
         int x = (int)event.getX();
         int y = (int)event.getY();
 
         for (Appliance appliance : appliances) {
             if (appliance.onClick(x, y)) {
-                return true;
+                return appliance;
             }
         }
-        return false;
+        return null;
+    }
+    public Appliance getApplianceAtCoord(int x, int y) {
+        for (Appliance appliance : appliances) {
+            if (appliance.onClick(x, y)) {
+                return appliance;
+            }
+        }
+        return null;
+    }
+    public Boolean isTrash(Appliance appliance) {
+        return appliance instanceof TrashBin;
+    }
+    public void doTrash(Appliance appliance) {
+        if (appliance instanceof Pan) {
+            Pan pan = (Pan) appliance;
+            pan.takeFood();
+        } else if (appliance instanceof TableTop) {
+            TableTop tableTop = (TableTop) appliance;
+            tableTop.takeFood();
+        }
     }
 
     public void reset() {
@@ -106,13 +127,12 @@ public class ApplianceManager {
             if (appliance instanceof CocaColaMaker) {
                 Boolean status = (((CocaColaMaker) appliance).hasDrinkReady());
                 ((CocaColaMaker) appliance).serving();
+                Log.d("ApplianceManager" ,"checkColaMachine: " + status);
                 return status;
             }
         }
         return false;
-//        return appliances.get(); // TEMP
     }
-
     public void pauseColaMachine() {
         for (Appliance appliance : appliances) {
             if (appliance instanceof CocaColaMaker) {
@@ -137,6 +157,44 @@ public class ApplianceManager {
             }
         }
         return null;
+    }
+
+    public Boolean hasTableSpace(FoodItem foodItem) {
+        if (!(foodItem.getFoodItemName().equals("BurgerBun") ||
+                foodItem.getFoodItemName().equals("HotdogBun"))) {
+            Log.d("ApplianceManager" ,"Rejected: " + foodItem.getFoodItemName());
+            return false;
+        }
+        int counter = 0;
+        for (Appliance appliance : appliances) {
+            if (appliance instanceof TableTop) {
+                TableTop tableTop = (TableTop) appliance;
+                if (tableTop.accepts(foodItem.getFoodItemName()) && !tableTop.isEmpty()) counter++;
+            }
+            if (counter == 3) {
+                Log.d("ApplianceManager" ,"Table full");
+                return false;
+            }
+        }
+
+        return true;
+    }
+    public Boolean hasPanSpace(FoodItem foodItem) {
+        if (!(foodItem.getFoodItemName().equals("Sausage") ||
+                foodItem.getFoodItemName().equals("Patty"))) return false;
+        int counter = 0;
+        for (Appliance appliance : appliances) {
+            if (appliance instanceof Pan) {
+                Pan pan = (Pan) appliance;
+                if (pan.accepts(foodItem.getFoodItemName()) && !pan.isEmpty()) counter++;
+            }
+            if (counter == 3) {
+                Log.d("ApplianceManager" ,"Pan full");
+                return false;
+            }
+        }
+
+        return true;
     }
 
     // Assign Food Item to appliance

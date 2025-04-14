@@ -54,7 +54,8 @@ public class TableTop implements Appliance {
         Log.d("TableTop", "Table " + x);
         if (hitbox.contains(x, y)) {
             if (currentItem != null) {
-                takeFood(); // Take the food when tapped
+//                takeFood(); // Take the food when tapped
+                Log.d("TableTop" ,"currentItem: " + currentItem);
                 return true;
             }
         }
@@ -102,7 +103,9 @@ public class TableTop implements Appliance {
 
     public FoodItem takeFood() {
         FoodItem taken = currentItem;
+        Log.d("TableTop", "currentItem isEmpty? " + isEmpty());
         currentItem = null;
+        Log.d("TableTop", "isEmpty? " + isEmpty());
         Log.d("TableTop" ,"item taken: " + taken.getFoodItemName());
         Log.d("TableTop" ,"x: " + taken.getX() + " y: " + taken.getY());
         return taken;
