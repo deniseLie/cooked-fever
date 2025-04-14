@@ -12,7 +12,7 @@ public class TableTop implements Appliance {
 
     private final int id;
     private final Rect hitbox;
-    private final String acceptedFood;  // "Burger" or "Hotdot"
+    private final String acceptedFood;  // "BurgerBun" or "HotdogBun"
     private FoodItem currentItem = null;
     private float x, y;
 
@@ -46,14 +46,6 @@ public class TableTop implements Appliance {
         // Draw tabletop
         canvas.drawRect(hitbox, platePaint);
         canvas.drawText("T" + id, hitbox.left + 20, hitbox.top + 30, textPaint);
-
-        // Draw food if present
-//        if (currentItem != null) {
-//            int centerX = (hitbox.left + hitbox.right) / 2;
-//            int centerY = (hitbox.top + hitbox.bottom) / 2;
-//            canvas.drawCircle(centerX, centerY, 40, itemPaint);
-//            canvas.drawText(currentItem.getFoodItemName(), centerX - 40, centerY + 60, textPaint);
-//        }
     }
 
     @Override

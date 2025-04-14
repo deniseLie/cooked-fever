@@ -195,7 +195,6 @@ public class Game {
             if (foodItem.getFoodItemName().equals("Cola")) {
                 if (applianceManager.checkColaMachine()) {
                     Log.d("Game" ,"foodItem created: " + foodItem.getFoodItemName());
-//                     foodItemManager.draw(canvas);
                     foodItem.prepareFoodItem();
 
                     // Set the dragged food item
@@ -235,28 +234,50 @@ public class Game {
 //            invalidate();  // Redraw the canvas to update the new position of the food item
         }
     }
+
     public void release(MotionEvent event) {
         if (draggedFoodItem != null) {
             Log.d("droppedItem" ,"droppedItem: " + draggedFoodItem.getFoodItemName());
 
-            // Check if the food item was dropped on a valid customer destination
-            // Customer served food
+            // Check if food drop on valid customer, customer food served
             Customer customer = customerManager.handleTouch(event);
             if (customer != null) {
                 customerManager.receiveItem(customer, draggedFoodItem);
                 foodItemManager.removeFoodItem(draggedFoodItem);
+                coins += customer.getReward();
 
                 // If cola, make a new drink
                 if (draggedFoodItem.getFoodItemName().equals("Cola")) {
                     applianceManager.resumeColaMachine();
                 }
 
-            // Invalid drop: reset position
-            } else {
+                // Set item not dragged anymore
+                draggedFoodItem.stopDrag();
+                draggedFoodItem = null;
+                return;
+
+            }
+
+            // Handle food combination
+            boolean combinationSucceeded = false;
+            String draggedFoodName = draggedFoodItem.getFoodItemName();
+
+            if (draggedFoodName.equals("Patty") || draggedFoodName.equals("Sausage")) {
+
+                // Check if the player dragged to combine
+                FoodItem targetItem = foodItemManager.findOtherItemAtTouch(event, draggedFoodItem);
+
+                if (targetItem != null && targetItem != draggedFoodItem) {
+                    // Attempt combination and check success
+                    combinationSucceeded = foodItemManager.combine(draggedFoodItem, targetItem);
+                }
+            }
+
+            // Reset position if no valid interaction occurred
+            if (!combinationSucceeded) {
                 draggedFoodItem.setItemPosition(draggedFoodItem.getOriginalX(), draggedFoodItem.getOriginalY());
             }
 
-            // Set item not dragged anymore
             draggedFoodItem.stopDrag();
             draggedFoodItem = null;
 

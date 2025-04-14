@@ -10,8 +10,8 @@ public class FoodSourceManager {
     private final List<FoodSource> sources = new ArrayList<>();
 
     public FoodSourceManager(int screenWidth, int screenHeight) {
-        addFoodSource(1050, screenHeight - 650, "Burger");
-        addFoodSource(1350, screenHeight - 650, "Hotdog");
+        addFoodSource(1050, screenHeight - 650, "BurgerBun");
+        addFoodSource(1350, screenHeight - 650, "HotdogBun");
         addFoodSource(1900, screenHeight - 650, "Patty");
         addFoodSource(2200, screenHeight - 650, "Sausage");
         addFoodSource(400,screenHeight - 550, "Cola");

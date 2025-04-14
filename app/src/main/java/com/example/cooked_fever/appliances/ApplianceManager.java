@@ -39,7 +39,7 @@ public class ApplianceManager {
             int row = i % 3;
             int x = i < 3 ? leftX : rightX;
             int y = baseY - row * rowGap;
-            String acceptedFood = (i < 3) ? "Burger" : "Hotdog";
+            String acceptedFood = (i < 3) ? "BurgerBun" : "HotdogBun";
             appliances.add(new TableTop(x, y, plateWidth, plateHeight, i, acceptedFood));
         }
 
@@ -149,7 +149,7 @@ public class ApplianceManager {
             Log.d("AppliManager", "aap" + appliance);
 
             // Burger -> Tabletop
-            if (foodItemName.equals("Burger")) {
+            if (foodItemName.equals("BurgerBun")) {
                 if (appliance instanceof TableTop) {
                     TableTop tableTop = (TableTop) appliance;   // Tabletop
                     if (tableTop.accepts(foodItemName) && tableTop.isEmpty()) {
@@ -161,7 +161,7 @@ public class ApplianceManager {
             }
 
             // Hotdog -> Tabletop
-            if (foodItemName.equals("Hotdog")) {
+            if (foodItemName.equals("HotdogBun")) {
                 if (appliance instanceof TableTop) {
                     TableTop tableTop = (TableTop) appliance;   // Tabletop
                     if (tableTop.accepts(foodItemName) && tableTop.isEmpty()) {

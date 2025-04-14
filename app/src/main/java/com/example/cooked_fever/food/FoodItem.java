@@ -45,6 +45,8 @@ public class FoodItem {
     public Boolean isDraggable() {return isDraggable;}
 
     // Setter
+    public void setFoodItemName(String name) {this.foodItemName = name;}
+    public void setIsPrepared(Boolean isPrepared) {this.isPrepared = isPrepared;}
     public void prepareFoodItem() {this.isPrepared = true;}
     public void badlyCook() {this.isBadlyCooked = true;}
     public void setItemPosition(float x, float y) {
@@ -60,10 +62,6 @@ public class FoodItem {
     public void setDraggable(Boolean draggable) {isDraggable = draggable;}
 
     // Interaction
-    // Method to check if the user clicked on this food item
-//    public boolean onClick(float clickX, float clickY) {
-//        return clickX >= x && clickX <= x + width && clickY >= y && clickY <= y + height;
-//    }
     public boolean onClick(float clickX, float clickY) {
         // Calculate the distance from the clicked point to the center of the circle (x, y)
         float dx = clickX - this.x; // x coordinate of the circle's center
@@ -85,11 +83,11 @@ public class FoodItem {
                 Log.d("FoodItem" ,"cola drawn: " + this.getFoodItemName());
 //                canvas.drawCircle(x, y, 50, paint);
                 break;
-            case "Hotdog":
+            case "HotdogBun":
                 paint.setColor(Color.RED);
 //                canvas.drawOval(x + 6, y - 10, x - 6, y + 10, paint);
                 break;
-            case "Burger":
+            case "BurgerBun":
                 paint.setColor(Color.rgb(210, 140, 60));
 //                canvas.drawCircle(x, y, 50, paint);
                 break;
@@ -99,6 +97,14 @@ public class FoodItem {
                 break;
             case "Sausage":
                 paint.setColor(Color.rgb(235, 100, 120));
+//                canvas.drawOval(x + 6, y - 10, x - 6, y + 10, paint);
+                break;
+            case "Burger":
+                paint.setColor(Color.rgb(235, 180, 85));
+//                canvas.drawOval(x + 6, y - 10, x - 6, y + 10, paint);
+                break;
+            case "Hotdog":
+                paint.setColor(Color.rgb(200, 50, 50));
 //                canvas.drawOval(x + 6, y - 10, x - 6, y + 10, paint);
                 break;
         }
