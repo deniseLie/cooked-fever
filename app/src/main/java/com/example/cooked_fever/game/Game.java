@@ -201,16 +201,19 @@ public class Game {
             // Check if food drop on valid customer, customer food served
             Customer customer = customerManager.handleTouch(event);
             if (customer != null) {
-                customerManager.receiveItem(customer, draggedFoodItem);
-                foodItemManager.removeFoodItem(draggedFoodItem);
-                coins += customer.getReward();
+                Boolean validReceive = customerManager.receiveItem(customer, draggedFoodItem);
+                if (validReceive) {
+                    foodItemManager.removeFoodItem(draggedFoodItem);
+                    coins += customer.getReward();
 
-                // If cola, make a new drink
-                if (draggedFoodItem.getFoodItemName().equals("Cola")) {
-                    applianceManager.resumeColaMachine();
+                    // If cola, make a new drink
+                    if (draggedFoodItem.getFoodItemName().equals("Cola")) {
+                        applianceManager.resumeColaMachine();
+                    }
                 }
 
                 // Set item not dragged anymore
+                draggedFoodItem.setItemPosition(draggedFoodItem.getOriginalX(), draggedFoodItem.getOriginalY());
                 draggedFoodItem.stopDrag();
                 draggedFoodItem = null;
                 return;

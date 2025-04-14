@@ -39,8 +39,8 @@ public class CustomerManager {
     public void addCustomer(int x, int y, List<String> orders) {
         customers.add(new Customer(x, y, orders));
     }
-    public void receiveItem (Customer customer, FoodItem foodItem) {
-        customer.serveItem(foodItem.getFoodItemName());
+    public Boolean receiveItem (Customer customer, FoodItem foodItem) {
+        return customer.serveItem(foodItem.getFoodItemName());
     }
 
     // Update function every delta time

@@ -70,16 +70,17 @@ public class Customer {
         }
     }
 
-    public void serveItem(String itemName) {
-        if (isServed) return;
+    public Boolean serveItem(String itemName) {
+        if (isServed) return false;
 
         for (FoodOrder order : orderList) {
             if (order.getItemName().equals(itemName) && !order.isPrepared()) {
                 Log.d("Customer", "serving " + itemName);
                 order.prepare();
-                break;
+                return true;
             }
         }
+        return false;
     }
 
     public void setSlotIndex(int index) {
