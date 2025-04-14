@@ -9,7 +9,6 @@ import android.util.Log;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Random;
 import java.util.function.Consumer;
 
 import com.example.cooked_fever.appliances.*;
@@ -30,31 +29,14 @@ public class Game {
     private final Paint textPaint = new Paint();
 
     private long lastUpdateTime = System.currentTimeMillis();
-    private long lastCustomerSpawn = System.currentTimeMillis();
 
     private int screenWidth = 1080;
     private int screenHeight = 1920;
-
-    private final Random random = new Random();
-    private final String LOG_TAG = this.getClass().getSimpleName();
 
     private int coins = 0;
     private final long GAME_DURATION_MS = 3600000; // 1 hour
     private long gameStartTime = System.currentTimeMillis();
     private boolean isGameOver = false;
-
-    // Var game Logic Menu
-    private final String[] availableMenu = {"Cola"};
-
-    // Customer Static Variables
-    private final int MAX_CUSTOMER = 5;
-    private final int CUSTOMER_SPACING = 220;
-    private final int START_X = 200;
-    private final int CUSTOMER_Y = 200;
-
-    // List
-//    private final List<Customer> customers = new ArrayList<>();
-    private boolean[] customerSlots = new boolean[MAX_CUSTOMER];
 
     // Managers
     private final ApplianceManager applianceManager = new ApplianceManager(screenWidth, screenHeight);
@@ -100,27 +82,8 @@ public class Game {
         long deltaTime = now - lastUpdateTime;
         lastUpdateTime = now;
 
-        List<Customer> customers = customerManager.getCustomerList();
-       // Update customers
-        Iterator<Customer> iter = customers.iterator();
-        while (iter.hasNext()) {
-            Customer c = iter.next();
-            c.update();
-
-            // If Customer need to leave
-            if (c.shouldLeave()) {
-                customerSlots[c.getSlotIndex()] = false;
-                iter.remove();
-            }
-        }
-
-        // Spawn new customer every 5 seconds and have enough space
-        if (now - lastCustomerSpawn >= 5000 && customers.size() < MAX_CUSTOMER) {
-            spawnCustomer();
-            lastCustomerSpawn = now;
-        }
-
         // Managers update
+        customerManager.update(now);
         applianceManager.update();
     }
 
@@ -163,7 +126,7 @@ public class Game {
 
         FoodItem foodItem = foodItemManager.handleTouch(event);
         if (foodItem != null && foodItem.isDraggable()) {
-            draggedFoodItem= foodItem;  // Set the dragged food item
+            draggedFoodItem = foodItem;  // Set the dragged food item
             Log.d("Game" ,"item picked up: " + draggedFoodItem.getFoodItemName());
             offsetX = x - foodItem.getX();  // Calculate offset to drag smoothly
             offsetY = y - foodItem.getY();
@@ -172,15 +135,11 @@ public class Game {
         }
 
         // Customer interaction
-        List<Customer> customers = customerManager.getCustomerList();
-        for (Customer customer : customers) {
-            if (x >= customer.getX() && x <= customer.getX() + 100 &&
-                    y >= customer.getY() && y <= customer.getY() + 100) {
-                Log.d("Game", "Serve Customer");
-                customer.serveItem("Cola"); // Assuming you’ll implement this method
-                coins+=customer.getReward();
-                break;
-            }
+        Customer customer = customerManager.handleTouch(event);
+        if (customer != null) {
+            Log.d("Game", "Serve Customer");
+            customer.serveItem("Cola"); // Assuming you’ll implement this method
+            coins += customer.getReward();
         }
 
         // Food Source interaction
@@ -297,38 +256,7 @@ public class Game {
         return 16; // ~60fps
     }
 
-    private void spawnCustomer() {
 
-        // Get slot index
-        int slotIndex = getNextAvailableSlot();
-        if (slotIndex == -1) return;    // No available slots
-
-        // Customer spawn
-        int x = START_X + slotIndex * CUSTOMER_SPACING;
-        int y = CUSTOMER_Y;
-
-        // Random number of items between 1–3
-        int orderCount = 1 + random.nextInt(3);
-        List<String> order = new ArrayList<>();
-
-        for (int i = 0; i < orderCount; i++) {
-            order.add(availableMenu[random.nextInt(availableMenu.length)]);
-        }
-
-        Customer customer = new Customer(x, y, order);
-        customer.setSlotIndex(slotIndex);   // save slot index
-        customerSlots[slotIndex] = true;
-        customerManager.addCustomer(customer);
-//        customers.add(customer);
-    }
-
-    // Helper function to find empty slot index
-    private int getNextAvailableSlot() {
-        for (int i = 0; i < MAX_CUSTOMER; i++) {
-            if (!customerSlots[i]) return i;
-        }
-        return -1;
-    }
     public int getRating(){
         if (coins >= 20 ) return 3;
         else if (coins >= 10 ) return 2;
@@ -337,15 +265,11 @@ public class Game {
     public void restart(){
         this.gameStartTime = System.currentTimeMillis();
         this.lastUpdateTime = System.currentTimeMillis();
-        this.lastCustomerSpawn = System.currentTimeMillis();
         this.isGameOver = false;
         this.coins = 0;
-        List<Customer> customers = customerManager.getCustomerList();
-        customers.clear();
-        for (int i = 0; i < customerSlots.length; i++) {
-            customerSlots[i] = false;
-        }
 
+        // reset managers
+        customerManager.reset();
         applianceManager.reset();
         foodSourceManager.reset();
     }
