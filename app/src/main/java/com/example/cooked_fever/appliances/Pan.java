@@ -117,6 +117,7 @@ public class Pan implements Appliance {
     public boolean placeFood(FoodItem item, float x, float y) {
         if (isEmpty() && item.getFoodItemName().equals(acceptedFood)) {
             item.setItemPosition(x, y);
+            item.setItemOriginalPosition(x, y);
             currentItem = item;
             startCooking();
             return true;

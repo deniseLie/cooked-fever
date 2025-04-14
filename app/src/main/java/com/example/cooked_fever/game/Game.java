@@ -66,8 +66,6 @@ public class Game {
     private FoodItem draggedFoodItem = null;  // Track which food item is being dragged
     private float offsetX, offsetY;  // Track where the user clicked on the food item to ensure smooth dragging
 
-
-
     public Game(Runnable sendNotification, Consumer<Consumer<Canvas>> canvasUser) {
         this.sendNotification = sendNotification;
         this.canvasUser = canvasUser;
@@ -132,22 +130,13 @@ public class Game {
 
             canvas.drawColor(Color.DKGRAY); // Background
 
-            // Draw appliances
-//            for (FoodItem foodItem : createdfoodItems) {
-//                    foodItem.draw(canvas);
-//            }
-
-            // Draw customers
-//            for (Customer customer : customers) {
-//                customer.draw(canvas);
-//            }
-            List<Customer> customers = customerManager.getCustomerList();
             // Managers draw
             customerManager.draw(canvas);
             applianceManager.draw(canvas);
             foodSourceManager.draw(canvas);
             foodItemManager.draw(canvas);
 
+            List<Customer> customers = customerManager.getCustomerList();
             canvas.drawText("Customers: " + customers.size(), 30, 60, textPaint);
             canvas.drawText("Coins: " + coins, 30, 120, textPaint);
 
@@ -172,26 +161,6 @@ public class Game {
         float x = event.getX();
         float y = event.getY();
 
-//        for (Appliance appliance : appliances) {
-//            if (appliance.onClick(x, y)) {
-//                FoodItem newColaDrink = new FoodItem(100, 135, "Cola");
-//                createdfoodItems.add(newColaDrink);
-//
-//                Log.d("createdFoodItemsList" ,"createdfoodItems List: " + createdfoodItems.get(0).getFoodItemName());
-//                // If the appliance interacted, stop checking others
-//                return;
-//            }
-//        }
-//        for (FoodItem foodItem : createdfoodItems) {
-//            if (foodItem.onClick(x, y)) {  // Check if the click is within the bounds of the food item
-//                draggedFoodItem = foodItem;  // Set the dragged food item
-//                Log.d("startdragItem" ,"item picked up: " + draggedFoodItem.getFoodItemName());
-//                offsetX = x - foodItem.getX();  // Calculate offset to drag smoothly
-//                offsetY = y - foodItem.getY();
-////                draggedFoodItem.startDrag();
-//                return; // Stop checking other food items once we've found the one being dragged
-//            }
-//        }
         FoodItem foodItem = foodItemManager.handleTouch(event);
         if (foodItem != null) {
             draggedFoodItem= foodItem;  // Set the dragged food item
@@ -220,20 +189,26 @@ public class Game {
             // Initialize food item
             foodItem = foodItemManager.createFoodItem(source.getX(), source.getY(), source.getFoodSourceName());
 
+            // Cola Interaction
             if (foodItem.getFoodItemName().equals("Cola")) {
                 if (applianceManager.checkColaMachine()) {
                     Log.d("Game" ,"foodItem created: " + foodItem.getFoodItemName());
 //                     foodItemManager.draw(canvas);
                     foodItem.prepareFoodItem();
-                    draggedFoodItem = foodItem;  // Set the dragged food item
+
+                    // Set the dragged food item
+                    draggedFoodItem = foodItem;
                     Log.d("startdragItem" ,"item picked up: " + draggedFoodItem.getFoodItemName());
                     offsetX = x - foodItem.getX();  // Calculate offset to drag smoothly
                     offsetY = y - foodItem.getY();
                     applianceManager.pauseColaMachine();
+
 //                    foodItemManager.addFoodItem(foodItem); // Effectively draws it on the spot
 //                draggedFoodItem.startDrag();
                     return; // Stop checking other food items once we've found the one being dragged
                 }
+
+            // Other Food Item Interaction
             } else {
                  // Take Food Item -> Tagged to an appliance
                 applianceManager.assign(foodItem);
@@ -251,7 +226,9 @@ public class Game {
     }
 
     public void drag(MotionEvent event) {
-        if (draggedFoodItem != null) {  // Ensure there’s a food item being dragged
+
+        // Ensure there’s a food item being dragged
+        if (draggedFoodItem != null) {
             // Calculate the new position for the dragged food item based on mouse/finger movement
 //            applianceManager.pauseColaMachine();
 //            Log.d("draggedItem" ,"draggedItem: " + draggedFoodItem.getFoodItemName());
@@ -264,25 +241,27 @@ public class Game {
     public void release(MotionEvent event) {
         if (draggedFoodItem != null) {
             Log.d("droppedItem" ,"droppedItem: " + draggedFoodItem.getFoodItemName());
-            if (draggedFoodItem.getFoodItemName().equals("Cola")) {
-                applianceManager.resumeColaMachine();
-            }
-            // Check if the food item was dropped on a valid destination
-//            if (isValidDropLocation(draggedFoodItem, event.getX(), event.getY())) {
-                // Drop the food item at the new location
-                Customer customer = customerManager.handleTouch(event);
-                if (customer != null) {
-                    customerManager.receiveItem(customer, draggedFoodItem);
+
+            // Check if the food item was dropped on a valid customer destination
+            // Customer served food
+            Customer customer = customerManager.handleTouch(event);
+            if (customer != null) {
+                customerManager.receiveItem(customer, draggedFoodItem);
+                foodItemManager.removeFoodItem(draggedFoodItem);
+                draggedFoodItem = null;
+
+                // If cola, make a new drink
+                if (draggedFoodItem.getFoodItemName().equals("Cola")) {
+                    applianceManager.resumeColaMachine();
                 }
 
+            // Invalid drop: reset position
+            } else {
+                draggedFoodItem.setPosition(draggedFoodItem.getOriginalX(), draggedFoodItem.getOriginalY());
+            }
 
-//            } else {
-//                // Invalid drop location, remove the food item
-//
-//            }
-            foodItemManager.removeFoodItem(draggedFoodItem);
-            draggedFoodItem.stopDrag(); // Mark it as not being dragged anymore, I think it don't matter, not sure
-            draggedFoodItem = null;
+            // Set item not dragged anymore
+            draggedFoodItem.stopDrag();
 
 //            invalidate();  // Refresh the canvas after release
         }

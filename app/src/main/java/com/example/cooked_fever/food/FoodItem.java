@@ -10,15 +10,22 @@ public class FoodItem {
     private String foodItemName;
     private Boolean isPrepared;
     private Boolean isBadlyCooked;
+
     private final Rect hitbox;
     private float x, y;
+    private float originalX, originalY;
+
     private final Paint paint = new Paint();
     private final Paint text = new Paint();
 
+    // Constructor
     public FoodItem (float x, float y, String foodItemName) {
         hitbox = new Rect((int)x, (int)y, (int)x + 200, (int)y + 200);
         this.x = x;
         this.y = y;
+        this.originalX = x;
+        this.originalY = y;
+
         this.foodItemName = foodItemName;
         this.isPrepared = false;
         this.isBadlyCooked = false;
@@ -32,17 +39,19 @@ public class FoodItem {
         this.x = x;
         this.y = y;
     }
+    public void setItemOriginalPosition(float x, float y) {
+        this.originalX = x;
+        this.originalY = y;
+    }
 
     // Getter
     public String getFoodItemName () {return this.foodItemName;}
     public Boolean getIsPrepared() {return this.isPrepared;}
     public Boolean getIsBadlyCooked() {return this.isBadlyCooked;}
-    public float getX() {
-        return x;
-    }
-    public float getY() {
-        return y;
-    }
+    public float getX() {return x;}
+    public float getY() {return y;}
+    public float getOriginalX() {return originalX;}
+    public float getOriginalY() {return originalY;}
     private boolean isDragged = false; // Track if the item is being dragged
 
     // Interaction

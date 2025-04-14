@@ -99,6 +99,7 @@ public class TableTop implements Appliance {
     // METHOD
     public void placeFood(FoodItem foodItem, float x, float y) {
         foodItem.setItemPosition(x, y);
+        foodItem.setItemOriginalPosition(x, y);
         this.currentItem = foodItem;
 
     }
