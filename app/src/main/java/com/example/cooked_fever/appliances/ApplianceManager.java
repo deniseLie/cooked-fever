@@ -73,6 +73,7 @@ public class ApplianceManager {
 
     public void draw(Canvas canvas) {
         for (Appliance appliance : appliances) {
+//            if (appliance instanceof TableTop) continue;
             appliance.draw(canvas);
         }
     }
@@ -129,6 +130,15 @@ public class ApplianceManager {
         }
     }
 
+    public FoodItem getTableItem() {
+        for (Appliance appliance : appliances) {
+            if (appliance instanceof TableTop) {
+                return ((TableTop) appliance).peekFood();
+            }
+        }
+        return null;
+    }
+
     // Assign Food Item to appliance
     public void assign(FoodItem foodItem) {
 
@@ -143,7 +153,7 @@ public class ApplianceManager {
                 if (appliance instanceof TableTop) {
                     TableTop tableTop = (TableTop) appliance;   // Tabletop
                     if (tableTop.accepts(foodItemName) && tableTop.isEmpty()) {
-                        tableTop.placeFood(foodItem);
+                        tableTop.placeFood(foodItem, tableTop.getX(), tableTop.getY());
                         Log.d("Game", "Placed " + foodItemName + " on TableTop " + tableTop.getId());
                         break;
                     }
@@ -155,7 +165,7 @@ public class ApplianceManager {
                 if (appliance instanceof TableTop) {
                     TableTop tableTop = (TableTop) appliance;   // Tabletop
                     if (tableTop.accepts(foodItemName) && tableTop.isEmpty()) {
-                        tableTop.placeFood(foodItem);
+                        tableTop.placeFood(foodItem, tableTop.getX(), tableTop.getY());
                         Log.d("Game", "Placed " + foodItemName + " on TableTop " + tableTop.getId());
                         break;
                     }
@@ -167,7 +177,7 @@ public class ApplianceManager {
                 if (appliance instanceof Pan) {
                     Pan pan = (Pan) appliance;   // Tabletop
                     if (pan.accepts(foodItemName) && pan.isEmpty()) {
-                        pan.placeFood(foodItem);
+                        pan.placeFood(foodItem, pan.getX(), pan.getY());
                         Log.d("Game", "Placed " + foodItemName + " on Pan " + pan.getId());
                         break;
                     }
@@ -179,7 +189,7 @@ public class ApplianceManager {
                 if (appliance instanceof Pan) {
                     Pan pan = (Pan) appliance;   // Tabletop
                     if (pan.accepts(foodItemName) && pan.isEmpty()) {
-                        pan.placeFood(foodItem);
+                        pan.placeFood(foodItem, pan.getX(), pan.getY());
                         Log.d("Game", "Placed " + foodItemName + " on Pan " + pan.getId());
                         break;
                     }

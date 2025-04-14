@@ -14,6 +14,7 @@ public class TableTop implements Appliance {
     private final Rect hitbox;
     private final String acceptedFood;  // "Burger" or "Hotdot"
     private FoodItem currentItem = null;
+    private float x, y;
 
     private final Paint platePaint = new Paint();
     private final Paint itemPaint = new Paint();
@@ -25,6 +26,8 @@ public class TableTop implements Appliance {
         this.id = id;
         this.acceptedFood = acceptedFood;
         this.hitbox = new Rect(x, y, x + width, y + height);
+        this.x = (float) x + (float)(width/2);
+        this.y = (float) y + (float)(height/2);
 
         platePaint.setColor(Color.LTGRAY);
         itemPaint.setColor(Color.rgb(139, 69, 19)); // Placeholder: brown
@@ -45,12 +48,12 @@ public class TableTop implements Appliance {
         canvas.drawText("T" + id, hitbox.left + 20, hitbox.top + 30, textPaint);
 
         // Draw food if present
-        if (currentItem != null) {
-            int centerX = (hitbox.left + hitbox.right) / 2;
-            int centerY = (hitbox.top + hitbox.bottom) / 2;
-            canvas.drawCircle(centerX, centerY, 40, itemPaint);
-            canvas.drawText(currentItem.getFoodItemName(), centerX - 40, centerY + 60, textPaint);
-        }
+//        if (currentItem != null) {
+//            int centerX = (hitbox.left + hitbox.right) / 2;
+//            int centerY = (hitbox.top + hitbox.bottom) / 2;
+//            canvas.drawCircle(centerX, centerY, 40, itemPaint);
+//            canvas.drawText(currentItem.getFoodItemName(), centerX - 40, centerY + 60, textPaint);
+//        }
     }
 
     @Override
@@ -75,6 +78,9 @@ public class TableTop implements Appliance {
     public int getId() {
         return id;
     }
+    public float getX() {return x;}
+    public float getY() {return y;}
+
 
     // CHECK METHOD
     @Override
@@ -91,8 +97,10 @@ public class TableTop implements Appliance {
     }
 
     // METHOD
-    public void placeFood(FoodItem foodItem) {
+    public void placeFood(FoodItem foodItem, float x, float y) {
+        foodItem.setItemPosition(x, y);
         this.currentItem = foodItem;
+
     }
 
     public FoodItem peekFood() {
@@ -102,6 +110,8 @@ public class TableTop implements Appliance {
     public FoodItem takeFood() {
         FoodItem taken = currentItem;
         currentItem = null;
+        Log.d("TableTop" ,"item taken: " + taken.getFoodItemName());
+        Log.d("TableTop" ,"x: " + taken.getX() + " y: " + taken.getY());
         return taken;
     }
 

@@ -28,6 +28,10 @@ public class FoodItem {
     // Setter
     public void prepareFoodItem() {this.isPrepared = true;}
     public void badlyCook() {this.isBadlyCooked = true;}
+    public void setItemPosition(float x, float y) {
+        this.x = x;
+        this.y = y;
+    }
 
     // Getter
     public String getFoodItemName () {return this.foodItemName;}
@@ -72,7 +76,29 @@ public class FoodItem {
 //        Log.d("drawItem" ,"cola drawn: " + this.getFoodItemName());
 //        Log.d("Location" ,"x: " + this.getX() + " y: " + this.getY());
         Paint paint = new Paint();
-        paint.setColor(Color.RED);
+        switch (this.getFoodItemName()) {
+            case "Cola":
+                paint.setColor(Color.RED);
+                Log.d("FoodItem" ,"cola drawn: " + this.getFoodItemName());
+//                canvas.drawCircle(x, y, 50, paint);
+                break;
+            case "Hotdog":
+                paint.setColor(Color.RED);
+//                canvas.drawOval(x + 6, y - 10, x - 6, y + 10, paint);
+                break;
+            case "Burger":
+                paint.setColor(Color.rgb(210, 140, 60));
+//                canvas.drawCircle(x, y, 50, paint);
+                break;
+            case "Patty":
+                paint.setColor(Color.rgb(90, 50, 30));
+//                canvas.drawCircle(x, y, 50, paint);
+                break;
+            case "Sausage":
+                paint.setColor(Color.rgb(235, 100, 120));
+//                canvas.drawOval(x + 6, y - 10, x - 6, y + 10, paint);
+                break;
+        }
         canvas.drawCircle(x, y, 50, paint);
 
         Paint text = new Paint();

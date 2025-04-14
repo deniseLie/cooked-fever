@@ -4,17 +4,14 @@
     <selectionStates>
       <SelectionState runConfigName="app">
         <option name="selectionMode" value="DROPDOWN" />
-<<<<<<< HEAD
-        <DropdownSelection timestamp="2025-04-13T05:59:39.436860700Z">
+        <DropdownSelection timestamp="2025-04-13T18:03:34.166454500Z">
           <Target type="DEFAULT_BOOT">
             <handle>
-              <DeviceId pluginId="LocalEmulator" identifier="path=C:\Users\Nathan\.android\avd\Nexus_6P.avd" />
+              <DeviceId pluginId="LocalEmulator" identifier="path=C:\Users\natha\.android\avd\Nexus_6P.avd" />
             </handle>
           </Target>
         </DropdownSelection>
         <DialogSelection />
-=======
->>>>>>> origin/main
       </SelectionState>
     </selectionStates>
   </component>
