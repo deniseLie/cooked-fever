@@ -38,19 +38,22 @@ public class Pan implements Appliance {
 
     @Override
     public void update() {
-        if (isCooking && currentItem != null) {
+
+        // If Item on Pan
+        if (currentItem != null) {
             long now = System.currentTimeMillis();
 
             // Cooking
-            if (now - cookingStartTime >= cookingDuration) {
+            if (isCooking && now - cookingStartTime >= cookingDuration) {
                 isCooking = false; // Cooking done
-//                currentItem.setState("Cooked");
+                currentItem.setDraggable(true);
+                currentItem.prepareFoodItem();
             }
 
             // Burnt
-            if (now - cookingStartTime >= cookingDuration) {
+            if (!isCooking && now - cookingStartTime >= burntDuration) {
                 isBurnt = true;
-                // currentItem.setState("Burnt");
+                currentItem.badlyCook();
             }
         }
     }
@@ -65,10 +68,12 @@ public class Pan implements Appliance {
             canvas.drawText("Empty", hitbox.left + 20, hitbox.top + 60, textPaint);
         } else if (isCooking) {
             canvas.drawText("Cooking " + acceptedFood, hitbox.left + 10, hitbox.top + 60, textPaint);
-        } else if (isBurnt) {
+        } else if (!isCooking && !isBurnt) {
+            canvas.drawText("Cooked " + acceptedFood, hitbox.left + 10, hitbox.top + 60, textPaint);
+        } else if (!isCooking && isBurnt) {
             canvas.drawText("Burnt " + acceptedFood, hitbox.left + 10, hitbox.top + 60, textPaint);
         } else {
-            canvas.drawText("Cooked " + acceptedFood, hitbox.left + 10, hitbox.top + 60, textPaint);
+            canvas.drawText("Invalid " + acceptedFood, hitbox.left + 10, hitbox.top + 60, textPaint);
         }
     }
 
@@ -76,7 +81,7 @@ public class Pan implements Appliance {
     public boolean onClick(int x, int y) {
         if (hitbox.contains(x, y)) {
             if (currentItem != null) {
-                takeFood(); // Take the food when tapped
+//                takeFood(); // Take the food when tapped
                 return true;
             }
         }
@@ -127,6 +132,7 @@ public class Pan implements Appliance {
 
     private void startCooking() {
         isCooking = true;
+        currentItem.setDraggable(false);
         cookingStartTime = System.currentTimeMillis();
     }
 

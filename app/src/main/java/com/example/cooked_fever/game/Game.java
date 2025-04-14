@@ -162,7 +162,7 @@ public class Game {
         float y = event.getY();
 
         FoodItem foodItem = foodItemManager.handleTouch(event);
-        if (foodItem != null) {
+        if (foodItem != null && foodItem.isDraggable()) {
             draggedFoodItem= foodItem;  // Set the dragged food item
             Log.d("Game" ,"item picked up: " + draggedFoodItem.getFoodItemName());
             offsetX = x - foodItem.getX();  // Calculate offset to drag smoothly
@@ -170,6 +170,8 @@ public class Game {
 //                draggedFoodItem.startDrag();
             return; // Stop checking other food items once we've found the one being dragged
         }
+
+        // Customer interaction
         List<Customer> customers = customerManager.getCustomerList();
         for (Customer customer : customers) {
             if (x >= customer.getX() && x <= customer.getX() + 100 &&
@@ -210,13 +212,8 @@ public class Game {
 
             // Other Food Item Interaction
             } else {
-                 // Take Food Item -> Tagged to an appliance
+                 // Take Food Item -> Tagged to an appliance -> Assigns foodItem to a slot
                 applianceManager.assign(foodItem);
-                // ^ Assigns foodItem to a slot
-                // Get x, y of that hitbox
-//                FoodItem slottedFoodItem = applianceManager.getTableItem();
-//                foodItem.setItemPosition(slottedFoodItem.getX(), slottedFoodItem.getY());
-//                foodItemManager.addFoodItem(foodItem);
             }
             foodItemManager.addFoodItem(foodItem);
         }
@@ -234,7 +231,7 @@ public class Game {
 //            Log.d("draggedItem" ,"draggedItem: " + draggedFoodItem.getFoodItemName());
             float newX = event.getX() - offsetX;  // Adjust for initial click offset
             float newY = event.getY() - offsetY;
-            draggedFoodItem.setPosition(newX, newY);  // Update the food item’s position
+            draggedFoodItem.setItemPosition(newX, newY);  // Update the food item’s position
 //            invalidate();  // Redraw the canvas to update the new position of the food item
         }
     }
@@ -248,7 +245,6 @@ public class Game {
             if (customer != null) {
                 customerManager.receiveItem(customer, draggedFoodItem);
                 foodItemManager.removeFoodItem(draggedFoodItem);
-                draggedFoodItem = null;
 
                 // If cola, make a new drink
                 if (draggedFoodItem.getFoodItemName().equals("Cola")) {
@@ -257,11 +253,12 @@ public class Game {
 
             // Invalid drop: reset position
             } else {
-                draggedFoodItem.setPosition(draggedFoodItem.getOriginalX(), draggedFoodItem.getOriginalY());
+                draggedFoodItem.setItemPosition(draggedFoodItem.getOriginalX(), draggedFoodItem.getOriginalY());
             }
 
             // Set item not dragged anymore
             draggedFoodItem.stopDrag();
+            draggedFoodItem = null;
 
 //            invalidate();  // Refresh the canvas after release
         }

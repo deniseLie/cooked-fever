@@ -14,6 +14,8 @@ public class FoodItem {
     private final Rect hitbox;
     private float x, y;
     private float originalX, originalY;
+    private boolean isDragged = false; // Track if the item is being dragged
+    private boolean isDraggable = true; // Track whether item allow being dragged
 
     private final Paint paint = new Paint();
     private final Paint text = new Paint();
@@ -32,6 +34,16 @@ public class FoodItem {
         Log.d("FoodItemCreation", "Created a new FoodItem: " + this.foodItemName);
     }
 
+    // Getter
+    public String getFoodItemName () {return this.foodItemName;}
+    public Boolean getIsPrepared() {return this.isPrepared;}
+    public Boolean getIsBadlyCooked() {return this.isBadlyCooked;}
+    public float getX() {return x;}
+    public float getY() {return y;}
+    public float getOriginalX() {return originalX;}
+    public float getOriginalY() {return originalY;}
+    public Boolean isDraggable() {return isDraggable;}
+
     // Setter
     public void prepareFoodItem() {this.isPrepared = true;}
     public void badlyCook() {this.isBadlyCooked = true;}
@@ -43,16 +55,9 @@ public class FoodItem {
         this.originalX = x;
         this.originalY = y;
     }
-
-    // Getter
-    public String getFoodItemName () {return this.foodItemName;}
-    public Boolean getIsPrepared() {return this.isPrepared;}
-    public Boolean getIsBadlyCooked() {return this.isBadlyCooked;}
-    public float getX() {return x;}
-    public float getY() {return y;}
-    public float getOriginalX() {return originalX;}
-    public float getOriginalY() {return originalY;}
-    private boolean isDragged = false; // Track if the item is being dragged
+    public void startDrag() {isDragged = true;} // Start dragging
+    public void stopDrag() {isDragged = false;}  // Mark the item as not being dragged anymore
+    public void setDraggable(Boolean draggable) {isDraggable = draggable;}
 
     // Interaction
     // Method to check if the user clicked on this food item
@@ -67,17 +72,6 @@ public class FoodItem {
 
         // Check if the click is within the circle's radius
         return distance <= 50; // 50 is the radius of the circle
-    }
-    public void setPosition(float x, float y) {
-        this.x = x;
-        this.y = y;
-    }
-    public void stopDrag() {
-        isDragged = false;  // Mark the item as not being dragged anymore
-    }
-    // Start dragging
-    public void startDrag() {
-        isDragged = true;
     }
 
     // Draw
@@ -116,7 +110,7 @@ public class FoodItem {
         text.setAntiAlias(true);
 
         canvas.drawText(this.foodItemName, x - 60, y + 80, text);
-        canvas.drawText("Status: " + this.isPrepared, x - 60, y + 80, text);  // Adjust y position (y + 80)
-        canvas.drawText("Cooked: " + (this.isBadlyCooked ? "Well" : "Badly"), x - 60, y + 120, text);  // Adjust y position (y + 120)
+        canvas.drawText("Status: " + this.isPrepared, x - 60, y + 100, text);  // Adjust y position (y + 80)
+        canvas.drawText("Cooked: " + (this.isBadlyCooked ? "Badly" : "Well"), x - 60, y + 120, text);  // Adjust y position (y + 120)
     }
 }
