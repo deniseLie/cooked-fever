@@ -12,13 +12,14 @@ import com.example.cooked_fever.food.*;
 // Creates food
 public class FoodItemManager {
     private List<FoodItem> createdFoodItems = new ArrayList<>();
+    private final Context context;
 
-    public FoodItemManager() {
-
+    public FoodItemManager(Context context) {
+        this.context = context;
     }
 
     public FoodItem createFoodItem(float x, float y, String foodItemName) {
-        FoodItem newFoodItem = new FoodItem(x, y, foodItemName);
+        FoodItem newFoodItem = new FoodItem(context, x, y, foodItemName);
         if (foodItemName.equals("Cola")) {
             newFoodItem.prepareFoodItem();
         }
@@ -107,10 +108,10 @@ public class FoodItemManager {
         }
     }
 
-    public void draw(Canvas canvas) {
+    public void draw(Canvas canvas, Context context) {
         synchronized(createdFoodItems) {
             for (FoodItem item : createdFoodItems) {
-                item.draw(canvas);
+                item.draw(canvas, context); // Draw each food item
             }
         }
     }

@@ -21,19 +21,23 @@ public class CocaColaMaker implements Appliance {
     private long refillStartTime;
     private final int refillDuration = 10000; // 10 seconds
 
+    private final Context context;
+
     private final Paint paint = new Paint();
     private final Paint text = new Paint();
-    private final FoodItemManager foodItemManager = new FoodItemManager();
+    private final FoodItemManager foodItemManager; // ✅ move initialization into constructor
 
     // Executor to manage background tasks
     private final ExecutorService executor = Executors.newCachedThreadPool();
     private final Handler uiHandler = new Handler(Looper.getMainLooper());
 
-    public CocaColaMaker(int x, int y) {
+    public CocaColaMaker(Context context, int x, int y) {
+        this.context = context;
         hitbox = new Rect(x, y, x + 200, y + 200);
         text.setColor(Color.WHITE);
         text.setTextSize(36f);
         text.setAntiAlias(true);
+        this.foodItemManager = new FoodItemManager(context);
 
         // Start Filling
         startFilling();

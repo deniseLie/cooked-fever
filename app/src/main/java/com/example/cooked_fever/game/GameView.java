@@ -26,13 +26,13 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
     public GameView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        this.game = new Game(this::sendNotification, this::useCanvas);
+        this.game = new Game(context, this::sendNotification, this::useCanvas);
         init(context);
     }
 
     public GameView(Context context) {
         super(context);
-        this.game = new Game(this::sendNotification, this::useCanvas);
+        this.game = new Game(context, this::sendNotification, this::useCanvas);
         init(context);
     }
 

@@ -12,9 +12,11 @@ public class ApplianceManager {
     private final List<Appliance> appliances  = new ArrayList<>();
     private int screenWidth;
     private int screenHeight;
+    private final Context context;
 
     private final String LOG_TAG = this.getClass().getSimpleName();
-    public ApplianceManager(int screenWidth, int screenHeight) {
+    public ApplianceManager(Context context, int screenWidth, int screenHeight) {
+        this.context = context;
         this.screenWidth = screenWidth;
         this.screenHeight = screenHeight;
         initializeAppliances();
@@ -25,7 +27,7 @@ public class ApplianceManager {
         Log.d("Appliance Manager", "INitializeing");
 
         // Add Coca cola maker
-        appliances.add(new CocaColaMaker(200, screenHeight - 300));
+        appliances.add(new CocaColaMaker(context, 200, screenHeight - 300));
         appliances.add(new TrashBin(550, screenHeight - 250));
 
         // Add 6 TableTops: 2 columns x 3 rows
@@ -54,7 +56,7 @@ public class ApplianceManager {
             int x = i < 3 ? leftX : rightX;
             int y = screenHeight - 500 - row * 200;
             String type = (i < 3) ? "Patty" : "Sausage";
-            appliances.add(new Pan(x, y, panWidth, panHeight, i, type));
+            appliances.add(new Pan(context, x, y, panWidth, panHeight, i, type));
         }
 
         Log.d("Appliance Manager", "222");

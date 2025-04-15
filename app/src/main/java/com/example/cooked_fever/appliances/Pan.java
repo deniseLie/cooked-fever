@@ -26,17 +26,24 @@ public class Pan implements Appliance {
     private final Paint paint = new Paint();
     private final Paint textPaint = new Paint();
 
+    private final Context context;
+    private final Bitmap panBitmap;
+
     // Constructor
-    public Pan(int x, int y, int width, int height, int index, String acceptedFood) {
+    public Pan(Context context, int x, int y, int width, int height, int index, String acceptedFood) {
+        this.context = context;
         this.hitbox = new Rect(x, y, x + width, y + height);
         this.acceptedFood = acceptedFood;
         this.id = index;
-        this.x = (float) x + (float)(width/2);
-        this.y = (float) y + (float)(height/2);
-
+        this.x = (float) x + (float)(width / 2);
+        this.y = (float) y + (float)(height / 2);
+    
         textPaint.setColor(Color.BLACK);
         textPaint.setTextSize(28f);
         textPaint.setAntiAlias(true);
+    
+        // Load the pan image
+        panBitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.pan);
     }
 
     @Override
@@ -46,8 +53,14 @@ public class Pan implements Appliance {
 
     public void draw(Canvas canvas) {
         // Pan base
-        paint.setColor(Color.LTGRAY);
-        canvas.drawRect(hitbox, paint);
+        if (panBitmap != null) {
+            Bitmap scaledPan = Bitmap.createScaledBitmap(panBitmap, hitbox.width(), hitbox.height(), false);
+            canvas.drawBitmap(scaledPan, hitbox.left, hitbox.top, null);
+        } else {
+            // fallback in case image didn't load
+            paint.setColor(Color.LTGRAY);
+            canvas.drawRect(hitbox, paint);
+        }
 
         // Food status
         String status = "Empty";

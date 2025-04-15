@@ -38,17 +38,20 @@ public class Game {
     private long gameStartTime = System.currentTimeMillis();
     private boolean isGameOver = false;
 
+    private final Context context;
+
     // Managers
-    private final ApplianceManager applianceManager = new ApplianceManager(screenWidth, screenHeight);
+    private final ApplianceManager applianceManager = new ApplianceManager(context, screenWidth, screenHeight);
     private final FoodSourceManager foodSourceManager = new FoodSourceManager(screenWidth, screenHeight);
-    private final FoodItemManager foodItemManager = new FoodItemManager();
+    private final FoodItemManager foodItemManager = new FoodItemManager(context);
     private final CustomerManager customerManager = new CustomerManager();
 
     // User Interaction
     private FoodItem draggedFoodItem = null;  // Track which food item is being dragged
     private float offsetX, offsetY;  // Track where the user clicked on the food item to ensure smooth dragging
 
-    public Game(Runnable sendNotification, Consumer<Consumer<Canvas>> canvasUser) {
+    public Game(Context context, Runnable sendNotification, Consumer<Consumer<Canvas>> canvasUser) {
+        this.context = context;
         this.sendNotification = sendNotification;
         this.canvasUser = canvasUser;
 
@@ -97,7 +100,7 @@ public class Game {
             customerManager.draw(canvas);
             applianceManager.draw(canvas);
             foodSourceManager.draw(canvas);
-            foodItemManager.draw(canvas);
+            foodItemManager.draw(canvas, context);
 
             List<Customer> customers = customerManager.getCustomerList();
             canvas.drawText("Customers: " + customers.size(), 30, 60, textPaint);
