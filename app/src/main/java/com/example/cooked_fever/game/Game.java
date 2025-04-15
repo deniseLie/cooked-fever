@@ -147,8 +147,6 @@ public class Game {
         if (source != null) {
             Log.d("Game", "FoodSource clicked: " + source.getFoodSourceName());
 
-
-
             // Initialize food item
             foodItem = foodItemManager.createFoodItem(source.getX(), source.getY(), source.getFoodSourceName());
             Log.d("Game" ,"foodItem created: " + foodItem.getFoodItemName());

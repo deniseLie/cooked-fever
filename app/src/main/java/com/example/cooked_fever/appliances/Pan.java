@@ -1,12 +1,16 @@
 package com.example.cooked_fever.appliances;
 
 import android.graphics.*;
+import android.os.*;
+import java.util.concurrent.*;
 
-import com.example.cooked_fever.appliances.Appliance;
-
+import com.example.cooked_fever.appliances.*;
 import com.example.cooked_fever.food.*;
 
 public class Pan implements Appliance {
+
+    private static final ExecutorService executor = Executors.newCachedThreadPool(); // Shared pool
+    private static final Handler uiHandler = new Handler(Looper.getMainLooper());
 
     private int id;
     private final Rect hitbox;
@@ -15,7 +19,6 @@ public class Pan implements Appliance {
 
     private boolean isCooking = false;
     private boolean isBurnt = false;
-    private long cookingStartTime;
     private final long cookingDuration = 10000; // 10 seconds
     private final long burntDuration = 30000; // 30 seconds
 
@@ -38,24 +41,7 @@ public class Pan implements Appliance {
 
     @Override
     public void update() {
-
-        // If Item on Pan
-        if (currentItem != null) {
-            long now = System.currentTimeMillis();
-
-            // Cooking
-            if (isCooking && now - cookingStartTime >= cookingDuration) {
-                isCooking = false; // Cooking done
-                currentItem.setDraggable(true);
-                currentItem.prepareFoodItem();
-            }
-
-            // Burnt
-            if (!isCooking && now - cookingStartTime >= burntDuration) {
-                isBurnt = true;
-                currentItem.badlyCook();
-            }
-        }
+        // Void move to background
     }
 
     public void draw(Canvas canvas) {
@@ -64,28 +50,19 @@ public class Pan implements Appliance {
         canvas.drawRect(hitbox, paint);
 
         // Food status
-        if (currentItem == null) {
-            canvas.drawText("Empty", hitbox.left + 20, hitbox.top + 60, textPaint);
-        } else if (isCooking) {
-            canvas.drawText("Cooking " + acceptedFood, hitbox.left + 10, hitbox.top + 60, textPaint);
-        } else if (!isCooking && !isBurnt) {
-            canvas.drawText("Cooked " + acceptedFood, hitbox.left + 10, hitbox.top + 60, textPaint);
-        } else if (!isCooking && isBurnt) {
-            canvas.drawText("Burnt " + acceptedFood, hitbox.left + 10, hitbox.top + 60, textPaint);
-        } else {
-            canvas.drawText("Invalid " + acceptedFood, hitbox.left + 10, hitbox.top + 60, textPaint);
+        String status = "Empty";
+        if (currentItem != null) {
+            if (isCooking) status = "Cooking " + acceptedFood;
+            else if (isBurnt) status = "Burnt " + acceptedFood;
+            else status = "Cooked " + acceptedFood;
         }
+
+        canvas.drawText(status, hitbox.left + 10, hitbox.top + 60, textPaint);
     }
 
     @Override
     public boolean onClick(int x, int y) {
-        if (hitbox.contains(x, y)) {
-            if (currentItem != null) {
-//                takeFood(); // Take the food when tapped
-                return true;
-            }
-        }
-        return false;
+        return hitbox.contains(x, y) && currentItem != null;
     }
 
     // GET METHOD
@@ -124,16 +101,43 @@ public class Pan implements Appliance {
             item.setItemPosition(x, y);
             item.setItemOriginalPosition(x, y);
             currentItem = item;
-            startCooking();
+            startCookingAsync(item);
             return true;
         }
         return false;
     }
 
-    private void startCooking() {
+    private void startCookingAsync(FoodItem item) {
         isCooking = true;
-        currentItem.setDraggable(false);
-        cookingStartTime = System.currentTimeMillis();
+        isBurnt = false;
+        item.setDraggable(false);
+
+        long startTime = System.currentTimeMillis();
+
+        // Run in the background
+        executor.execute(() -> {
+            try {
+
+                // Waiting for Cooking done
+                Thread.sleep(cookingDuration);
+                uiHandler.post(() -> {
+                    isCooking = false;
+                    item.prepareFoodItem();
+                    item.setDraggable(true);
+                });
+
+                // Waiting for Food Burnt
+                Thread.sleep(burntDuration - cookingDuration);
+                uiHandler.post(() -> {
+                    if (!isCooking && currentItem == item) {
+                        isBurnt = true;
+                        item.badlyCook();
+                    }
+                });
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        });
     }
 
     public FoodItem takeFood() {
@@ -150,6 +154,5 @@ public class Pan implements Appliance {
         this.currentItem = null;
         this.isCooking = false;
         this.isBurnt = false;
-        this.cookingStartTime = 0;
     }
 }

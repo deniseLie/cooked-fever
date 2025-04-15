@@ -3,7 +3,6 @@ package com.example.cooked_fever.food;
 import android.graphics.*;
 import android.util.Log;
 import android.view.MotionEvent;
-
 import java.util.*;
 
 import com.example.cooked_fever.appliances.Appliance;
@@ -28,16 +27,19 @@ public class FoodItemManager {
     }
 
     public void addFoodItem(FoodItem foodItem) {
-        createdFoodItems.add(foodItem);
-        Log.d("foodItemList" ,"foodItem added: " + foodItem.getFoodItemName());
+        synchronized(createdFoodItems) {
+            createdFoodItems.add(foodItem);
+            Log.d("foodItemList" ,"foodItem added: " + foodItem.getFoodItemName());
+        }
     }
 
     public void removeFoodItem (FoodItem foodItem) {
+        synchronized(createdFoodItems) {
+            createdFoodItems.remove(foodItem);
 
-        createdFoodItems.remove(foodItem);
-
-        // Clear references
-        foodItem = null;
+            // Clear references
+            foodItem = null;
+        }
     }
 
     public void setFoodPosition (FoodItem foodItem, float x, float y) {
@@ -77,47 +79,39 @@ public class FoodItemManager {
 
     // Handle Touch
     public FoodItem handleTouch(MotionEvent event) {
-        float x = event.getX();
-        float y = event.getY();
-        for (FoodItem foodItem : createdFoodItems) {
-            if (foodItem.onClick(x, y)) {  // Check if the click is within the bounds of the food item
-                return foodItem; // Return food item
+        synchronized(createdFoodItems) {
+            float x = event.getX();
+            float y = event.getY();
+            for (FoodItem foodItem : createdFoodItems) {
+                if (foodItem.onClick(x, y)) {  // Check if the click is within the bounds of the food item
+                    return foodItem; // Return food item
 
+                }
             }
+            return null;
         }
-        return null;
     }
 
     // Handle Touch with exception
     public FoodItem findOtherItemAtTouch(MotionEvent event, FoodItem excludedItem) {
-        float x = event.getX();
-        float y = event.getY();
+        synchronized(createdFoodItems) {
+            float x = event.getX();
+            float y = event.getY();
 
-        for (FoodItem foodItem : createdFoodItems) {
-            if (foodItem != excludedItem && foodItem.onClick(x, y)) {
-                return foodItem;
+            for (FoodItem foodItem : createdFoodItems) {
+                if (foodItem != excludedItem && foodItem.onClick(x, y)) {
+                    return foodItem;
+                }
             }
+            return null;
         }
-        return null;
     }
 
     public void draw(Canvas canvas) {
-        Iterator<FoodItem> iterator = createdFoodItems.iterator();
-        while (iterator.hasNext()) {
-            FoodItem foodItem = iterator.next();
-            foodItem.draw(canvas);
+        synchronized(createdFoodItems) {
+            for (FoodItem item : createdFoodItems) {
+                item.draw(canvas);
+            }
         }
     }
-
-//    public boolean handleTouch(MotionEvent event) {
-//        int x = (int)event.getX();
-//        int y = (int)event.getY();
-//
-//        for (Appliance appliance : appliances) {
-//            if (appliance.onClick(x, y)) {
-//                return true;
-//            }
-//        }
-//        return false;
-//    }
 }

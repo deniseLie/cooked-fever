@@ -125,8 +125,12 @@ public class ApplianceManager {
     public Boolean checkColaMachine() {
         for (Appliance appliance : appliances) {
             if (appliance instanceof CocaColaMaker) {
+
+                // Serve when drink is ready
                 Boolean status = (((CocaColaMaker) appliance).hasDrinkReady());
-                ((CocaColaMaker) appliance).serving();
+                if (status) {
+                    ((CocaColaMaker) appliance).serving();
+                }
                 Log.d("ApplianceManager" ,"checkColaMachine: " + status);
                 return status;
             }
