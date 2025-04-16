@@ -2,8 +2,9 @@ package com.example.cooked_fever.appliances;
 
 import android.graphics.*;
 import android.view.MotionEvent;
-import java.util.*;
 import android.util.Log;
+import android.content.*;
+import java.util.*;
 
 import com.example.cooked_fever.food.*;
 

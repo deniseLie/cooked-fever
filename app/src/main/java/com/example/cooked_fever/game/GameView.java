@@ -2,14 +2,9 @@ package com.example.cooked_fever.game;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.graphics.Canvas;
-import android.graphics.Rect;
-import android.util.AttributeSet;
-import android.view.MotionEvent;
-import android.view.SurfaceHolder;
-import android.view.SurfaceView;
-import android.view.View;
-import android.util.Log;
+import android.graphics.*;
+import android.view.*;
+import android.util.*;
 import java.util.function.Consumer;
 
 import com.example.cooked_fever.*;
@@ -21,9 +16,6 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
     private Game game;
     private GameThread gameThread;
-    private String LOG_TAG = this.getClass().getSimpleName();
-
-
     public GameView(Context context, AttributeSet attrs) {
         super(context, attrs);
         this.game = new Game(context, this::sendNotification, this::useCanvas);

@@ -1,10 +1,9 @@
 package com.example.cooked_fever.food;
 
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.Rect;
+import android.graphics.*;
 import android.util.Log;
+import android.content.*;
+import com.example.cooked_fever.R;
 
 public class FoodItem {
     private String foodItemName;
@@ -34,7 +33,7 @@ public class FoodItem {
         Log.d("FoodItemCreation", "Created a new FoodItem: " + this.foodItemName);
 
         // Load bitmap based on item name
-        int resId = getDrawableResourceId(foodItemName);
+        int resId = getDrawableResourceId();
     }
 
     // Getter
@@ -100,7 +99,7 @@ public class FoodItem {
                                        R.drawable.hotdawg_raw;
     
             case "Hotdog":
-                return R.drawable.hotdawg_cooked; // I not sure whats the diff between hotdog and sausage
+                return R.drawable.hotdawg_cook; // I not sure whats the diff between hotdog and sausage
     
             default:
                 return R.drawable.raw_meat;
@@ -162,7 +161,7 @@ public class FoodItem {
 //     }
 
     public void draw(Canvas canvas, Context context) {
-        int resId = getDrawableResourceId(this.foodItemName);
+        int resId = getDrawableResourceId();
         Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(), resId);
 
         if (bitmap != null) {

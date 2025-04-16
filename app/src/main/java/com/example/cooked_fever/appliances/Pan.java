@@ -2,10 +2,12 @@ package com.example.cooked_fever.appliances;
 
 import android.graphics.*;
 import android.os.*;
+import android.content.*;
 import java.util.concurrent.*;
 
 import com.example.cooked_fever.appliances.*;
 import com.example.cooked_fever.food.*;
+import com.example.cooked_fever.R;
 
 public class Pan implements Appliance {
 

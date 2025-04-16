@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.view.MotionEvent;
 import android.util.Log;
+import android.content.*;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -41,10 +42,10 @@ public class Game {
     private final Context context;
 
     // Managers
-    private final ApplianceManager applianceManager = new ApplianceManager(context, screenWidth, screenHeight);
-    private final FoodSourceManager foodSourceManager = new FoodSourceManager(screenWidth, screenHeight);
-    private final FoodItemManager foodItemManager = new FoodItemManager(context);
-    private final CustomerManager customerManager = new CustomerManager();
+    private final ApplianceManager applianceManager;
+    private final FoodSourceManager foodSourceManager;
+    private final FoodItemManager foodItemManager;
+    private final CustomerManager customerManager;
 
     // User Interaction
     private FoodItem draggedFoodItem = null;  // Track which food item is being dragged
@@ -55,6 +56,11 @@ public class Game {
         this.sendNotification = sendNotification;
         this.canvasUser = canvasUser;
 
+        // Initialize managers
+        this.applianceManager = new ApplianceManager(context, screenWidth, screenHeight);
+        this.foodSourceManager = new FoodSourceManager(screenWidth, screenHeight);
+        this.foodItemManager = new FoodItemManager(context);
+        this.customerManager = new CustomerManager();
         // Pain sprites
         customerPaint.setColor(Color.MAGENTA);
         appliancePaint.setColor(Color.BLUE);
