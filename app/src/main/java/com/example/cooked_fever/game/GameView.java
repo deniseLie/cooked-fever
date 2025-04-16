@@ -14,6 +14,7 @@ import java.util.function.Consumer;
 
 import com.example.cooked_fever.*;
 
+
 /**
  * A class representing a view for the game activity.
  */
@@ -22,6 +23,12 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     private Game game;
     private GameThread gameThread;
     private String LOG_TAG = this.getClass().getSimpleName();
+
+    private Runnable onReadyCallback;
+
+    public void setOnReady(Runnable onReady) {
+        this.onReadyCallback = onReady;
+    }
 
 
     public GameView(Context context, AttributeSet attrs) {
@@ -98,8 +105,14 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         if ((gameThread == null) || (gameThread.getState() == Thread.State.TERMINATED)) {
             gameThread = new GameThread(game);
         }
-        final Rect rect = getHolder().getSurfaceFrame(); // to get a reference to screen width and height
+        final Rect rect = getHolder().getSurfaceFrame(); // get screen size
         game.resize(rect.width(), rect.height());
+
+        if (onReadyCallback != null) {
+            onReadyCallback.run();
+            onReadyCallback = null; // prevent double calls
+        }
+
         gameThread.startLoop();
     }
 

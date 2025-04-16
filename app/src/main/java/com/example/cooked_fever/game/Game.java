@@ -1,5 +1,6 @@
 package com.example.cooked_fever.game;
 
+import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -41,9 +42,9 @@ public class Game {
     private final Context context;
 
     // Managers
-    private final ApplianceManager applianceManager = new ApplianceManager(context, screenWidth, screenHeight);
-    private final FoodSourceManager foodSourceManager = new FoodSourceManager(screenWidth, screenHeight);
-    private final FoodItemManager foodItemManager = new FoodItemManager(context);
+    private ApplianceManager applianceManager;
+    private FoodSourceManager foodSourceManager;
+    private FoodItemManager foodItemManager;
     private final CustomerManager customerManager = new CustomerManager();
 
     // User Interaction
@@ -66,6 +67,10 @@ public class Game {
     public void resize(int width, int height) {
         screenWidth = width;
         screenHeight = height;
+
+        this.applianceManager = new ApplianceManager(context, width, height);
+        this.foodSourceManager = new FoodSourceManager(width, height);
+        this.foodItemManager = new FoodItemManager(context);
 
         // Resize manager
         applianceManager.resize(width, height);

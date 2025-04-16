@@ -1,5 +1,6 @@
 package com.example.cooked_fever.appliances;
 
+import android.content.Context;
 import android.graphics.*;
 import android.view.MotionEvent;
 import java.util.*;

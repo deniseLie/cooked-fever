@@ -45,15 +45,20 @@ public class MainActivity extends AppCompatActivity {
         startButton.setOnClickListener(v -> {
             mainMenu.setVisibility(View.GONE);
             gameView.setVisibility(View.VISIBLE);
-            gameView.getGame().restart(); // just in case
-            handler.post(checkGameOverRunnable); // start polling game over
+            gameView.setOnReady(() -> {
+                gameView.getGame().restart();
+                handler.post(checkGameOverRunnable);
+            });
         });
 
         // Restart Game
         restartButton.setOnClickListener(v -> {
-            gameView.getGame().restart();
             restartOverlay.setVisibility(View.GONE);
-            handler.post(checkGameOverRunnable); // start polling again
+
+            gameView.setOnReady(() -> {
+                gameView.getGame().restart(); // ✅ safe now
+                handler.post(checkGameOverRunnable);
+            });
         });
     }
 

@@ -1,10 +1,15 @@
 package com.example.cooked_fever.food;
 
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.util.Log;
+
+import com.example.cooked_fever.R;
 
 public class FoodItem {
     private String foodItemName;
@@ -75,7 +80,7 @@ public class FoodItem {
         return distance <= 50; // 50 is the radius of the circle
     }
 
-    private int getDrawableResourceId() {
+    private int getDrawableResourceId(String foodItemName) {
         switch (foodItemName) {
             case "Cola":
                 return isPrepared ? R.drawable.cola_filled : R.drawable.cola_empty;
@@ -100,7 +105,7 @@ public class FoodItem {
                                        R.drawable.hotdawg_raw;
     
             case "Hotdog":
-                return R.drawable.hotdawg_cooked; // I not sure whats the diff between hotdog and sausage
+                return R.drawable.hotdawg_cook; // I not sure whats the diff between hotdog and sausage
     
             default:
                 return R.drawable.raw_meat;
