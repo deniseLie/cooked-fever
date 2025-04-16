@@ -46,6 +46,7 @@ public class Game {
     private final FoodSourceManager foodSourceManager;
     private final FoodItemManager foodItemManager;
     private final CustomerManager customerManager;
+    private final CoinManager coinManager;
 
     // User Interaction
     private FoodItem draggedFoodItem = null;  // Track which food item is being dragged
@@ -61,6 +62,7 @@ public class Game {
         this.foodSourceManager = new FoodSourceManager(screenWidth, screenHeight);
         this.foodItemManager = new FoodItemManager(context);
         this.customerManager = new CustomerManager();
+        this.coinManager = new CoinManager(context);
         // Pain sprites
         customerPaint.setColor(Color.MAGENTA);
         appliancePaint.setColor(Color.BLUE);
@@ -107,6 +109,7 @@ public class Game {
             applianceManager.draw(canvas);
             foodSourceManager.draw(canvas);
             foodItemManager.draw(canvas, context);
+            coinManager.draw(canvas, context);
 
             List<Customer> customers = customerManager.getCustomerList();
             canvas.drawText("Customers: " + customers.size(), 30, 60, textPaint);
@@ -149,7 +152,18 @@ public class Game {
         if (customer != null) {
             Log.d("Game-Click", "Serve Customer");
             customer.serveItem("Cola"); // Assuming you’ll implement this method
-            coins += customer.getReward();
+
+            Coin newCoin = coinManager.addNewCoins(context, customer.id, customer.getX(), 1500, customer.getReward());
+            coinManager.addCoin(newCoin);
+            return;
+        }
+
+        Coin coinCollected = coinManager.handleTouch(event);
+        if (coinCollected != null) {
+            coins += coinCollected.getCoinAmount();
+            coinManager.removeCoin(coinCollected);
+            coinCollected = null;
+            return;
         }
 
         // Food Source interaction
@@ -225,7 +239,9 @@ public class Game {
                 Boolean validReceive = customerManager.receiveItem(customer, draggedFoodItem);
                 if (validReceive) {
                     foodItemManager.removeFoodItem(draggedFoodItem);
-                    coins += customer.getReward();
+                    Coin newCoin = coinManager.addNewCoins(context, customer.id, customer.getX(), 1000, customer.getReward());
+                    coinManager.addCoin(newCoin);
+//                    coins += customer.getReward();
 
                     // If cola, make a new drink
                     if (draggedFoodItem.getFoodItemName().equals("Cola")) {
