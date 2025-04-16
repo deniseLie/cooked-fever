@@ -5,6 +5,7 @@ import android.os.Handler;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.util.Log;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -35,6 +36,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        Log.d("MainActivity", "onCreate called");
+
         gameView = findViewById(R.id.game_view);
         mainMenu = findViewById(R.id.main_menu);
         restartOverlay = findViewById(R.id.restart_overlay);
@@ -45,15 +48,20 @@ public class MainActivity extends AppCompatActivity {
         startButton.setOnClickListener(v -> {
             mainMenu.setVisibility(View.GONE);
             gameView.setVisibility(View.VISIBLE);
-            gameView.getGame().restart(); // just in case
-            handler.post(checkGameOverRunnable); // start polling game over
+            gameView.setOnReady(() -> {
+                gameView.getGame().restart();
+                handler.post(checkGameOverRunnable);
+            });
         });
 
         // Restart Game
         restartButton.setOnClickListener(v -> {
-            gameView.getGame().restart();
             restartOverlay.setVisibility(View.GONE);
-            handler.post(checkGameOverRunnable); // start polling again
+
+            gameView.setOnReady(() -> {
+                gameView.getGame().restart();
+                handler.post(checkGameOverRunnable);
+            });
         });
     }
 

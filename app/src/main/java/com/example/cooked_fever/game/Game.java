@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.view.MotionEvent;
 import android.util.Log;
+import android.content.*;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -38,20 +39,28 @@ public class Game {
     private long gameStartTime = System.currentTimeMillis();
     private boolean isGameOver = false;
 
+    private final Context context;
+
     // Managers
-    private final ApplianceManager applianceManager = new ApplianceManager(screenWidth, screenHeight);
-    private final FoodSourceManager foodSourceManager = new FoodSourceManager(screenWidth, screenHeight);
-    private final FoodItemManager foodItemManager = new FoodItemManager();
-    private final CustomerManager customerManager = new CustomerManager();
+    private final ApplianceManager applianceManager;
+    private final FoodSourceManager foodSourceManager;
+    private final FoodItemManager foodItemManager;
+    private final CustomerManager customerManager;
 
     // User Interaction
     private FoodItem draggedFoodItem = null;  // Track which food item is being dragged
     private float offsetX, offsetY;  // Track where the user clicked on the food item to ensure smooth dragging
 
-    public Game(Runnable sendNotification, Consumer<Consumer<Canvas>> canvasUser) {
+    public Game(Context context, Runnable sendNotification, Consumer<Consumer<Canvas>> canvasUser) {
+        this.context = context;
         this.sendNotification = sendNotification;
         this.canvasUser = canvasUser;
 
+        // Initialize managers
+        this.applianceManager = new ApplianceManager(context, screenWidth, screenHeight);
+        this.foodSourceManager = new FoodSourceManager(screenWidth, screenHeight);
+        this.foodItemManager = new FoodItemManager(context);
+        this.customerManager = new CustomerManager();
         // Pain sprites
         customerPaint.setColor(Color.MAGENTA);
         appliancePaint.setColor(Color.BLUE);
@@ -97,7 +106,7 @@ public class Game {
             customerManager.draw(canvas);
             applianceManager.draw(canvas);
             foodSourceManager.draw(canvas);
-            foodItemManager.draw(canvas);
+            foodItemManager.draw(canvas, context);
 
             List<Customer> customers = customerManager.getCustomerList();
             canvas.drawText("Customers: " + customers.size(), 30, 60, textPaint);
@@ -147,8 +156,6 @@ public class Game {
         FoodSource source = foodSourceManager.getTouchedSource(x, y);
         if (source != null) {
             Log.d("Game-Click", "FoodSource clicked: " + source.getFoodSourceName());
-
-
 
             // Initialize food item
             foodItem = foodItemManager.createFoodItem(source.getX(), source.getY(), source.getFoodSourceName());
