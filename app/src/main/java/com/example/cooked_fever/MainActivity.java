@@ -59,7 +59,7 @@ public class MainActivity extends AppCompatActivity {
             restartOverlay.setVisibility(View.GONE);
 
             gameView.setOnReady(() -> {
-                gameView.getGame().restart(); // ✅ safe now
+                gameView.getGame().restart();
                 handler.post(checkGameOverRunnable);
             });
         });

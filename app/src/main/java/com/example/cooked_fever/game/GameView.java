@@ -16,6 +16,15 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
     private Game game;
     private GameThread gameThread;
+
+    private String LOG_TAG = this.getClass().getSimpleName();
+
+    private Runnable onReadyCallback;
+
+    public void setOnReady(Runnable onReady) {
+        this.onReadyCallback = onReady;
+    }
+
     public GameView(Context context, AttributeSet attrs) {
         super(context, attrs);
         this.game = new Game(context, this::sendNotification, this::useCanvas);
@@ -92,6 +101,12 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         }
         final Rect rect = getHolder().getSurfaceFrame(); // to get a reference to screen width and height
         game.resize(rect.width(), rect.height());
+
+        if (onReadyCallback != null) {
+            onReadyCallback.run();
+            onReadyCallback = null; // prevent double calls
+        }
+
         gameThread.startLoop();
     }
 
