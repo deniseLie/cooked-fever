@@ -1,14 +1,8 @@
 package com.example.cooked_fever.food;
 
-import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.Rect;
+import android.graphics.*;
 import android.util.Log;
-
+import android.content.*;
 import com.example.cooked_fever.R;
 
 public class FoodItem {
@@ -39,7 +33,7 @@ public class FoodItem {
         Log.d("FoodItemCreation", "Created a new FoodItem: " + this.foodItemName);
 
         // Load bitmap based on item name
-        int resId = getDrawableResourceId(foodItemName);
+        int resId = getDrawableResourceId();
     }
 
     // Getter
@@ -80,7 +74,7 @@ public class FoodItem {
         return distance <= 50; // 50 is the radius of the circle
     }
 
-    private int getDrawableResourceId(String foodItemName) {
+    private int getDrawableResourceId() {
         switch (foodItemName) {
             case "Cola":
                 return isPrepared ? R.drawable.cola_filled : R.drawable.cola_empty;
@@ -167,7 +161,7 @@ public class FoodItem {
 //     }
 
     public void draw(Canvas canvas, Context context) {
-        int resId = getDrawableResourceId(this.foodItemName);
+        int resId = getDrawableResourceId();
         Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(), resId);
 
         if (bitmap != null) {

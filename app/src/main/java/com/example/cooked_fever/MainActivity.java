@@ -5,6 +5,7 @@ import android.os.Handler;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.util.Log;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -34,6 +35,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        Log.d("MainActivity", "onCreate called");
 
         gameView = findViewById(R.id.game_view);
         mainMenu = findViewById(R.id.main_menu);

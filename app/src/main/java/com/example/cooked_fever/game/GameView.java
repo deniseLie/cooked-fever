@@ -2,18 +2,12 @@ package com.example.cooked_fever.game;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.graphics.Canvas;
-import android.graphics.Rect;
-import android.util.AttributeSet;
-import android.view.MotionEvent;
-import android.view.SurfaceHolder;
-import android.view.SurfaceView;
-import android.view.View;
-import android.util.Log;
+import android.graphics.*;
+import android.view.*;
+import android.util.*;
 import java.util.function.Consumer;
 
 import com.example.cooked_fever.*;
-
 
 /**
  * A class representing a view for the game activity.
@@ -22,15 +16,6 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
     private Game game;
     private GameThread gameThread;
-    private String LOG_TAG = this.getClass().getSimpleName();
-
-    private Runnable onReadyCallback;
-
-    public void setOnReady(Runnable onReady) {
-        this.onReadyCallback = onReady;
-    }
-
-
     public GameView(Context context, AttributeSet attrs) {
         super(context, attrs);
         this.game = new Game(context, this::sendNotification, this::useCanvas);
@@ -105,14 +90,8 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         if ((gameThread == null) || (gameThread.getState() == Thread.State.TERMINATED)) {
             gameThread = new GameThread(game);
         }
-        final Rect rect = getHolder().getSurfaceFrame(); // get screen size
+        final Rect rect = getHolder().getSurfaceFrame(); // to get a reference to screen width and height
         game.resize(rect.width(), rect.height());
-
-        if (onReadyCallback != null) {
-            onReadyCallback.run();
-            onReadyCallback = null; // prevent double calls
-        }
-
         gameThread.startLoop();
     }
 
