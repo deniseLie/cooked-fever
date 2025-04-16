@@ -6,6 +6,7 @@ import android.util.Log;
 import android.os.*;
 import java.util.concurrent.*;
 import android.content.*;
+import com.example.cooked_fever.R;
 
 import com.example.cooked_fever.appliances.Appliance;
 import com.example.cooked_fever.food.*;
@@ -29,12 +30,22 @@ public class CocaColaMaker implements Appliance {
     private final Paint text = new Paint();
     private final FoodItemManager foodItemManager; // ✅ move initialization into constructor
 
+    private final Bitmap spriteFilling;
+    private final Bitmap spriteCupEmpty;
+    private final Bitmap spriteServing;
+    private final Bitmap spriteCupFilled;
+
     // Executor to manage background tasks
     private final ExecutorService executor = Executors.newCachedThreadPool();
     private final Handler uiHandler = new Handler(Looper.getMainLooper());
 
     public CocaColaMaker(Context context, int x, int y) {
         this.context = context;
+        this.spriteFilling = BitmapFactory.decodeResource(context.getResources(), R.drawable.cola_machine);
+        this.spriteCupEmpty = BitmapFactory.decodeResource(context.getResources(), R.drawable.cola_machine_cup_empty);
+        this.spriteServing = BitmapFactory.decodeResource(context.getResources(), R.drawable.cola_machine);
+        this.spriteCupFilled = BitmapFactory.decodeResource(context.getResources(), R.drawable.cola_machine_cup_filled);
+
         hitbox = new Rect(x, y, x + 200, y + 200);
         text.setColor(Color.WHITE);
         text.setTextSize(36f);
@@ -200,16 +211,22 @@ public class CocaColaMaker implements Appliance {
         // Draw glass area
         Rect glassRect = new Rect(hitbox.left + 60, hitbox.top + 100, hitbox.right - 60, hitbox.bottom - 30);
 
+        Bitmap spriteToDraw = null;
+
         if (hasGlass && isFilling && !isFilled) {
-            paint.setColor(Color.YELLOW); // Preparing
+            spriteToDraw = spriteFilling;
         } else if (hasGlass && !isFilling && isFilled) {
-            paint.setColor(Color.GREEN); // Ready
-        } else if (!hasGlass && !isFilling && isFilled){
-            paint.setColor(Color.BLUE); // Serving
+            spriteToDraw = spriteCupEmpty;
+        } else if (!hasGlass && !isFilling && isFilled) {
+            spriteToDraw = spriteServing;
         } else { // hasGlass && !isFilling && !isFilled
-            paint.setColor(Color.LTGRAY); // Serving complete
+            spriteToDraw = spriteCupFilled;
         }
-        canvas.drawRect(glassRect, paint);
+
+        if (spriteToDraw != null) {
+            Bitmap scaled = Bitmap.createScaledBitmap(spriteToDraw, hitbox.width(), hitbox.height(), false);
+            canvas.drawBitmap(scaled, hitbox.left, hitbox.top, null);
+        }
 
         // Draw outline of glass
         Paint border = new Paint();

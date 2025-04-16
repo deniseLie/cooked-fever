@@ -77,32 +77,32 @@ public class FoodItem {
     private int getDrawableResourceId() {
         switch (foodItemName) {
             case "Cola":
-                return isPrepared ? R.drawable.cola_filled : R.drawable.cola_empty;
+                return isPrepared ? R.drawable.cup_filled : R.drawable.cup_empty;
     
             case "HotdogBun":
-                return R.drawable.hotdawg_bun;
+                return R.drawable.hotdog_bun;
     
             case "BurgerBun":
-                return R.drawable.bottom_bun;
+                return R.drawable.burger_empty;
     
             case "Patty":
-                return isBadlyCooked ? R.drawable.overcooked_meat :
-                       isPrepared    ? R.drawable.cooked_meat :
-                                       R.drawable.raw_meat;
+                return isBadlyCooked ? R.drawable.patty_burnt :
+                       isPrepared    ? R.drawable.patty_cooked :
+                                       R.drawable.patty_raw;
     
             case "Burger":
-                return R.drawable.cooked_meat; // MISSING BURGER IMAGE
+                return R.drawable.burger_completed;
     
             case "Sausage":
-                return isBadlyCooked ? R.drawable.hotdawg_burnt :
-                       isPrepared    ? R.drawable.hotdawg_cook :
-                                       R.drawable.hotdawg_raw;
+                return isBadlyCooked ? R.drawable.sausage_burnt :
+                       isPrepared    ? R.drawable.sausage_cooked :
+                                       R.drawable.sausage_raw;
     
             case "Hotdog":
-                return R.drawable.hotdawg_cook; // I not sure whats the diff between hotdog and sausage
-    
+                return R.drawable.hotdog_completed;
+
             default:
-                return R.drawable.raw_meat;
+                return R.drawable.patty_raw;
         }
     }
     
