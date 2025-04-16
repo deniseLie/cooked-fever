@@ -32,7 +32,7 @@ public class CocaColaMaker implements Appliance {
 
     private final Bitmap spriteFilling;
     private final Bitmap spriteCupEmpty;
-    private final Bitmap spriteServing;
+    private final Bitmap spriteNoCup;
     private final Bitmap spriteCupFilled;
 
     // Executor to manage background tasks
@@ -41,9 +41,9 @@ public class CocaColaMaker implements Appliance {
 
     public CocaColaMaker(Context context, int x, int y) {
         this.context = context;
-        this.spriteFilling = BitmapFactory.decodeResource(context.getResources(), R.drawable.cola_machine);
+        this.spriteFilling = BitmapFactory.decodeResource(context.getResources(), R.drawable.cola_machine_filling);
         this.spriteCupEmpty = BitmapFactory.decodeResource(context.getResources(), R.drawable.cola_machine_cup_empty);
-        this.spriteServing = BitmapFactory.decodeResource(context.getResources(), R.drawable.cola_machine);
+        this.spriteNoCup = BitmapFactory.decodeResource(context.getResources(), R.drawable.cola_machine);
         this.spriteCupFilled = BitmapFactory.decodeResource(context.getResources(), R.drawable.cola_machine_cup_filled);
 
         hitbox = new Rect(x, y, x + 200, y + 200);
@@ -216,11 +216,11 @@ public class CocaColaMaker implements Appliance {
         if (hasGlass && isFilling && !isFilled) {
             spriteToDraw = spriteFilling;
         } else if (hasGlass && !isFilling && isFilled) {
-            spriteToDraw = spriteCupEmpty;
-        } else if (!hasGlass && !isFilling && isFilled) {
-            spriteToDraw = spriteServing;
-        } else { // hasGlass && !isFilling && !isFilled
             spriteToDraw = spriteCupFilled;
+        } else if (!hasGlass && !isFilling && isFilled) {
+            spriteToDraw = spriteNoCup;
+        } else { // hasGlass && !isFilling && !isFilled
+            spriteToDraw = spriteCupEmpty;
         }
 
         if (spriteToDraw != null) {
