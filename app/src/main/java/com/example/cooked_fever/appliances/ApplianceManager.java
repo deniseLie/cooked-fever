@@ -30,8 +30,8 @@ public class ApplianceManager {
             Log.d("Appliance Manager", "Initializing");
 
             // Add Coca cola maker
-            appliances.add(new CocaColaMaker(context, 200, screenHeight - 300));
-            appliances.add(new TrashBin(550, screenHeight - 250));
+            appliances.add(new CocaColaMaker(context, 200, screenHeight - 500));
+            appliances.add(new TrashBin(context, 550, screenHeight - 250));
 
             // Add 6 TableTops: 2 columns x 3 rows
             int plateWidth = 300;
@@ -46,7 +46,7 @@ public class ApplianceManager {
                 int x = i < 3 ? leftX : rightX;
                 int y = baseY - row * rowGap;
                 String acceptedFood = (i < 3) ? "BurgerBun" : "HotdogBun";
-                appliances.add(new TableTop(x, y, plateWidth, plateHeight, i, acceptedFood));
+                appliances.add(new TableTop(context, x, y, plateWidth, plateHeight, i, acceptedFood));
             }
 
             // Add 6 Pans: 2 columns x 3 rows
@@ -291,7 +291,7 @@ public class ApplianceManager {
                 if (appliance instanceof Pan) {
                     Pan pan = (Pan) appliance;
                     if (pan.accepts(foodItemName) && pan.isEmpty()) {
-                        pan.placeFood(foodItem, pan.getX(), pan.getY());
+                        pan.placeFood(foodItem, pan.getX() - 10, pan.getY() - 45);
                         Log.d("Game", "Placed " + foodItemName + " on Pan " + pan.getId());
                         break;
                     }

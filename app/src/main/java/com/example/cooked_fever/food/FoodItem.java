@@ -165,8 +165,15 @@ public class FoodItem {
         Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(), resId);
 
         if (bitmap != null) {
-            Bitmap scaled = Bitmap.createScaledBitmap(bitmap, 100, 100, false);
-            canvas.drawBitmap(scaled, x - 50, y - 50, null);
+            int bitmapSize = 100;
+
+            // Make Patty and Sausage slightly smaller
+            if (foodItemName.equals("Patty") || foodItemName.equals("Sausage")) {
+                bitmapSize = 80;
+            }
+
+            Bitmap scaled = Bitmap.createScaledBitmap(bitmap, bitmapSize, bitmapSize, false);
+            canvas.drawBitmap(scaled, x - bitmapSize / 2f, y - bitmapSize / 2f, null);
         } else {
             // fallback if bitmap can't load
             paint.setColor(Color.GRAY);

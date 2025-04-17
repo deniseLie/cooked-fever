@@ -1,40 +1,45 @@
 package com.example.cooked_fever.appliances;
 
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.Rect;
+import android.content.Context;
+import android.graphics.*;
 import android.util.Log;
+import com.example.cooked_fever.R;
 
 public class TrashBin implements Appliance {
     private float x, y;
     private final Rect hitbox;
 
-    private final Paint paint = new Paint();
     private final Paint text = new Paint();
-    public TrashBin (int x, int y) {
-        hitbox = new Rect(x-20, y-20, x + 200 + 20, y + 200 + 20);
-        this.x = (int) x;
-        this.y = (int) y;
+    private final Bitmap trashBitmap;
+
+    public TrashBin(Context context, int x, int y) {
+        this.x = x;
+        this.y = y;
+        this.hitbox = new Rect(x - 20, y - 20, x + 220, y + 220); // 200 + padding
+        this.trashBitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.trash_can);
+
+        text.setColor(Color.BLACK);
+        text.setTextSize(32f);
+        text.setAntiAlias(true);
     }
 
     @Override
     public void update() {
-
+        // No dynamic logic for trash
     }
 
     @Override
     public void draw(Canvas canvas) {
-        Paint paint = new Paint();
-        paint.setColor(Color.RED);
-        canvas.drawRect(x-20, y-20, x+ 200 + 20, y + 200 + 20, paint);
+        if (trashBitmap != null) {
+            Bitmap scaled = Bitmap.createScaledBitmap(trashBitmap, hitbox.width(), hitbox.height(), false);
+            canvas.drawBitmap(scaled, hitbox.left, hitbox.top, null);
+        } else {
+            Paint fallback = new Paint();
+            fallback.setColor(Color.RED);
+            canvas.drawRect(hitbox, fallback);
+        }
 
-        Paint text = new Paint();
-        text.setColor(Color.BLACK);
-        text.setTextSize(32f);
-        text.setAntiAlias(true);
-
-        canvas.drawText("TrashBin", x, y+110, text);
+        canvas.drawText("TrashBin", x, y + 250, text);
     }
 
     @Override
@@ -45,7 +50,7 @@ public class TrashBin implements Appliance {
     @Override
     public boolean onClick(int x, int y) {
         if (hitbox.contains(x, y)) {
-            Log.d("TrashBin" ,"Clicked");
+            Log.d("TrashBin", "Clicked");
             return true;
         }
         return false;
@@ -53,19 +58,16 @@ public class TrashBin implements Appliance {
 
     public boolean isTrashBin(int x, int y) {
         Log.d("TrashBin", "isTrashBin " + x);
-        if (hitbox.contains(x, y)) {
-            return true;
-        }
-        return false;
+        return hitbox.contains(x, y);
     }
 
     @Override
     public Rect getHitbox() {
-        return null;
+        return hitbox;
     }
 
     @Override
     public void reset() {
-
+        // Nothing to reset for now
     }
 }

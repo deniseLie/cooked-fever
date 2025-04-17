@@ -46,7 +46,7 @@ public class CocaColaMaker implements Appliance {
         this.spriteNoCup = BitmapFactory.decodeResource(context.getResources(), R.drawable.cola_machine);
         this.spriteCupFilled = BitmapFactory.decodeResource(context.getResources(), R.drawable.cola_machine_cup_filled);
 
-        hitbox = new Rect(x, y, x + 200, y + 200);
+        hitbox = new Rect(x, y, x + 300, y + 300);
         text.setColor(Color.WHITE);
         text.setTextSize(36f);
         text.setAntiAlias(true);
@@ -225,7 +225,13 @@ public class CocaColaMaker implements Appliance {
 
         if (spriteToDraw != null) {
             Bitmap scaled = Bitmap.createScaledBitmap(spriteToDraw, hitbox.width(), hitbox.height(), false);
-            canvas.drawBitmap(scaled, hitbox.left, hitbox.top, null);
+
+            Matrix matrix = new Matrix();
+            matrix.preScale(-1, 1); // 👈 Flip horizontally
+
+            Bitmap flipped = Bitmap.createBitmap(scaled, 0, 0, scaled.getWidth(), scaled.getHeight(), matrix, true);
+
+            canvas.drawBitmap(flipped, hitbox.left, hitbox.top, null);
         }
 
         // Draw outline of glass
