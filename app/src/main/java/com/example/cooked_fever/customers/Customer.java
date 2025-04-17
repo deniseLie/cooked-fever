@@ -5,8 +5,11 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.ColorMatrix;
+import android.graphics.ColorMatrixColorFilter;
 import android.graphics.Paint;
 import android.graphics.Rect;
+import android.graphics.RectF;
 import android.util.Log;
 
 import com.example.cooked_fever.R;
@@ -33,10 +36,13 @@ public class Customer {
 
     private Bitmap sprite;
 
+    private final Context context;
+
     // Log
     private final String LOG_TAG = this.getClass().getSimpleName();
 
     public Customer(Context context, float x, float y, List<String> foodItems) {
+        this.context = context;
         this.hitbox = new Rect((int)x-12, (int)y-12, (int)x + 25, (int)y + 25);
         this.x = x;
         this.y = y;
@@ -133,33 +139,68 @@ public class Customer {
     // Draw Customer
     public void draw(Canvas canvas) {
         Paint paint = new Paint();
-        paint.setColor(Color.GREEN);
         Log.d("CustomerDraw", "Drawing at x=" + x + " | sprite width=" + sprite.getWidth());
+
+        // Draw the sprite (scaled)
         if (sprite != null) {
-            // Center the sprite based on its size
-            float spriteX = x - sprite.getWidth() / 2f;
-            float spriteY = y - sprite.getHeight() / 2f;
-            canvas.drawBitmap(sprite, spriteX, spriteY, null);
+            float scale = 1.5f;
+            int newWidth = (int) (sprite.getWidth() * scale);
+            int newHeight = (int) (sprite.getHeight() * scale);
+            Bitmap scaled = Bitmap.createScaledBitmap(sprite, newWidth, newHeight, true);
+
+            float spriteX = x - newWidth / 2f;
+            float spriteY = y - newHeight / 2f;
+            canvas.drawBitmap(scaled, spriteX, spriteY, null);
         }
 
-        Paint text = new Paint();
-        text.setColor(Color.BLACK);
-        text.setTextSize(32f);
-        text.setAntiAlias(true);
-
-        canvas.drawText("Customer", x - 60, y + 80, text);
-
-        // Draw patience bar
+        // Draw the patience bar
         Paint patienceBar = new Paint();
         patienceBar.setColor(Color.RED);
         float barWidth = Math.max(0, (float) patience / MAX_PATIENCE) * 100;
         canvas.drawRect(x - 50, y - 70, x - 50 + barWidth, y - 60, patienceBar);
 
-        // Draw orders
+        // ✨ NEW: draw order bubble
+        drawOrderBubble(canvas);
+    }
+    private void drawOrderBubble(Canvas canvas) {
+        if (orderList.isEmpty()) return;
+
+        int bubbleWidth = 150;
+        int bubbleHeight = 60 + (orderList.size() * 70); // expand based on order count
+        float bubbleX = x + 70; // right of sprite
+        float bubbleY = y - 100;
+
+        Paint bubblePaint = new Paint();
+        bubblePaint.setColor(Color.WHITE);
+        bubblePaint.setStyle(Paint.Style.FILL);
+        bubblePaint.setAlpha(220);
+
+        canvas.drawRoundRect(new RectF(bubbleX, bubbleY, bubbleX + bubbleWidth, bubbleY + bubbleHeight), 20, 20, bubblePaint);
+
         for (int i = 0; i < orderList.size(); i++) {
-            FoodOrder o = orderList.get(i);
-            text.setColor(o.isPrepared() ? Color.GRAY : Color.BLACK);
-            canvas.drawText(o.getItemName(), x - 40, y + 120 + (i * 30), text);
+            String name = orderList.get(i).getItemName();
+            int resId = getDrawableResourceId(name);
+            if (resId != 0) {
+                Bitmap icon = BitmapFactory.decodeResource(context.getResources(), resId);
+                Bitmap scaledIcon = Bitmap.createScaledBitmap(icon, 64, 64, true); // prevent explosion
+
+                int iconX = (int)(bubbleX + 15); // left padding inside bubble
+                int iconY = (int)(bubbleY + 20 + i * 70); // stack vertically
+
+                canvas.drawBitmap(scaledIcon, iconX, iconY, null);
+            }
+        }
+    }
+    private int getDrawableResourceId(String name) {
+        switch (name) {
+            case "Burger":
+                return R.drawable.burger_completed;
+            case "Hotdog":
+                return R.drawable.hotdog_completed;
+            case "Cola":
+                return R.drawable.cola_machine_cup_filled;
+            default:
+                return 0;
         }
     }
 }

@@ -119,8 +119,8 @@ public class CustomerManager {
 
         int totalSlots = customerSlots.length;
 
-        int leftPadding = 200;
-        int rightPadding = 350; // More space on the right to avoid the timer
+        int leftPadding = 400;
+        int rightPadding = 550; // More space on the right to avoid the timer
 
         float usableWidth = screenWidth - leftPadding - rightPadding;
         float spacing = usableWidth / (totalSlots - 1);  // e.g. 4 gaps for 5 customers
