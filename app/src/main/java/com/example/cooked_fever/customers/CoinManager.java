@@ -59,4 +59,8 @@ public class CoinManager {
         }
     }
 
+    public void reset() {
+        uncollectedCoinList.clear(); // or however you're tracking floating coins
+    }
+
 }

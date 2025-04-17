@@ -23,20 +23,28 @@ public class GameThread extends Thread {
 
     @Override
     public void run() {
-        super.run();
+        long previousTime = System.currentTimeMillis();
+
         while (isRunning) {
-            game.draw();
-            game_sleep();
+            long currentTime = System.currentTimeMillis();
+            long elapsedTime = currentTime - previousTime;
+            previousTime = currentTime;
+
             game.update();
+            game.draw();
+
+            game_sleep(elapsedTime);
         }
     }
 
-    private void game_sleep() {
-        long sleepTime = game.getSleepTime();
+    private void game_sleep(long elapsedTime) {
+        long targetFrameTime = 16; // target ~60 FPS
+        long sleepTime = targetFrameTime - elapsedTime;
+
         if (sleepTime > 0) {
             try {
                 sleep(sleepTime);
-            } catch (final Exception e) {
+            } catch (InterruptedException e) {
                 e.printStackTrace();
             }
         }

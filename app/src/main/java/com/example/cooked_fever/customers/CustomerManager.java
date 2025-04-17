@@ -30,10 +30,16 @@ public class CustomerManager {
     private ExecutorService executor = Executors.newFixedThreadPool(4); // For background updates
     private Context context;
 
+    private int screenWidth = 1080;
     // Constructor
 
-    public CustomerManager(Context context) {
+    public CustomerManager(Context context, int screenWidth) {
         this.context = context;
+        this.screenWidth = screenWidth;
+    }
+
+    public void setScreenWidth(int width) {
+        this.screenWidth = width;
     }
 
     // GET
@@ -108,27 +114,29 @@ public class CustomerManager {
 
     // Spawn customer
     private void spawnCustomer() {
-
-        // Get slot index
         int slotIndex = getNextAvailableSlot();
-        if (slotIndex == -1) return;    // No available slots
+        if (slotIndex == -1) return;
 
-        // Customer spawn
-        int x = START_X + slotIndex * CUSTOMER_SPACING;
+        int totalSlots = customerSlots.length;
+
+        int leftPadding = 200;
+        int rightPadding = 350; // More space on the right to avoid the timer
+
+        float usableWidth = screenWidth - leftPadding - rightPadding;
+        float spacing = usableWidth / (totalSlots - 1);  // e.g. 4 gaps for 5 customers
+        int x = (int)(leftPadding + slotIndex * spacing);
         int y = CUSTOMER_Y;
 
-        // Random number of items between 1–3
         int orderCount = 1 + random.nextInt(3);
         List<String> order = new ArrayList<>();
-
         for (int i = 0; i < orderCount; i++) {
             order.add(availableMenu[random.nextInt(availableMenu.length)]);
         }
 
         Customer customer = new Customer(context, x, y, order);
-        customer.setSlotIndex(slotIndex);   // save slot index
+        customer.setSlotIndex(slotIndex);
         customerSlots[slotIndex] = true;
-        customers.add(customer);    // add customer
+        customers.add(customer);
     }
 
     // Draw

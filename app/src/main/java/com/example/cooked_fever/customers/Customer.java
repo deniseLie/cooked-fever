@@ -48,6 +48,12 @@ public class Customer {
         this.reward = 2 * orderList.size();
         this.arrivalTime = System.currentTimeMillis();
         this.sprite = BitmapFactory.decodeResource(context.getResources(), R.drawable.player_idle);
+        sprite = Bitmap.createScaledBitmap(
+                sprite,
+                (int)(sprite.getWidth() * 0.8f),  // 60% width
+                (int)(sprite.getHeight() * 0.8f), // 60% height
+                true
+        );
     }
 
     public int getReward(){
@@ -128,6 +134,7 @@ public class Customer {
     public void draw(Canvas canvas) {
         Paint paint = new Paint();
         paint.setColor(Color.GREEN);
+        Log.d("CustomerDraw", "Drawing at x=" + x + " | sprite width=" + sprite.getWidth());
         if (sprite != null) {
             // Center the sprite based on its size
             float spriteX = x - sprite.getWidth() / 2f;

@@ -58,11 +58,8 @@ public class MainActivity extends AppCompatActivity {
         // Restart Game
         restartButton.setOnClickListener(v -> {
             restartOverlay.setVisibility(View.GONE);
-
-            gameView.setOnReady(() -> {
-                gameView.getGame().restart();
-                handler.post(checkGameOverRunnable);
-            });
+            gameView.getGame().restart();
+            handler.post(checkGameOverRunnable);
         });
     }
 

@@ -112,7 +112,8 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
     @Override
     public void surfaceChanged(final SurfaceHolder surfaceHolder, final int format, final int width, final int height) {
-        game.resize(width, height);
+        final Rect rect = getHolder().getSurfaceFrame();
+        game.resize(rect.width(), rect.height());
     }
 
     @Override

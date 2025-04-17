@@ -3,6 +3,7 @@ package com.example.cooked_fever.game;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.RectF;
 import android.view.MotionEvent;
 import android.util.Log;
 import android.content.*;
@@ -31,13 +32,14 @@ public class Game {
 
     private long lastUpdateTime = System.currentTimeMillis();
 
-    private int screenWidth = 1080;
-    private int screenHeight = 1920;
+    private int screenWidth;
+    private int screenHeight;
 
     private int coins = 0;
     private final long GAME_DURATION_MS = 40000; // 1 hour
     private long gameStartTime = System.currentTimeMillis();
     private boolean isGameOver = false;
+    private boolean isGameStarted = false;
 
     private final Context context;
 
@@ -58,10 +60,9 @@ public class Game {
         this.canvasUser = canvasUser;
 
         // Initialize managers
+        this.customerManager = new CustomerManager(context, screenWidth);
         this.applianceManager = new ApplianceManager(context, screenWidth, screenHeight);
-        this.foodSourceManager = new FoodSourceManager(screenWidth, screenHeight);
         this.foodItemManager = new FoodItemManager(context);
-        this.customerManager = new CustomerManager(context);
         this.coinManager = new CoinManager(context);
         // Pain sprites
         customerPaint.setColor(Color.MAGENTA);
@@ -69,20 +70,25 @@ public class Game {
         textPaint.setColor(Color.WHITE);
         textPaint.setTextSize(48f);
         textPaint.setAntiAlias(true);
+        this.foodSourceManager = new FoodSourceManager();
     }
 
     public void resize(int width, int height) {
-        screenWidth = width;
-        screenHeight = height;
+        this.screenWidth = width;
+        this.screenHeight = height;
 
-        // Resize manager
+        // Rebuild with correct dimensions
         applianceManager.resize(width, height);
+
+        foodSourceManager.clear();  // optional: if you had one before
+        foodSourceManager.setup(screenHeight);
+        customerManager.setScreenWidth(width);
     }
 
     public void update() {
         long now = System.currentTimeMillis();
 
-        if (isGameOver) return;
+        if (isGameOver || !isGameStarted) return;
         if (now - gameStartTime >= GAME_DURATION_MS) {
             isGameOver = true;
             Log.d("Game", "Game over!");
@@ -105,18 +111,49 @@ public class Game {
             canvas.drawColor(Color.DKGRAY); // Background
 
             // Managers draw
+            foodSourceManager.draw(canvas);
             customerManager.draw(canvas);
             applianceManager.draw(canvas);
-            foodSourceManager.draw(canvas);
             foodItemManager.draw(canvas, context);
             coinManager.draw(canvas, context);
 
-            List<Customer> customers = customerManager.getCustomerList();
-            canvas.drawText("Customers: " + customers.size(), 30, 60, textPaint);
-            canvas.drawText("Coins: " + coins, 30, 120, textPaint);
+            if (isGameStarted) {
+                // Timer logic
+                long elapsed = (System.currentTimeMillis() - gameStartTime) / 1000;
+                int totalSeconds = (int)(GAME_DURATION_MS / 1000);
+                int remaining = Math.max(0, totalSeconds - (int) elapsed);
 
-            int rating = getRating();
-            canvas.drawText("Rating: " + rating + " star(s)", 30, 180, textPaint);
+                float radius = 90f;
+                float cx = screenWidth - 130;
+                float cy = 130;
+                RectF oval = new RectF(cx - radius, cy - radius, cx + radius, cy + radius);
+
+                Paint bgCircle = new Paint();
+                bgCircle.setColor(Color.DKGRAY);
+                bgCircle.setStyle(Paint.Style.STROKE);
+                bgCircle.setStrokeWidth(18f);
+                bgCircle.setAntiAlias(true);
+                canvas.drawArc(oval, 0, 360, false, bgCircle);
+
+                Paint arcPaint = new Paint(bgCircle);
+                arcPaint.setColor(remaining <= 10 ? Color.RED : Color.YELLOW);
+                float sweepAngle = (remaining / (float) totalSeconds) * 360f;
+                canvas.drawArc(oval, -90, sweepAngle, false, arcPaint);
+
+                Paint timerText = new Paint();
+                timerText.setColor(Color.WHITE);
+                timerText.setTextSize(48f);
+                timerText.setTextAlign(Paint.Align.CENTER);
+                timerText.setAntiAlias(true);
+                canvas.drawText(remaining + "s", cx, cy + 12, timerText);
+
+                // Stats
+                List<Customer> customers = customerManager.getCustomerList();
+                canvas.drawText("Customers: " + customers.size(), 30, 60, textPaint);
+                canvas.drawText("Coins: " + coins, 30, 120, textPaint);
+                int rating = getRating();
+                canvas.drawText("Rating: " + rating + " star(s)", 30, 180, textPaint);
+            }
 
             if (isGameOver) {
                 canvas.drawText("Game Over!", 30, 240, textPaint);
@@ -324,6 +361,7 @@ public class Game {
         coins = Math.max(0, coins - amount);
     }
     public void restart(){
+        this.isGameStarted = true;
         this.gameStartTime = System.currentTimeMillis();
         this.lastUpdateTime = System.currentTimeMillis();
         this.isGameOver = false;
@@ -333,6 +371,8 @@ public class Game {
         customerManager.reset();
         applianceManager.reset();
         foodSourceManager.reset();
+        foodItemManager.reset();
+        coinManager.reset();
     }
     public boolean isGameOver() {
         return isGameOver;

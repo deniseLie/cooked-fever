@@ -11,7 +11,7 @@ public class FoodSource {
     private final Paint text = new Paint();
 
     public FoodSource (int x, int y, String foodSourceName) {
-        hitbox = new Rect(x-20, y-20, x + 200 + 20, y + 200 + 20);
+        hitbox = new Rect(x - 50, y - 50, x + 50, y + 50);
         this.x = x;
         this.y = y;
         this.foodSourceName = foodSourceName;

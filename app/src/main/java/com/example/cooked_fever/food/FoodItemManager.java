@@ -111,10 +111,19 @@ public class FoodItemManager {
     }
 
     public void draw(Canvas canvas, Context context) {
-        synchronized(createdFoodItems) {
-            for (FoodItem item : createdFoodItems) {
-                item.draw(canvas, context); // Draw each food item
-            }
+        List<FoodItem> snapshot;
+        synchronized (createdFoodItems) {
+            snapshot = new ArrayList<>(createdFoodItems);
+        }
+
+        for (FoodItem item : snapshot) {
+            item.draw(canvas, context);
+        }
+    }
+
+    public void reset() {
+        synchronized (createdFoodItems) {
+            createdFoodItems.clear();
         }
     }
 }
