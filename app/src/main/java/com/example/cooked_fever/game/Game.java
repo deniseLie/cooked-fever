@@ -35,7 +35,7 @@ public class Game {
     private int screenHeight = 1920;
 
     private int coins = 0;
-    private final long GAME_DURATION_MS = 3600000; // 1 hour
+    private final long GAME_DURATION_MS = 40000; // 1 hour
     private long gameStartTime = System.currentTimeMillis();
     private boolean isGameOver = false;
 
@@ -61,7 +61,7 @@ public class Game {
         this.applianceManager = new ApplianceManager(context, screenWidth, screenHeight);
         this.foodSourceManager = new FoodSourceManager(screenWidth, screenHeight);
         this.foodItemManager = new FoodItemManager(context);
-        this.customerManager = new CustomerManager();
+        this.customerManager = new CustomerManager(context);
         this.coinManager = new CoinManager(context);
         // Pain sprites
         customerPaint.setColor(Color.MAGENTA);
@@ -265,6 +265,8 @@ public class Game {
                         applianceManager.resumeColaMachine();
                     }
                     foodItemManager.removeFoodItem(draggedFoodItem);
+                    deductCoin(1);
+                    Log.d("Game", "Coins after trashing: " + coins);
                     draggedFoodItem.stopDrag();
                     draggedFoodItem = null;
                     return;
@@ -316,6 +318,10 @@ public class Game {
         if (coins >= 20 ) return 3;
         else if (coins >= 10 ) return 2;
         else return 1;
+    }
+
+    public void deductCoin(int amount) {
+        coins = Math.max(0, coins - amount);
     }
     public void restart(){
         this.gameStartTime = System.currentTimeMillis();

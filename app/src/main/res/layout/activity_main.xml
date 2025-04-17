@@ -46,7 +46,8 @@
         android:gravity="center"
         android:orientation="vertical"
         android:background="#AA000000"
-        android:visibility="gone">
+        android:visibility="gone"
+        android:padding="24dp">
 
         <TextView
             android:id="@+id/game_over_text"
@@ -55,14 +56,47 @@
             android:textSize="36sp"
             android:gravity="center"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"/>
+
+        <!-- ⭐ Star Rating Row -->
+        <LinearLayout
+            android:id="@+id/star_container"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:layout_marginBottom="24dp">
+
+            <ImageView
+                android:id="@+id/star1"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:src="@drawable/star_empty"
+                android:contentDescription="Star 1" />
+
+            <ImageView
+                android:id="@+id/star2"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:src="@drawable/star_empty"
+                android:contentDescription="Star 2"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="8dp" />
+
+            <ImageView
+                android:id="@+id/star3"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:src="@drawable/star_empty"
+                android:contentDescription="Star 3" />
+        </LinearLayout>
 
         <Button
             android:id="@+id/restart_button"
             android:text="Restart Game"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"/>
+            android:layout_height="wrap_content"/>
     </LinearLayout>
 
 </FrameLayout>

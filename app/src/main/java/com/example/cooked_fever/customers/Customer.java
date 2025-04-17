@@ -1,11 +1,15 @@
 package com.example.cooked_fever.customers;
 
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.util.Log;
 
+import com.example.cooked_fever.R;
 import com.example.cooked_fever.food.FoodOrder;
 
 import java.util.ArrayList;
@@ -27,10 +31,12 @@ public class Customer {
     private final Rect hitbox;
     private int reward;
 
+    private Bitmap sprite;
+
     // Log
     private final String LOG_TAG = this.getClass().getSimpleName();
 
-    public Customer(float x, float y, List<String> foodItems) {
+    public Customer(Context context, float x, float y, List<String> foodItems) {
         this.hitbox = new Rect((int)x-12, (int)y-12, (int)x + 25, (int)y + 25);
         this.x = x;
         this.y = y;
@@ -41,6 +47,7 @@ public class Customer {
         this.patience = MAX_PATIENCE;
         this.reward = 2 * orderList.size();
         this.arrivalTime = System.currentTimeMillis();
+        this.sprite = BitmapFactory.decodeResource(context.getResources(), R.drawable.player_idle);
     }
 
     public int getReward(){
@@ -121,7 +128,12 @@ public class Customer {
     public void draw(Canvas canvas) {
         Paint paint = new Paint();
         paint.setColor(Color.GREEN);
-        canvas.drawCircle(x, y, 50, paint);
+        if (sprite != null) {
+            // Center the sprite based on its size
+            float spriteX = x - sprite.getWidth() / 2f;
+            float spriteY = y - sprite.getHeight() / 2f;
+            canvas.drawBitmap(sprite, spriteX, spriteY, null);
+        }
 
         Paint text = new Paint();
         text.setColor(Color.BLACK);

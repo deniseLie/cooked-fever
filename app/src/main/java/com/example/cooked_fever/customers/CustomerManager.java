@@ -1,5 +1,6 @@
 package com.example.cooked_fever.customers;
 
+import android.content.Context;
 import android.graphics.*;
 import android.view.*;
 import android.util.Log;
@@ -27,9 +28,12 @@ public class CustomerManager {
     private final Random random = new Random();
     private final String LOG_TAG = this.getClass().getSimpleName();
     private ExecutorService executor = Executors.newFixedThreadPool(4); // For background updates
+    private Context context;
 
     // Constructor
-    public CustomerManager() {
+
+    public CustomerManager(Context context) {
+        this.context = context;
     }
 
     // GET
@@ -121,7 +125,7 @@ public class CustomerManager {
             order.add(availableMenu[random.nextInt(availableMenu.length)]);
         }
 
-        Customer customer = new Customer(x, y, order);
+        Customer customer = new Customer(context, x, y, order);
         customer.setSlotIndex(slotIndex);   // save slot index
         customerSlots[slotIndex] = true;
         customers.add(customer);    // add customer
