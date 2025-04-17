@@ -68,7 +68,7 @@ public class Coin {
     }
 
     public void draw(Canvas canvas, Context context) {
-        int resId = R.drawable.hotdawg_burnt;
+        int resId = R.drawable.sausage_burnt;
         Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(), resId);
 
         if (bitmap != null) {
