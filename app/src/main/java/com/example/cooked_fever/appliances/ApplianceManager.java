@@ -324,6 +324,8 @@ public class ApplianceManager {
                     if (pan.accepts(foodItemName) && pan.isEmpty()) {
                         pan.placeFood(foodItem, pan.getX() - 10, pan.getY() - 45);
                         Log.d("Game", "Placed " + foodItemName + " on Pan " + pan.getId());
+                        foodItem.playSizzleSound();      // you’ll add this helper below
+
                         break;
                     }
                 }

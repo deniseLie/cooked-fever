@@ -6,6 +6,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.util.Log;
+import com.example.cooked_fever.utils.SoundUtils;
+
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -35,6 +37,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        SoundUtils.init(getApplicationContext());
 
         Log.d("MainActivity", "onCreate called");
 
@@ -48,6 +51,8 @@ public class MainActivity extends AppCompatActivity {
         startButton.setOnClickListener(v -> {
             mainMenu.setVisibility(View.GONE);
             gameView.setVisibility(View.VISIBLE);
+            SoundUtils.startBGM(getApplicationContext());
+
             gameView.setOnReady(() -> {
                 gameView.getGame().restart();
                 handler.post(checkGameOverRunnable);
@@ -57,12 +62,18 @@ public class MainActivity extends AppCompatActivity {
         // Restart Game
         restartButton.setOnClickListener(v -> {
             restartOverlay.setVisibility(View.GONE);
+            SoundUtils.startBGM(getApplicationContext()); // just in case bgm stops after game over
 
             gameView.setOnReady(() -> {
                 gameView.getGame().restart();
                 handler.post(checkGameOverRunnable);
             });
         });
+    }
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        SoundUtils.stopBGM();
     }
 
     private void showRestartOverlay() {

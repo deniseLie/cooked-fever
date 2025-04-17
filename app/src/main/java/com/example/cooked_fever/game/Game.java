@@ -50,6 +50,7 @@ public class Game {
     private final FoodSourceManager foodSourceManager;
     private final FoodItemManager foodItemManager;
     private final CustomerManager customerManager;
+    private final CoinManager coinManager;
 
     // User Interaction
     private FoodItem draggedFoodItem = null;  // Track which food item is being dragged
@@ -65,6 +66,7 @@ public class Game {
         this.foodSourceManager = new FoodSourceManager(context, screenWidth, screenHeight);
         this.foodItemManager = new FoodItemManager(context);
         this.customerManager = new CustomerManager();
+        this.coinManager = new CoinManager(context);
         // Pain sprites
 
         kitchenTableBitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.kitchen_table); // 🔥 Load image
@@ -133,6 +135,7 @@ public class Game {
             applianceManager.draw(canvas);
             foodSourceManager.draw(canvas);
             foodItemManager.draw(canvas, context);
+            coinManager.draw(canvas, context);
 
             List<Customer> customers = customerManager.getCustomerList();
             canvas.drawText("Customers: " + customers.size(), 30, 60, textPaint);
@@ -162,39 +165,51 @@ public class Game {
         FoodItem foodItem = foodItemManager.handleTouch(event);
         if (foodItem != null && foodItem.isDraggable()) {
             draggedFoodItem = foodItem;  // Set the dragged food item
-            Log.d("Game" ,"item picked up: " + draggedFoodItem.getFoodItemName());
+            Log.d("Game-Click" ,"item picked up: " + draggedFoodItem.getFoodItemName());
             offsetX = x - foodItem.getX();  // Calculate offset to drag smoothly
             offsetY = y - foodItem.getY();
 //                draggedFoodItem.startDrag();
+
             return; // Stop checking other food items once we've found the one being dragged
         }
 
         // Customer interaction
         Customer customer = customerManager.handleTouch(event);
         if (customer != null) {
-            Log.d("Game", "Serve Customer");
+            Log.d("Game-Click", "Serve Customer");
             customer.serveItem("Cola"); // Assuming you’ll implement this method
-            coins += customer.getReward();
+
+            Coin newCoin = coinManager.addNewCoins(context, customer.id, customer.getX(), 1500, customer.getReward());
+            coinManager.addCoin(newCoin);
+            return;
+        }
+
+        Coin coinCollected = coinManager.handleTouch(event);
+        if (coinCollected != null) {
+            coins += coinCollected.getCoinAmount();
+            coinManager.removeCoin(coinCollected);
+            coinCollected = null;
+            return;
         }
 
         // Food Source interaction
         FoodSource source = foodSourceManager.getTouchedSource(x, y);
         if (source != null) {
-            Log.d("Game", "FoodSource clicked: " + source.getFoodSourceName());
+            Log.d("Game-Click", "FoodSource clicked: " + source.getFoodSourceName());
 
             // Initialize food item
             foodItem = foodItemManager.createFoodItem(source.getX(), source.getY(), source.getFoodSourceName());
-            Log.d("Game" ,"foodItem created: " + foodItem.getFoodItemName());
+            Log.d("Game-Click" ,"foodItem created: " + foodItem.getFoodItemName());
 
             // Cola Interaction
             if (foodItem.getFoodItemName().equals("Cola")) {
                 if (applianceManager.checkColaMachine()) {
-                    Log.d("Game" ,"checkColaMachine: " + foodItem.getFoodItemName());
+                    Log.d("Game-Click" ,"checkColaMachine: " + foodItem.getFoodItemName());
                     foodItem.prepareFoodItem();
-                    Log.d("Game" ,"foodItem ready: " + foodItem.getFoodItemName());
+                    Log.d("Game-Click" ,"foodItem ready: " + foodItem.getFoodItemName());
                     // Set the dragged food item
                     draggedFoodItem = foodItem;
-                    Log.d("startdragItem" ,"item picked up: " + draggedFoodItem.getFoodItemName());
+                    Log.d("Game-Click" ,"Drag picked up: " + draggedFoodItem.getFoodItemName());
                     offsetX = x - foodItem.getX();  // Calculate offset to drag smoothly
                     offsetY = y - foodItem.getY();
                     applianceManager.pauseColaMachine();
@@ -212,7 +227,7 @@ public class Game {
                     // Take Food Item -> Tagged to an appliance -> Assigns foodItem to a slot
                     applianceManager.assign(foodItem);
 //                    foodItemManager.addFoodItem(foodItem);
-                    Log.d("Game" ,"appliance source: " + foodItem.getFoodItemName());
+                    Log.d("Game-Click" ,"appliance source: " + foodItem.getFoodItemName());
                     foodItemManager.addFoodItem(foodItem);
                     return;
                 }
@@ -250,7 +265,9 @@ public class Game {
                 Boolean validReceive = customerManager.receiveItem(customer, draggedFoodItem);
                 if (validReceive) {
                     foodItemManager.removeFoodItem(draggedFoodItem);
-                    coins += customer.getReward();
+                    Coin newCoin = coinManager.addNewCoins(context, customer.id, customer.getX(), 1000, customer.getReward());
+                    coinManager.addCoin(newCoin);
+//                    coins += customer.getReward();
 
                     // If cola, make a new drink
                     if (draggedFoodItem.getFoodItemName().equals("Cola")) {
@@ -270,6 +287,9 @@ public class Game {
                 if (applianceManager.isTrash(appliance)) {
                     Log.d("Game" ,"Trashed: " + draggedFoodItem.getFoodItemName());
                     applianceManager.doTrash(applianceManager.getApplianceAtCoord((int)draggedFoodItem.getOriginalX(), (int)draggedFoodItem.getOriginalY()));
+                    if (draggedFoodItem.getFoodItemName().equals("Cola")) {
+                        applianceManager.resumeColaMachine();
+                    }
                     foodItemManager.removeFoodItem(draggedFoodItem);
                     draggedFoodItem.stopDrag();
                     draggedFoodItem = null;

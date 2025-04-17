@@ -4,6 +4,8 @@ import android.graphics.*;
 import android.util.Log;
 import android.content.*;
 import com.example.cooked_fever.R;
+import com.example.cooked_fever.utils.SoundUtils;
+
 
 public class FoodItem {
     private String foodItemName;
@@ -18,6 +20,7 @@ public class FoodItem {
 
     private final Paint paint = new Paint();
     private final Paint text = new Paint();
+
 
     // Constructor
     public FoodItem (Context context, float x, float y, String foodItemName) {
@@ -35,7 +38,7 @@ public class FoodItem {
         // Load bitmap based on item name
         int resId = getDrawableResourceId();
     }
-
+    // Sound initializer
     // Getter
     public String getFoodItemName () {return this.foodItemName;}
     public Boolean getIsPrepared() {return this.isPrepared;}
@@ -49,8 +52,15 @@ public class FoodItem {
     // Setter
     public void setFoodItemName(String name) {this.foodItemName = name;}
     public void setIsPrepared(Boolean isPrepared) {this.isPrepared = isPrepared;}
-    public void prepareFoodItem() {this.isPrepared = true;}
-    public void badlyCook() {this.isBadlyCooked = true;}
+    public void prepareFoodItem() {
+        this.isPrepared = true;
+        SoundUtils.playSizzle();
+    }
+
+    public void badlyCook() {
+        this.isBadlyCooked = true;
+        SoundUtils.playBurnt();
+    }
     public void setItemPosition(float x, float y) {
         this.x = x;
         this.y = y;
@@ -59,9 +69,20 @@ public class FoodItem {
         this.originalX = x;
         this.originalY = y;
     }
-    public void startDrag() {isDragged = true;} // Start dragging
-    public void stopDrag() {isDragged = false;}  // Mark the item as not being dragged anymore
+    public void startDrag() {
+        isDragged = true;
+        SoundUtils.playPickup();
+    }
+
+    public void stopDrag() {
+        isDragged = false;
+        SoundUtils.playPlace();
+    }
     public void setDraggable(Boolean draggable) {isDraggable = draggable;}
+
+    public void playSizzleSound() {
+        SoundUtils.playSizzle();
+    }
 
     // Interaction
     public boolean onClick(float clickX, float clickY) {
