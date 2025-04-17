@@ -80,7 +80,19 @@ public class Customer {
                 return true;
             }
         }
+
         return false;
+    }
+
+    public Boolean isServed() {
+        boolean allPrepared = true;
+        for (FoodOrder order : orderList) {
+            if (!order.isPrepared()) {
+                allPrepared = false;
+                return allPrepared;
+            }
+        }
+        return allPrepared;
     }
 
     public void setSlotIndex(int index) {

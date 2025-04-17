@@ -62,6 +62,11 @@ public class ApplianceManager {
                 appliances.add(new Pan(context, x, y, panWidth, panHeight, i, type));
             }
 
+            // Add 2 Pans: 1 column x 2 rows
+            int warmWidth = 200;
+            int warmHeight = 100;
+            appliances.add(new FoodWarmer(context, 1750,420, warmWidth, warmHeight, 0));
+            appliances.add(new FoodWarmer(context, 1950, 420, warmWidth, warmHeight, 1));
             Log.d("Appliance Manager", "Finished initializing appliances");
         }
     }
@@ -122,13 +127,16 @@ public class ApplianceManager {
         return appliance instanceof TrashBin;
     }
     public void doTrash(Appliance appliance) {
+
         if (appliance instanceof Pan) {
             Pan pan = (Pan) appliance;
+
             pan.takeFood();
         } else if (appliance instanceof TableTop) {
             TableTop tableTop = (TableTop) appliance;
             tableTop.takeFood();
         }
+        Log.d("ApplianceManager", "Trash from: " + appliance);
     }
 
     public void reset() {
@@ -262,6 +270,13 @@ public class ApplianceManager {
         return true;
     }
 
+    public void keepWarm(FoodItem foodItem, FoodWarmer foodWarmer) {
+
+    }
+    public FoodItem removeWarm() {
+
+    }
+
     // Assign Food Item to appliance
     public void assign(FoodItem foodItem) {
         String foodItemName = foodItem.getFoodItemName();
@@ -272,7 +287,7 @@ public class ApplianceManager {
         }
 
         for (Appliance appliance : snapshot) {
-            Log.d("AppliManager", "aap" + appliance);
+//            Log.d("AppliManager", "aap" + appliance);
 
             // Burger -> Tabletop
             if (foodItemName.equals("BurgerBun") || foodItemName.equals("HotdogBun")) {

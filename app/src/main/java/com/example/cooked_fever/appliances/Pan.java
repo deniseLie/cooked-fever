@@ -4,6 +4,8 @@ import android.content.Context;
 import android.graphics.*;
 import android.os.*;
 import android.content.*;
+import android.util.Log;
+
 import java.util.concurrent.*;
 
 import com.example.cooked_fever.R;
@@ -160,6 +162,7 @@ public class Pan implements Appliance {
     public FoodItem takeFood() {
         if (isReady()) {
             FoodItem item = currentItem;
+            Log.d("Pan", "Removing: " + currentItem.getFoodItemName());
             currentItem = null;
             return item;
         }
