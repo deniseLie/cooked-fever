@@ -4,8 +4,7 @@ import android.graphics.*;
 import android.util.Log;
 import android.content.*;
 import com.example.cooked_fever.R;
-import android.media.SoundPool;
-import android.media.AudioAttributes;
+import com.example.cooked_fever.utils.SoundUtils;
 
 
 public class FoodItem {
@@ -22,13 +21,7 @@ public class FoodItem {
     private final Paint paint = new Paint();
     private final Paint text = new Paint();
 
-    // sound
-    private static SoundPool soundPool;
-    private static boolean soundsLoaded = false;
-    private static int sizzleSound;
-    private static int burntSound;
-    private static int pickupSound;
-    private static int placeSound;
+
     // Constructor
     public FoodItem (Context context, float x, float y, String foodItemName) {
         hitbox = new Rect((int)x, (int)y, (int)x + 200, (int)y + 200);
@@ -46,26 +39,6 @@ public class FoodItem {
         int resId = getDrawableResourceId();
     }
     // Sound initializer
-    public static void initSounds(Context context) {
-        if (soundPool != null) return;
-
-        AudioAttributes attrs = new AudioAttributes.Builder()
-                .setUsage(AudioAttributes.USAGE_GAME)
-                .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
-                .build();
-
-        soundPool = new SoundPool.Builder()
-                .setMaxStreams(6)
-                .setAudioAttributes(attrs)
-                .build();
-
-        sizzleSound = soundPool.load(context, R.raw.pan_sizzle, 1);
-        burntSound = soundPool.load(context, R.raw.pan_burnt, 1);
-        pickupSound = soundPool.load(context, R.raw.item_pickup, 1);
-        placeSound = soundPool.load(context, R.raw.place_item, 1);
-
-        soundsLoaded = true;
-    }
     // Getter
     public String getFoodItemName () {return this.foodItemName;}
     public Boolean getIsPrepared() {return this.isPrepared;}
@@ -81,11 +54,12 @@ public class FoodItem {
     public void setIsPrepared(Boolean isPrepared) {this.isPrepared = isPrepared;}
     public void prepareFoodItem() {
         this.isPrepared = true;
-        if (soundsLoaded) soundPool.play(sizzleSound, 1, 1, 0, 0, 1);
+        SoundUtils.playSizzle();
     }
+
     public void badlyCook() {
         this.isBadlyCooked = true;
-        if (soundsLoaded) soundPool.play(burntSound, 1, 1, 0, 0, 1);
+        SoundUtils.playBurnt();
     }
     public void setItemPosition(float x, float y) {
         this.x = x;
@@ -97,13 +71,18 @@ public class FoodItem {
     }
     public void startDrag() {
         isDragged = true;
-        if (soundsLoaded) soundPool.play(pickupSound, 1, 1, 0, 0, 1);
+        SoundUtils.playPickup();
     }
+
     public void stopDrag() {
         isDragged = false;
-        if (soundsLoaded) soundPool.play(placeSound, 1, 1, 0, 0, 1);
+        SoundUtils.playPlace();
     }
     public void setDraggable(Boolean draggable) {isDraggable = draggable;}
+
+    public void playSizzleSound() {
+        SoundUtils.playSizzle();
+    }
 
     // Interaction
     public boolean onClick(float clickX, float clickY) {

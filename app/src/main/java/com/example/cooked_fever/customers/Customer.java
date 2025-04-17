@@ -5,6 +5,8 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.util.Log;
+import com.example.cooked_fever.utils.SoundUtils;
+
 
 import com.example.cooked_fever.food.FoodOrder;
 
@@ -26,6 +28,9 @@ public class Customer {
     private int slotIndex = -1;
     private final Rect hitbox;
     private int reward;
+
+    private boolean hasReacted = false;
+
 
     // Log
     private final String LOG_TAG = this.getClass().getSimpleName();
@@ -62,12 +67,15 @@ public class Customer {
             }
         }
 
-        if (allPrepared) {
+        if (allPrepared && !hasReacted) {
             isServed = true;
-        } else if (patience <= 0) {
-            // if not served in time, customer leaves
-            leave();
+            SoundUtils.playHappy(); // only plays once
+            hasReacted = true;
+        } else if (patience <= 0 && !hasReacted) {
+            leave(); // triggers angry
+            hasReacted = true;
         }
+
     }
 
     public Boolean serveItem(String itemName) {
@@ -97,9 +105,13 @@ public class Customer {
     }
 
     private void leave() {
-        // Remove from queue or trigger a "leave" animation/state
-        isServed = true; // Still mark as served to remove from screen, but with penalty
+        isServed = true;
+        if (!hasReacted) {
+            SoundUtils.playAngry();
+            hasReacted = true;
+        }
     }
+
     public Rect getHitbox() {
         return hitbox;
     }
