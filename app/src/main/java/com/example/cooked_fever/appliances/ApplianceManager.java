@@ -279,7 +279,7 @@ public class ApplianceManager {
                 if (appliance instanceof TableTop) {
                     TableTop tableTop = (TableTop) appliance;
                     if (tableTop.accepts(foodItemName) && tableTop.isEmpty()) {
-                        tableTop.placeFood(foodItem, tableTop.getX(), tableTop.getY());
+                        tableTop.placeFood(foodItem, tableTop.getX() - 10, tableTop.getY() - 20);
                         Log.d("Game", "Placed " + foodItemName + " on TableTop " + tableTop.getId());
                         break;
                     }

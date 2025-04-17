@@ -160,19 +160,27 @@ public class FoodItem {
 //         canvas.drawText("Cooked: " + (this.isBadlyCooked ? "Badly" : "Well"), x - 60, y + 120, text);  // Adjust y position (y + 120)
 //     }
 
+    private int getBitmapSize(String name) {
+        if (name.equals("Patty") || name.equals("Sausage")) {
+            return 80;
+        } else if (name.equals("HotdogBun") || name.equals("Hotdog") ||
+                name.equals("BurgerBun") || name.equals("Burger")) {
+            return 120;
+        }
+        return 100;
+    }
+
+
     public void draw(Canvas canvas, Context context) {
         int resId = getDrawableResourceId();
         Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(), resId);
 
         if (bitmap != null) {
-            int bitmapSize = 100;
+            int bitmapSize = getBitmapSize(foodItemName);
+            int width = (int) (bitmapSize * 1.2f);  // 20% wider
+            int height = bitmapSize;
 
-            // Make Patty and Sausage slightly smaller
-            if (foodItemName.equals("Patty") || foodItemName.equals("Sausage")) {
-                bitmapSize = 80;
-            }
-
-            Bitmap scaled = Bitmap.createScaledBitmap(bitmap, bitmapSize, bitmapSize, false);
+            Bitmap scaled = Bitmap.createScaledBitmap(bitmap, width, height, false);
             canvas.drawBitmap(scaled, x - bitmapSize / 2f, y - bitmapSize / 2f, null);
         } else {
             // fallback if bitmap can't load
