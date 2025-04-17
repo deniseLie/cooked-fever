@@ -31,36 +31,66 @@ public class ApplianceManager {
 
             // Add Coca cola maker
             appliances.add(new CocaColaMaker(context, 200, screenHeight - 500));
-            appliances.add(new TrashBin(context, 550, screenHeight - 250));
+            appliances.add(new TrashBin(context, 60, screenHeight - 200));
 
             // Add 6 TableTops: 2 columns x 3 rows
-            int plateWidth = 300;
-            int plateHeight = 200;
-            int baseY = screenHeight - 500;
+            int baseY = screenHeight - 530;
+            int rowGap = 180;
             int leftX = 900;
-            int rightX = leftX + plateWidth;
-            int rowGap = 200;
 
             for (int i = 0; i < 6; i++) {
                 int row = i % 3;
-                int x = i < 3 ? leftX : rightX;
+                int x, width, height;
+
+                // Increase size and spacing for bottom row
+                if (row == 0) {
+                    width = 340;
+                    height = 180;
+                    x = i < 3 ? leftX - 30 : leftX + 300 + 20; // widen spacing between columns
+                } else if (row == 1) {
+                    width = 300;
+                    height = 160;
+                    x = i < 3 ? leftX + 10: leftX + 300 + 10;
+                } else {
+                    width = 260;
+                    height = 140;
+                    x = i < 3 ? leftX + 50 : leftX + 300 + 10; // tighter columns for upper row
+                }
+
                 int y = baseY - row * rowGap;
                 String acceptedFood = (i < 3) ? "BurgerBun" : "HotdogBun";
-                appliances.add(new TableTop(context, x, y, plateWidth, plateHeight, i, acceptedFood));
+                appliances.add(new TableTop(context, x, y, width, height, i, acceptedFood));
             }
 
             // Add 6 Pans: 2 columns x 3 rows
-            int panWidth = 300;
-            int panHeight = 200;
+            int panBaseY = screenHeight - 500;
+            int panRowGap = 180;
             leftX = 1700;
-            rightX = leftX + panWidth;
+
             for (int i = 0; i < 6; i++) {
                 int row = i % 3;
-                int x = i < 3 ? leftX : rightX;
-                int y = screenHeight - 500 - row * 200;
+                int x, width, height;
+
+                // Apply same perspective-style variation
+                if (row == 0) {
+                    width = 330;
+                    height = 200;
+                    x = i < 3 ? leftX - 25 : leftX + 300 - 10;
+                } else if (row == 1) {
+                    width = 300;
+                    height = 180;
+                    x = i < 3 ? leftX - 80 : leftX + 300 - 100;
+                } else {
+                    width = 260;
+                    height = 160;
+                    x = i < 3 ? leftX - 140 : leftX + 300 - 190;
+                }
+
+                int y = panBaseY - row * panRowGap;
                 String type = (i < 3) ? "Patty" : "Sausage";
-                appliances.add(new Pan(context, x, y, panWidth, panHeight, i, type));
+                appliances.add(new Pan(context, x, y, width, height, i, type));
             }
+
 
             Log.d("Appliance Manager", "Finished initializing appliances");
         }
@@ -121,6 +151,7 @@ public class ApplianceManager {
     public Boolean isTrash(Appliance appliance) {
         return appliance instanceof TrashBin;
     }
+
     public void doTrash(Appliance appliance) {
         if (appliance instanceof Pan) {
             Pan pan = (Pan) appliance;

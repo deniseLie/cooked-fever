@@ -41,9 +41,8 @@ public class TableTop implements Appliance {
             Bitmap scaled = Bitmap.createScaledBitmap(tabletopBitmap, hitbox.width(), hitbox.height(), false);
             canvas.drawBitmap(scaled, hitbox.left, hitbox.top, null);
         }
-
-        canvas.drawText("T" + id, hitbox.left + 20, hitbox.top + 30, textPaint);
     }
+
 
     @Override
     public boolean onClick(int x, int y) {

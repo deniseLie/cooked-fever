@@ -202,11 +202,11 @@ public class CocaColaMaker implements Appliance {
     @Override
     public void draw(Canvas canvas) {
         // Draw machine body with rounded rectangle
-        paint.setColor(Color.DKGRAY);
-        canvas.drawRoundRect(
-                hitbox.left, hitbox.top, hitbox.right, hitbox.bottom,
-                20f, 20f, paint
-        );
+//        paint.setColor(Color.DKGRAY);
+//        canvas.drawRoundRect(
+//                hitbox.left, hitbox.top, hitbox.right, hitbox.bottom,
+//                20f, 20f, paint
+//        );
 
         // Draw glass area
         Rect glassRect = new Rect(hitbox.left + 60, hitbox.top + 100, hitbox.right - 60, hitbox.bottom - 30);
@@ -224,38 +224,46 @@ public class CocaColaMaker implements Appliance {
         }
 
         if (spriteToDraw != null) {
-            Bitmap scaled = Bitmap.createScaledBitmap(spriteToDraw, hitbox.width(), hitbox.height(), false);
+            float scaleFactor = 1.7f;
+            int scaledWidth = (int)(hitbox.width() * scaleFactor);
+            int scaledHeight = (int)(hitbox.height() * scaleFactor);
+
+            Bitmap scaled = Bitmap.createScaledBitmap(spriteToDraw, scaledWidth, scaledHeight, false);
 
             Matrix matrix = new Matrix();
-            matrix.preScale(-1, 1); // 👈 Flip horizontally
+            matrix.preScale(1, 1); // flip horizontally
 
             Bitmap flipped = Bitmap.createBitmap(scaled, 0, 0, scaled.getWidth(), scaled.getHeight(), matrix, true);
 
-            canvas.drawBitmap(flipped, hitbox.left, hitbox.top, null);
+            int drawX = hitbox.left - 30; // adjust horizontal position
+            int drawY = hitbox.top - 400;  // adjust vertical position
+
+            canvas.drawBitmap(flipped, drawX, drawY, null);
         }
+
 
         // Draw outline of glass
-        Paint border = new Paint();
-        border.setColor(Color.WHITE);
-        border.setStyle(Paint.Style.STROKE);
-        border.setStrokeWidth(4f);
-        canvas.drawRect(glassRect, border);
+//        Paint border = new Paint();
+//        border.setColor(Color.WHITE);
+//        border.setStyle(Paint.Style.STROKE);
+//        border.setStrokeWidth(4f);
+//        canvas.drawRect(glassRect, border);
 
         // Draw label "Cola Machine"
-        text.setColor(Color.WHITE);
-        text.setTextSize(36f);
-        canvas.drawText("Cola Maker", hitbox.left + 30, hitbox.top + 40, text);
+//        text.setColor(Color.WHITE);
+//        text.setTextSize(36f);
+//        canvas.drawText("Cola Maker", hitbox.left + 30, hitbox.top + 40, text);
 
         // Draw status
-        text.setTextSize(28f);
-        if (hasGlass && isFilling && !isFilled) {
-            canvas.drawText("Preparing", hitbox.left + 30, hitbox.bottom - 10, text);
-        } else if (hasGlass && !isFilling && isFilled) {
-            canvas.drawText("Ready", hitbox.left + 40, hitbox.bottom - 10, text);
-        } else if (!hasGlass && !isFilling && isFilled) {
-            canvas.drawText("Serving", hitbox.left + 60, hitbox.bottom - 10, text);
-        } else { // hasGlass && !isFilling && !isFilled
-            canvas.drawText("Returning Glass", hitbox.left + 60, hitbox.bottom - 10, text); // Serving complete
-        }
+//        text.setTextSize(28f);
+//        if (hasGlass && isFilling && !isFilled) {
+//            canvas.drawText("Preparing", hitbox.left + 30, hitbox.bottom - 10, text);
+//        } else if (hasGlass && !isFilling && isFilled) {
+//            canvas.drawText("Ready", hitbox.left + 40, hitbox.bottom - 10, text);
+//        } else if (!hasGlass && !isFilling && isFilled) {
+//            canvas.drawText("Serving", hitbox.left + 60, hitbox.bottom - 10, text);
+//        } else { // hasGlass && !isFilling && !isFilled
+//            canvas.drawText("Returning Glass", hitbox.left + 60, hitbox.bottom - 10, text); // Serving complete
+//        }
     }
 }

@@ -11,10 +11,13 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.function.Consumer;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 
 import com.example.cooked_fever.appliances.*;
 import com.example.cooked_fever.customers.*;
 import com.example.cooked_fever.food.*;
+import com.example.cooked_fever.R;
 
 /**
  * A class representing the main logic of this demo
@@ -40,6 +43,7 @@ public class Game {
     private boolean isGameOver = false;
 
     private final Context context;
+    private Bitmap kitchenTableBitmap;
 
     // Managers
     private final ApplianceManager applianceManager;
@@ -58,10 +62,13 @@ public class Game {
 
         // Initialize managers
         this.applianceManager = new ApplianceManager(context, screenWidth, screenHeight);
-        this.foodSourceManager = new FoodSourceManager(screenWidth, screenHeight);
+        this.foodSourceManager = new FoodSourceManager(context, screenWidth, screenHeight);
         this.foodItemManager = new FoodItemManager(context);
         this.customerManager = new CustomerManager();
         // Pain sprites
+
+        kitchenTableBitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.kitchen_table); // 🔥 Load image
+
         customerPaint.setColor(Color.MAGENTA);
         appliancePaint.setColor(Color.BLUE);
         textPaint.setColor(Color.WHITE);
@@ -101,6 +108,25 @@ public class Game {
             if (canvas == null) return;
 
             canvas.drawColor(Color.DKGRAY); // Background
+
+            // 🔽 Draw the background image scaled
+            if (kitchenTableBitmap != null) {
+                int canvasWidth = canvas.getWidth();
+                int canvasHeight = canvas.getHeight();
+
+                int originalWidth = kitchenTableBitmap.getWidth();
+                int originalHeight = kitchenTableBitmap.getHeight();
+
+                float widthScale = (float) canvasWidth / originalWidth;
+                float heightScale = 1.4f; // increase this to stretch vertically
+
+                int scaledHeight = (int)(originalHeight * widthScale * heightScale);
+                Bitmap scaledBitmap = Bitmap.createScaledBitmap(kitchenTableBitmap, canvasWidth, scaledHeight, false);
+
+                int yPosition = (canvasHeight - scaledHeight) / 2 + 250; // center vertically (optional)
+                canvas.drawBitmap(scaledBitmap, 0, yPosition, null);
+            }
+
 
             // Managers draw
             customerManager.draw(canvas);
@@ -272,6 +298,7 @@ public class Game {
                 draggedFoodItem.setItemPosition(draggedFoodItem.getOriginalX(), draggedFoodItem.getOriginalY());
             }
 
+            applianceManager.doTrash(applianceManager.getApplianceAtCoord((int)draggedFoodItem.getOriginalX(), (int)draggedFoodItem.getOriginalY()));
             draggedFoodItem.stopDrag();
             draggedFoodItem = null;
 
