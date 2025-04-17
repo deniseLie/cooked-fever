@@ -153,7 +153,7 @@ public class Game {
             Log.d("Game-Click", "Serve Customer");
             customer.serveItem("Cola"); // Assuming you’ll implement this method
 
-            Coin newCoin = coinManager.addNewCoins(context, customer.id, customer.getX(), 1500, customer.getReward());
+            Coin newCoin = coinManager.addNewCoins(context, customer.id, customer.getX(), customer.getReward());
             coinManager.addCoin(newCoin);
             return;
         }
@@ -212,7 +212,23 @@ public class Game {
         }
 
         // Appliance interaction
-        applianceManager.handleTouch(event);
+        Appliance appliance = applianceManager.handleTouch(event);
+        if (appliance != null) {
+            if (appliance instanceof CocaColaMaker) {
+                CocaColaMaker colaMachine = (CocaColaMaker) appliance;
+                if (colaMachine.hasDrinkReady()) { // Checks if ready
+                    applianceManager.doReady() // Play sound to signify ready?
+                    // ??? Idk what to do now since it auto spawns
+                } else {
+                    // Reflect error message?
+                    applianceManager.doNotReady() // Play sound to signal not ready
+                }
+                colaMachine = null;
+            }
+            appliance = null;
+            return;
+        }
+
     }
 
     public void drag(MotionEvent event) {
@@ -239,7 +255,7 @@ public class Game {
                 Boolean validReceive = customerManager.receiveItem(customer, draggedFoodItem);
                 if (validReceive) {
                     foodItemManager.removeFoodItem(draggedFoodItem);
-                    Coin newCoin = coinManager.addNewCoins(context, customer.id, customer.getX(), 1000, customer.getReward());
+                    Coin newCoin = coinManager.addNewCoins(context, customer.id, customer.getX(), customer.getReward());
                     coinManager.addCoin(newCoin);
 //                    coins += customer.getReward();
 

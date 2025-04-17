@@ -28,7 +28,7 @@ public class CocaColaMaker implements Appliance {
 
     private final Paint paint = new Paint();
     private final Paint text = new Paint();
-    private final FoodItemManager foodItemManager; // ✅ move initialization into constructor
+//    private final FoodItemManager foodItemManager; // ✅ move initialization into constructor
 
     private final Bitmap spriteFilling;
     private final Bitmap spriteCupEmpty;
@@ -50,7 +50,7 @@ public class CocaColaMaker implements Appliance {
         text.setColor(Color.WHITE);
         text.setTextSize(36f);
         text.setAntiAlias(true);
-        this.foodItemManager = new FoodItemManager(context);
+//        this.foodItemManager = new FoodItemManager(context);
 
         // Start Filling
         startFilling();

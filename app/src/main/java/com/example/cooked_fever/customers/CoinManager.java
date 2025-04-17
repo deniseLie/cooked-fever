@@ -18,8 +18,8 @@ public class CoinManager {
         this.context = context;
     }
 
-    public Coin addNewCoins(Context context, int customerID, float x, float y, int coinAmount) {
-        Coin newCoin = new Coin(context, customerID, x, y, coinAmount);
+    public Coin addNewCoins(Context context, int customerID, float x, int coinAmount) {
+        Coin newCoin = new Coin(context, customerID, x, 500, coinAmount);
         Log.d("CoinManager", "Created: coin" + customerID + " amt: " + coinAmount);
         return newCoin;
     }
@@ -44,7 +44,6 @@ public class CoinManager {
             for (Coin coin : uncollectedCoinList) {
                 if (coin.onClick(x, y)) {  // Check if the click is within the bounds of the food item
                     return coin; // Return food item
-
                 }
             }
             return null;
