@@ -96,6 +96,10 @@ public class Game {
         // Managers update
         customerManager.update(now);
         applianceManager.update();
+        if (applianceManager.checkColaMachine()) { // drinkReady
+            foodItemManager.addFoodItem(new FoodItem(context, 200, screenHeight - 315, "Cola"));
+            applianceManager.pauseColaMachine();
+        }
     }
 
     public void draw() {
@@ -177,20 +181,20 @@ public class Game {
 
             // Cola Interaction
             if (foodItem.getFoodItemName().equals("Cola")) {
-                if (applianceManager.checkColaMachine()) {
-                    Log.d("Game-Click" ,"checkColaMachine: " + foodItem.getFoodItemName());
-                    foodItem.prepareFoodItem();
-                    Log.d("Game-Click" ,"foodItem ready: " + foodItem.getFoodItemName());
-                    // Set the dragged food item
-                    draggedFoodItem = foodItem;
-                    Log.d("Game-Click" ,"Drag picked up: " + draggedFoodItem.getFoodItemName());
-                    offsetX = x - foodItem.getX();  // Calculate offset to drag smoothly
-                    offsetY = y - foodItem.getY();
-                    applianceManager.pauseColaMachine();
-                    foodItemManager.addFoodItem(foodItem);
-//                draggedFoodItem.startDrag();
-                    return; // Stop checking other food items once we've found the one being dragged
-                }
+//                if (applianceManager.checkColaMachine()) {
+//                    Log.d("Game-Click" ,"checkColaMachine: " + foodItem.getFoodItemName());
+//                    foodItem.prepareFoodItem();
+//                    Log.d("Game-Click" ,"foodItem ready: " + foodItem.getFoodItemName());
+//                    // Set the dragged food item
+//                    draggedFoodItem = foodItem;
+//                    Log.d("Game-Click" ,"Drag picked up: " + draggedFoodItem.getFoodItemName());
+//                    offsetX = x - foodItem.getX();  // Calculate offset to drag smoothly
+//                    offsetY = y - foodItem.getY();
+//                    applianceManager.pauseColaMachine();
+//                    foodItemManager.addFoodItem(foodItem);
+////                draggedFoodItem.startDrag();
+//                    return; // Stop checking other food items once we've found the one being dragged
+//                }
 
             // Other Food Item Interaction
             } else {
@@ -217,11 +221,11 @@ public class Game {
             if (appliance instanceof CocaColaMaker) {
                 CocaColaMaker colaMachine = (CocaColaMaker) appliance;
                 if (colaMachine.hasDrinkReady()) { // Checks if ready
-                    applianceManager.doReady() // Play sound to signify ready?
+//                    applianceManager.doColaReady() // Play sound to signify ready?
                     // ??? Idk what to do now since it auto spawns
                 } else {
                     // Reflect error message?
-                    applianceManager.doNotReady() // Play sound to signal not ready
+//                    applianceManager.doColaNotReady() // Play sound to signal not ready
                 }
                 colaMachine = null;
             }

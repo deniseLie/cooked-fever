@@ -156,9 +156,9 @@ public class ApplianceManager {
         for (Appliance appliance : snapshot) {
             if (appliance instanceof CocaColaMaker) {
                 boolean status = ((CocaColaMaker) appliance).hasDrinkReady();
-                if (status) {
-                    ((CocaColaMaker) appliance).serving();
-                }
+//                if (status) {
+//                    ((CocaColaMaker) appliance).serving();
+//                }
                 Log.d("ApplianceManager", "checkColaMachine: " + status);
                 return status;
             }

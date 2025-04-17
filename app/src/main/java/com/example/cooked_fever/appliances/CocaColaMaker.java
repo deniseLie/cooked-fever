@@ -18,9 +18,13 @@ public class CocaColaMaker implements Appliance {
     // Ready = hasGlass, !isFilling, isFilled
     // Serving = !hasGlass, !isFilling, isFilled
     // Serving complete = hasGlass, !isFilling, !isFilled
-    private boolean hasGlass = true;
-    private boolean isFilling = false;
-    private boolean isFilled = false;
+//    private boolean hasGlass = true;
+//    private boolean isFilling = false;
+//    private boolean isFilled = false;
+    private boolean preparingCola = true;
+    private boolean readyCola = false;
+    private boolean servingCola = false;
+    private boolean servedCola = false;
     private long refillStartTime;
     private final int refillDuration = 10000; // 10 seconds
 
@@ -62,23 +66,32 @@ public class CocaColaMaker implements Appliance {
         return hitbox;
     }
     @Override
+//    public boolean isReady() {
+//        return hasGlass && !isFilling && isFilled;
+//    }
     public boolean isReady() {
-        return hasGlass && !isFilling && isFilled;
+        return readyCola;
     }
     public boolean hasDrinkReady() {
-        Log.d("ColaMaker" ,"hasGlass: " + hasGlass);
-        Log.d("ColaMaker" ,"isFilling: " + isFilling);
-        Log.d("ColaMaker" ,"isFilled: " + isFilled);
-        return hasGlass && !isFilling && isFilled;
+//        Log.d("ColaMaker" ,"hasGlass: " + hasGlass);
+//        Log.d("ColaMaker" ,"isFilling: " + isFilling);
+//        Log.d("ColaMaker" ,"isFilled: " + isFilled);
+        return readyCola;
     }
 
     // METHOD
     @Override
     public void update() {
-
         // Trigger fill when needed — this is called every frame
-        if (hasGlass && isFilling && !isFilled) {
+//        if (hasGlass && isFilling && !isFilled) {
+//            startFilling();
+//        }
+        if (servedCola) {
+            servedCola = false;
             startFilling();
+        }
+        if (servingCola) {
+            return;
         }
 
         // Trigger return glass process if needed
@@ -91,12 +104,13 @@ public class CocaColaMaker implements Appliance {
 
     public void startFilling() {
         // Ensure we don’t start filling multiple times
-        if (isFilling) return;
+//        if (isFilling) return;
 
         // Start filling
-        hasGlass = true;
-        isFilling = true;
-        isFilled = false;
+//        hasGlass = true;
+//        isFilling = true;
+//        isFilled = false;
+        preparingCola = true;
 
         executor.execute(() -> {
             try {
@@ -105,8 +119,10 @@ public class CocaColaMaker implements Appliance {
 
                 // Once done, update the UI thread
                 uiHandler.post(() -> {
-                    isFilled = true;
-                    isFilling = false;
+                    preparingCola = false;
+                    readyCola = true;
+//                    isFilled = true;
+//                    isFilling = false;
                     Log.d("CokeMachine", "Filled");
                 });
             } catch (InterruptedException e) {
@@ -116,25 +132,25 @@ public class CocaColaMaker implements Appliance {
         });
     }
 
-    public void returnGlass() {
-        // Handle glass returning asynchronously.
-        executor.execute(() -> {
-            try {
-                Log.d("CokeMachine" ,"Returning Glass");
-                Thread.sleep(2000); // Pauses the thread for 2 seconds (2000 milliseconds)
-
-                // Simulate returning glass (no delay in real world logic)
-                uiHandler.post(() -> {
-                    hasGlass = true;
-                    isFilling = true;
-                    isFilled = false;
-                });
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-                Log.d("CokeMachine" ,"Filling error: " + e.toString());
-            }
-        });
-    }
+//    public void returnGlass() {
+//        // Handle glass returning asynchronously.
+//        executor.execute(() -> {
+//            try {
+//                Log.d("CokeMachine" ,"Returning Glass");
+//                Thread.sleep(2000); // Pauses the thread for 2 seconds (2000 milliseconds)
+//
+//                // Simulate returning glass (no delay in real world logic)
+//                uiHandler.post(() -> {
+//                    hasGlass = true;
+//                    isFilling = true;
+//                    isFilled = false;
+//                });
+//            } catch (InterruptedException e) {
+//                e.printStackTrace();
+//                Log.d("CokeMachine" ,"Filling error: " + e.toString());
+//            }
+//        });
+//    }
 
     public void serving() {
         // Handle serving the drink asynchronously.
@@ -143,9 +159,12 @@ public class CocaColaMaker implements Appliance {
                 Log.d("CokeMachine", "Serving");
                 // Simulate the serving process (no delay here in a real case)
                 uiHandler.post(() -> {
-                    hasGlass = false;
-                    isFilling = false;
-                    isFilled = true;
+                    readyCola = false;
+                    servingCola = true;
+//                    servingComplete();
+//                    hasGlass = false;
+//                    isFilling = false;
+//                    isFilled = true;
                 });
             } catch (Exception e) {
                 Log.d("CokeMachine", "Error while serving: " + e.toString());
@@ -154,7 +173,8 @@ public class CocaColaMaker implements Appliance {
     }
 
     public void servingComplete() {
-        startFilling();
+        servedCola = true;
+//        startFilling();
         // Handle glass returning asynchronously.
 //        executor.execute(() -> {
 //            try {
@@ -193,9 +213,12 @@ public class CocaColaMaker implements Appliance {
     @Override
     public void reset() {
         executor.shutdownNow(); // Stop background threads
-
-        this.hasGlass = true;         // Refill complete – ready for use
-        this.isFilling = false;       // No longer actively filling
+        preparingCola = true;
+        readyCola = false;
+        servingCola = false;
+        servedCola = false;
+//        this.hasGlass = true;         // Refill complete – ready for use
+//        this.isFilling = false;       // No longer actively filling
         this.refillStartTime = 0;
     }
 
@@ -213,11 +236,11 @@ public class CocaColaMaker implements Appliance {
 
         Bitmap spriteToDraw = null;
 
-        if (hasGlass && isFilling && !isFilled) {
+        if (preparingCola) {
             spriteToDraw = spriteFilling;
-        } else if (hasGlass && !isFilling && isFilled) {
+        } else if (readyCola) {
             spriteToDraw = spriteCupFilled;
-        } else if (!hasGlass && !isFilling && isFilled) {
+        } else if (servingCola) {
             spriteToDraw = spriteNoCup;
         } else { // hasGlass && !isFilling && !isFilled
             spriteToDraw = spriteCupEmpty;
@@ -242,11 +265,11 @@ public class CocaColaMaker implements Appliance {
 
         // Draw status
         text.setTextSize(28f);
-        if (hasGlass && isFilling && !isFilled) {
+        if (preparingCola) {
             canvas.drawText("Preparing", hitbox.left + 30, hitbox.bottom - 10, text);
-        } else if (hasGlass && !isFilling && isFilled) {
+        } else if (readyCola) {
             canvas.drawText("Ready", hitbox.left + 40, hitbox.bottom - 10, text);
-        } else if (!hasGlass && !isFilling && isFilled) {
+        } else if (servingCola) {
             canvas.drawText("Serving", hitbox.left + 60, hitbox.bottom - 10, text);
         } else { // hasGlass && !isFilling && !isFilled
             canvas.drawText("Returning Glass", hitbox.left + 60, hitbox.bottom - 10, text); // Serving complete

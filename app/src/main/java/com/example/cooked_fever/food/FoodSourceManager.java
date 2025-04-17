@@ -14,7 +14,7 @@ public class FoodSourceManager {
         addFoodSource(1350, screenHeight - 650, "HotdogBun");
         addFoodSource(1900, screenHeight - 650, "Patty");
         addFoodSource(2200, screenHeight - 650, "Sausage");
-        addFoodSource(400,screenHeight - 550, "Cola");
+//        addFoodSource(400,screenHeight - 550, "Cola");
     }
 
     public void addFoodSource(int x, int y, String name) {
