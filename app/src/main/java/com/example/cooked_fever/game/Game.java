@@ -100,6 +100,17 @@ public class Game {
             foodItemManager.addFoodItem(new FoodItem(context, 200, screenHeight - 315, "Cola"));
             applianceManager.pauseColaMachine();
         }
+        FryMaker fryMaker = applianceManager.getFryMaker();
+        if (applianceManager.checkFryMaker(fryMaker)) { // readyFries
+            Log.d("Game", "Fries are ready");
+            while (applianceManager.isEmptyFryHolder()) {
+                FoodItem foodItem = new FoodItem(context, 300, screenHeight - 500, "Fries");
+                applianceManager.assign(foodItem);
+                foodItemManager.addFoodItem(foodItem);
+            }
+            Log.d("Game", "Fries are done");
+            applianceManager.stopFrying(fryMaker);
+        }
     }
 
     public void draw() {
@@ -229,6 +240,12 @@ public class Game {
 //                    applianceManager.doColaNotReady() // Play sound to signal not ready
                 }
                 colaMachine = null;
+            } else if (appliance instanceof FryMaker) {
+                Log.d("Game", "Frymaker");
+                FryMaker fryMaker = (FryMaker) appliance;
+                if (applianceManager.isEmptyFryHolder()) {
+                    applianceManager.startFrying(fryMaker);
+                }
             }
             appliance = null;
             return;
@@ -287,6 +304,18 @@ public class Game {
                         applianceManager.resumeColaMachine();
                     }
                     foodItemManager.removeFoodItem(draggedFoodItem);
+                    draggedFoodItem.stopDrag();
+                    draggedFoodItem = null;
+                    return;
+                } else if (appliance instanceof FoodWarmer) {
+                    Boolean isWarm = applianceManager.keepWarm(draggedFoodItem, (FoodWarmer) appliance);
+                    if (isWarm) { // Successful placing -> Empty old
+                        applianceManager.doTrash(applianceManager.getApplianceAtCoord((int)draggedFoodItem.getOriginalX(), (int)draggedFoodItem.getOriginalY()));
+                        draggedFoodItem.setItemOriginalPosition(draggedFoodItem.getX(), draggedFoodItem.getY());
+                    } else { // Failed placing -> Reset position
+                        draggedFoodItem.setItemPosition(draggedFoodItem.getOriginalX(), draggedFoodItem.getOriginalY());
+                    }
+                    // Stop drag
                     draggedFoodItem.stopDrag();
                     draggedFoodItem = null;
                     return;

@@ -101,6 +101,9 @@ public class FoodItem {
             case "Hotdog":
                 return R.drawable.hotdog_completed;
 
+            case "Fries":
+                return R.drawable.fries;
+
             default:
                 return R.drawable.patty_raw;
         }

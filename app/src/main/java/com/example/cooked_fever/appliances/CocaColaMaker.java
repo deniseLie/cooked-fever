@@ -114,7 +114,7 @@ public class CocaColaMaker implements Appliance {
 
         executor.execute(() -> {
             try {
-                Log.d("CokeMachine" ,"Filling");
+//                Log.d("CokeMachine" ,"Filling");
                 Thread.sleep(refillDuration); // Simulate filling time
 
                 // Once done, update the UI thread
@@ -123,11 +123,11 @@ public class CocaColaMaker implements Appliance {
                     readyCola = true;
 //                    isFilled = true;
 //                    isFilling = false;
-                    Log.d("CokeMachine", "Filled");
+//                    Log.d("CokeMachine", "Filled");
                 });
             } catch (InterruptedException e) {
                 e.printStackTrace();
-                Log.d("CokeMachine" ,"Coke Spilled: " + e.toString());
+//                Log.d("CokeMachine" ,"Coke Spilled: " + e.toString());
             }
         });
     }
@@ -220,6 +220,11 @@ public class CocaColaMaker implements Appliance {
 //        this.hasGlass = true;         // Refill complete – ready for use
 //        this.isFilling = false;       // No longer actively filling
         this.refillStartTime = 0;
+    }
+
+    @Override
+    public FoodItem takeFood() {
+        return null;
     }
 
     @Override

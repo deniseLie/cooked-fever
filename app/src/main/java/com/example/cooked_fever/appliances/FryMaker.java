@@ -24,7 +24,9 @@ public class FryMaker implements Appliance{
     private int id;
     private final Rect hitbox;
 //    private String acceptedFood; // "Patty" or "Sausage"
-    private FoodItem currentItem = null;
+    private Boolean isCooking;
+    private Boolean readyFries;
+    private final int fryingDuration = 3000; // 10 seconds
 
     private float x, y;
     private final Paint paint = new Paint();
@@ -40,6 +42,8 @@ public class FryMaker implements Appliance{
         this.id = index;
         this.x = (float) x + (float)(width / 2);
         this.y = (float) y + (float)(height / 2);
+        isCooking = false;
+        readyFries = false;
 
         textPaint.setColor(Color.BLACK);
         textPaint.setTextSize(28f);
@@ -55,36 +59,37 @@ public class FryMaker implements Appliance{
     }
 
     @Override
-    public void draw(Canvas canvas) {
-
-    }
-
-    @Override
     public boolean isReady() {
-        return false;
+        return readyFries;
     }
 
     @Override
     public boolean onClick(int x, int y) {
-        return hitbox.contains(x, y) && currentItem != null;
+        return hitbox.contains(x, y) && !isCooking;
     }
 
     // GET METHOD
-    public void placeFood(FoodItem foodItem) {
-        switch (foodItem.getFoodItemName()){
-            case "Patty":
-            case "Sausage":
-                currentItem = foodItem;
-                break;
-            default:
-
-                currentItem = null;
-        }
+    public void makeFries() {
+        isCooking = true;
+        Log.d("FryMaker", "cooking status: " + isCooking);
+        executor.execute(() -> {
+            try {
+                Thread.sleep(fryingDuration); // Simulate frying time
+                // Once done, update the UI thread
+                uiHandler.post(() -> {
+                    isCooking = false;
+                    readyFries = true;
+                    Log.d("FryMaker", "cooking status: " + isCooking);
+                    Log.d("FryMaker", "Fries status: " + readyFries);
+                });
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        });
     }
+    @Override
     public FoodItem takeFood() {
-            FoodItem item = currentItem;
-            currentItem = null;
-            return item;
+            return null;
     }
     @Override
     public Rect getHitbox() {return hitbox;}
@@ -93,6 +98,19 @@ public class FryMaker implements Appliance{
 
     @Override
     public void reset() {
+        isCooking = false;
+        readyFries = false;
+    }
 
+    @Override
+    public void draw(Canvas canvas) {
+        if (panBitmap != null) {
+            Bitmap scaledPan = Bitmap.createScaledBitmap(panBitmap, hitbox.width(), hitbox.height(), false);
+            canvas.drawBitmap(scaledPan, hitbox.left, hitbox.top, null);
+        } else {
+            // fallback in case image didn't load
+            paint.setColor(Color.LTGRAY);
+            canvas.drawRect(hitbox, paint);
+        }
     }
 }

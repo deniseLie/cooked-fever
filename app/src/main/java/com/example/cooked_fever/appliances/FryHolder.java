@@ -17,14 +17,14 @@ import com.example.cooked_fever.food.FoodItem;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class FoodWarmer implements Appliance{
+public class FryHolder implements Appliance{
     private static final ExecutorService executor = Executors.newCachedThreadPool(); // Shared pool
     private static final Handler uiHandler = new Handler(Looper.getMainLooper());
 
     private int id;
     private final Rect hitbox;
     //    private String acceptedFood; // "Patty" or "Sausage"
-    private FoodItem currentItem = null;
+    private FoodItem currentItem;
 
     private float x, y;
     private final Paint paint = new Paint();
@@ -33,13 +33,14 @@ public class FoodWarmer implements Appliance{
     private final Context context;
     private final Bitmap panBitmap;
 
-    public FoodWarmer (Context context, int x, int y, int width, int height, int index) {
+    public FryHolder (Context context, int x, int y, int width, int height, int index) {
         this.context = context;
         this.hitbox = new Rect(x, y, x + width, y + height);
 //        this.acceptedFood = acceptedFood;
         this.id = index;
         this.x = (float) x + (float)(width / 2);
         this.y = (float) y + (float)(height / 2);
+        currentItem = null;
 
         textPaint.setColor(Color.BLACK);
         textPaint.setTextSize(28f);
@@ -78,17 +79,22 @@ public class FoodWarmer implements Appliance{
     }
 
     // GET METHOD
-    public Boolean placeFood(FoodItem foodItem) {
-        switch (foodItem.getFoodItemName()){
-            case "Patty":
-            case "Sausage":
-                currentItem = foodItem;
-                return true;
-//                break;
-            default:
-                Log.d("FoodWarmer", "Not valid item: " + foodItem.getFoodItemName());
-                currentItem = null;
-                return false;
+    public Boolean isEmpty() {
+        if (currentItem != null) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+    public Boolean placeFood(FoodItem foodItem, float x, float y) {
+        if (foodItem.getFoodItemName().equals("Fries")) {
+            currentItem = foodItem;
+            foodItem.setItemPosition(x, y);
+            foodItem.setItemOriginalPosition(x, y);
+            return true;
+        } else {
+            currentItem = null;
+            return false;
         }
     }
     @Override
@@ -107,5 +113,3 @@ public class FoodWarmer implements Appliance{
 
     }
 }
-
-
