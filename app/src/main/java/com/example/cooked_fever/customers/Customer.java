@@ -153,44 +153,76 @@ public class Customer {
             canvas.drawBitmap(scaled, spriteX, spriteY, null);
         }
 
-        // Draw the patience bar
-        Paint patienceBar = new Paint();
-        patienceBar.setColor(Color.RED);
-        float barWidth = Math.max(0, (float) patience / MAX_PATIENCE) * 100;
-        canvas.drawRect(x - 50, y - 70, x - 50 + barWidth, y - 60, patienceBar);
 
-        // ✨ NEW: draw order bubble
+        // NEW: draw order bubble
         drawOrderBubble(canvas);
     }
     private void drawOrderBubble(Canvas canvas) {
         if (orderList.isEmpty()) return;
 
-        int bubbleWidth = 150;
-        int bubbleHeight = 60 + (orderList.size() * 70); // expand based on order count
-        float bubbleX = x + 70; // right of sprite
+        // Fixed bubble size
+        int bubbleWidth = 180;
+        int bubbleHeight = 200;
+        float bubbleX = x + 70;
         float bubbleY = y - 100;
 
+        // Bubble background
         Paint bubblePaint = new Paint();
         bubblePaint.setColor(Color.WHITE);
         bubblePaint.setStyle(Paint.Style.FILL);
-        bubblePaint.setAlpha(220);
-
+        bubblePaint.setAlpha(230);
         canvas.drawRoundRect(new RectF(bubbleX, bubbleY, bubbleX + bubbleWidth, bubbleY + bubbleHeight), 20, 20, bubblePaint);
 
+        // Icon layout (vertical)
+        int iconSize = 50;
+        int spacing = 12;
+        int totalHeight = orderList.size() * iconSize + (orderList.size() - 1) * spacing;
+        float iconStartY = bubbleY + (bubbleHeight - totalHeight) / 2f;
+        float iconX = bubbleX + 30;  // moved more towards center
+
         for (int i = 0; i < orderList.size(); i++) {
-            String name = orderList.get(i).getItemName();
-            int resId = getDrawableResourceId(name);
+            int resId = getDrawableResourceId(orderList.get(i).getItemName());
             if (resId != 0) {
                 Bitmap icon = BitmapFactory.decodeResource(context.getResources(), resId);
-                Bitmap scaledIcon = Bitmap.createScaledBitmap(icon, 64, 64, true); // prevent explosion
-
-                int iconX = (int)(bubbleX + 15); // left padding inside bubble
-                int iconY = (int)(bubbleY + 20 + i * 70); // stack vertically
-
-                canvas.drawBitmap(scaledIcon, iconX, iconY, null);
+                Bitmap scaled = Bitmap.createScaledBitmap(icon, iconSize, iconSize, true);
+                float iconY = iconStartY + i * (iconSize + spacing);
+                canvas.drawBitmap(scaled, iconX, iconY, null);
             }
         }
+
+        // Timer bar (right side, padded more inward, wider)
+        float barWidth = 16;
+        float barX = bubbleX + bubbleWidth - barWidth - 15;  // padded inward
+        float barY = bubbleY + 20;
+        float barHeight = bubbleHeight - 40;
+
+        // Border around the timer bar
+        Paint outlinePaint = new Paint();
+        outlinePaint.setColor(Color.BLACK);
+        outlinePaint.setStyle(Paint.Style.STROKE);
+        outlinePaint.setStrokeWidth(1);
+        canvas.drawRect(barX, barY, barX + barWidth, barY + barHeight, outlinePaint);
+
+        // Fill level (gradient from green → red)
+        float fillRatio = Math.max(0f, patience / (float) MAX_PATIENCE);
+        float filledHeight = barHeight * fillRatio;
+
+        int red, green;
+        if (fillRatio > 0.5f) {
+            float t = (fillRatio - 0.5f) * 2;
+            red = (int)(255 * (1 - t));
+            green = 255;
+        } else {
+            float t = fillRatio * 2;
+            red = 255;
+            green = (int)(255 * t);
+        }
+
+        Paint fillPaint = new Paint();
+        fillPaint.setColor(Color.rgb(red, green, 0));
+        canvas.drawRect(barX, barY + (barHeight - filledHeight), barX + barWidth, barY + barHeight, fillPaint);
     }
+
     private int getDrawableResourceId(String name) {
         switch (name) {
             case "Burger":
