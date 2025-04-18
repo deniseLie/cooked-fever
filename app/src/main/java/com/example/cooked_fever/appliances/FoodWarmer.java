@@ -46,7 +46,7 @@ public class FoodWarmer implements Appliance{
         textPaint.setAntiAlias(true);
 
         // Load the pan image
-        panBitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.pan);
+        panBitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.food_warmer);
     }
 
     @Override

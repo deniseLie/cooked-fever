@@ -33,7 +33,10 @@ public class FryMaker implements Appliance{
     private final Paint textPaint = new Paint();
 
     private final Context context;
-    private final Bitmap panBitmap;
+    private final Bitmap frying;
+    private final Bitmap fryOff;
+//    private final Bitmap fryDone;
+
 
     public FryMaker (Context context, int x, int y, int width, int height, int index) {
         this.context = context;
@@ -50,7 +53,9 @@ public class FryMaker implements Appliance{
         textPaint.setAntiAlias(true);
 
         // Load the pan image
-        panBitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.pan);
+        frying = BitmapFactory.decodeResource(context.getResources(), R.drawable.machine__frying);
+        fryOff = BitmapFactory.decodeResource(context.getResources(), R.drawable.machine__waiting);
+//        fryDone = BitmapFactory.decodeResource(context.getResources(), R.drawable.cola_machine_cup_filled);
     }
 
     @Override
@@ -104,8 +109,14 @@ public class FryMaker implements Appliance{
 
     @Override
     public void draw(Canvas canvas) {
-        if (panBitmap != null) {
-            Bitmap scaledPan = Bitmap.createScaledBitmap(panBitmap, hitbox.width(), hitbox.height(), false);
+        Bitmap spriteToDraw = null;
+        if (isCooking) {
+            spriteToDraw = frying;
+        } else {
+            spriteToDraw =fryOff;
+        }
+        if (spriteToDraw != null) {
+            Bitmap scaledPan = Bitmap.createScaledBitmap(spriteToDraw, hitbox.width(), hitbox.height(), false);
             canvas.drawBitmap(scaledPan, hitbox.left, hitbox.top, null);
         } else {
             // fallback in case image didn't load

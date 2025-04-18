@@ -31,7 +31,7 @@ public class FryHolder implements Appliance{
     private final Paint textPaint = new Paint();
 
     private final Context context;
-    private final Bitmap panBitmap;
+    private final Bitmap foodWarmerBitmap;
 
     public FryHolder (Context context, int x, int y, int width, int height, int index) {
         this.context = context;
@@ -47,7 +47,7 @@ public class FryHolder implements Appliance{
         textPaint.setAntiAlias(true);
 
         // Load the pan image
-        panBitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.pan);
+        foodWarmerBitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.food_warmer);
     }
 
     @Override
@@ -58,8 +58,8 @@ public class FryHolder implements Appliance{
     @Override
     public void draw(Canvas canvas) {
 // Pan base
-        if (panBitmap != null) {
-            Bitmap scaledPan = Bitmap.createScaledBitmap(panBitmap, hitbox.width(), hitbox.height(), false);
+        if (foodWarmerBitmap != null) {
+            Bitmap scaledPan = Bitmap.createScaledBitmap(foodWarmerBitmap, hitbox.width(), hitbox.height(), false);
             canvas.drawBitmap(scaledPan, hitbox.left, hitbox.top, null);
         } else {
             // fallback in case image didn't load

@@ -102,7 +102,7 @@ public class FoodItem {
                 return R.drawable.hotdog_completed;
 
             case "Fries":
-                return R.drawable.fries;
+                return R.drawable.cooked_fries;
 
             default:
                 return R.drawable.patty_raw;
