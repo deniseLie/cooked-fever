@@ -93,13 +93,15 @@ public class Customer {
         if (isServed) return false;
 
         for (FoodOrder order : orderList) {
+            Log.d("CustomerServe", "Checking: " + order.getItemName() + " vs " + itemName);
             if (order.getItemName().equals(itemName) && !order.isPrepared()) {
-                Log.d("Customer", "serving " + itemName);
+                Log.d("CustomerServe", "Accepted: " + itemName);
                 order.prepare();
                 return true;
             }
         }
 
+        Log.d("CustomerServe", "Rejected: " + itemName);
         return false;
     }
 
@@ -140,12 +142,33 @@ public class Customer {
     public float getY() {
         return y;
     }
-    public boolean isCustomerHitbox(int x, int y) {
-        Log.d("TableTop", "Table " + x);
-        if (hitbox.contains(x, y)) {
-            return true;
-        }
-        return false;
+    public boolean isCustomerHitbox(int touchX, int touchY) {
+        float spriteScale = 1.2f;
+        int spriteWidth = (int) (sprite.getWidth() * spriteScale);
+        int spriteHeight = (int) (sprite.getHeight() * spriteScale);
+
+        // Bounding box around the sprite
+        Rect spriteBounds = new Rect(
+                (int)(x - spriteWidth / 2f),
+                (int)(y - spriteHeight / 2f),
+                (int)(x + spriteWidth / 2f),
+                (int)(y + spriteHeight / 2f)
+        );
+
+        // Bounding box around the bubble (fixed values same as drawOrderBubble)
+        int bubbleWidth = 180;
+        int bubbleHeight = 260;
+        float bubbleX = x + 70;
+        float bubbleY = y - 100;
+
+        Rect bubbleBounds = new Rect(
+                (int)(bubbleX),
+                (int)(bubbleY),
+                (int)(bubbleX + bubbleWidth),
+                (int)(bubbleY + bubbleHeight)
+        );
+
+        return spriteBounds.contains(touchX, touchY) || bubbleBounds.contains(touchX, touchY);
     }
 
     // Draw Customer
@@ -155,7 +178,7 @@ public class Customer {
 
         // Draw the sprite (scaled)
         if (sprite != null) {
-            float scale = 1.5f;
+            float scale = 1.2f;
             int newWidth = (int) (sprite.getWidth() * scale);
             int newHeight = (int) (sprite.getHeight() * scale);
             Bitmap scaled = Bitmap.createScaledBitmap(sprite, newWidth, newHeight, true);
@@ -172,68 +195,84 @@ public class Customer {
     private void drawOrderBubble(Canvas canvas) {
         if (orderList.isEmpty()) return;
 
-        // Fixed bubble size
+        // Bubble size and position
         int bubbleWidth = 180;
-        int bubbleHeight = 200;
+        int bubbleHeight = 260;
         float bubbleX = x + 70;
         float bubbleY = y - 100;
 
+        RectF bubbleRect = new RectF(bubbleX, bubbleY, bubbleX + bubbleWidth, bubbleY + bubbleHeight);
+
         // Bubble background
         Paint bubblePaint = new Paint();
-        bubblePaint.setColor(Color.WHITE);
+        bubblePaint.setColor(Color.rgb(255, 253, 200)); // light yellow
         bubblePaint.setStyle(Paint.Style.FILL);
-        bubblePaint.setAlpha(230);
-        canvas.drawRoundRect(new RectF(bubbleX, bubbleY, bubbleX + bubbleWidth, bubbleY + bubbleHeight), 20, 20, bubblePaint);
+        bubblePaint.setAlpha(235);
+        canvas.drawRoundRect(bubbleRect, 20, 20, bubblePaint);
 
-        // Icon layout (vertical)
-        int iconSize = 50;
+        // Bubble border
+        Paint borderPaint = new Paint();
+        borderPaint.setStyle(Paint.Style.STROKE);
+        borderPaint.setStrokeWidth(3f);
+        borderPaint.setColor(Color.DKGRAY);
+        canvas.drawRoundRect(bubbleRect, 20, 20, borderPaint);
+
+        // Icons: centered vertically
+        int iconSize = (int)(80 * 0.8f);
         int spacing = 12;
-        int totalHeight = orderList.size() * iconSize + (orderList.size() - 1) * spacing;
-        float iconStartY = bubbleY + (bubbleHeight - totalHeight) / 2f;
-        float iconX = bubbleX + 30;  // moved more towards center
+        int totalHeight = orderList.size() * (iconSize + spacing) - spacing;
+        int startY = (int)(bubbleY + (bubbleHeight - totalHeight) / 2f);
 
         for (int i = 0; i < orderList.size(); i++) {
-            int resId = getDrawableResourceId(orderList.get(i).getItemName());
-            if (resId != 0) {
-                Bitmap icon = BitmapFactory.decodeResource(context.getResources(), resId);
-                Bitmap scaled = Bitmap.createScaledBitmap(icon, iconSize, iconSize, true);
-                float iconY = iconStartY + i * (iconSize + spacing);
-                canvas.drawBitmap(scaled, iconX, iconY, null);
+            String itemName = orderList.get(i).getItemName();
+            int iconX = (int)(bubbleX + (bubbleWidth - iconSize - 20) / 2f);  // more padding
+            int iconY = startY + i * (iconSize + spacing);
+
+            Bitmap icon = BitmapFactory.decodeResource(context.getResources(), getDrawableResourceId(itemName));
+            if (icon != null) {
+                Bitmap scaledIcon = Bitmap.createScaledBitmap(icon, iconSize, iconSize, true);
+
+                if (orderList.get(i).isPrepared()) {
+                    Paint greyPaint = new Paint();
+                    ColorMatrix matrix = new ColorMatrix();
+                    matrix.setSaturation(0); // grayscale
+                    greyPaint.setColorFilter(new ColorMatrixColorFilter(matrix));
+                    greyPaint.setAlpha(120); // semi-transparent
+                    canvas.drawBitmap(scaledIcon, iconX, iconY, greyPaint);
+                } else {
+                    canvas.drawBitmap(scaledIcon, iconX, iconY, null);
+                }
             }
         }
 
-        // Timer bar (right side, padded more inward, wider)
-        float barWidth = 16;
-        float barX = bubbleX + bubbleWidth - barWidth - 15;  // padded inward
-        float barY = bubbleY + 20;
-        float barHeight = bubbleHeight - 40;
+        // Timer bar
+        float barWidth = 14f;
+        float barX = bubbleRect.right - barWidth - 8f;
+        float barTop = bubbleRect.top + 10f;
+        float barBottom = bubbleRect.bottom - 10f;
 
-        // Border around the timer bar
+        float patiencePercent = Math.max(0, (float)patience / MAX_PATIENCE);
+        float filledHeight = (barBottom - barTop) * patiencePercent;
+        float filledTop = barBottom - filledHeight;
+
+        // Background of timer bar
+        Paint barBg = new Paint();
+        barBg.setColor(Color.LTGRAY);
+        canvas.drawRect(barX, barTop, barX + barWidth, barBottom, barBg);
+
+        // Foreground of timer bar
+        Paint barFill = new Paint();
+        barFill.setColor(Color.rgb((int)((1 - patiencePercent) * 255), (int)(patiencePercent * 255), 0)); // green → red
+        canvas.drawRect(barX, filledTop, barX + barWidth, barBottom, barFill);
+
+        // Optional: 1px outline on the bar
         Paint outlinePaint = new Paint();
-        outlinePaint.setColor(Color.BLACK);
         outlinePaint.setStyle(Paint.Style.STROKE);
-        outlinePaint.setStrokeWidth(1);
-        canvas.drawRect(barX, barY, barX + barWidth, barY + barHeight, outlinePaint);
-
-        // Fill level (gradient from green → red)
-        float fillRatio = Math.max(0f, patience / (float) MAX_PATIENCE);
-        float filledHeight = barHeight * fillRatio;
-
-        int red, green;
-        if (fillRatio > 0.5f) {
-            float t = (fillRatio - 0.5f) * 2;
-            red = (int)(255 * (1 - t));
-            green = 255;
-        } else {
-            float t = fillRatio * 2;
-            red = 255;
-            green = (int)(255 * t);
-        }
-
-        Paint fillPaint = new Paint();
-        fillPaint.setColor(Color.rgb(red, green, 0));
-        canvas.drawRect(barX, barY + (barHeight - filledHeight), barX + barWidth, barY + barHeight, fillPaint);
+        outlinePaint.setStrokeWidth(1f);
+        outlinePaint.setColor(Color.DKGRAY);
+        canvas.drawRect(barX, barTop, barX + barWidth, barBottom, outlinePaint);
     }
+
 
     private int getDrawableResourceId(String name) {
         switch (name) {
@@ -242,7 +281,10 @@ public class Customer {
             case "Hotdog":
                 return R.drawable.hotdog_completed;
             case "Cola":
-                return R.drawable.cola_machine_cup_filled;
+                return R.drawable.cup_filled;
+            case "Fries":
+                return R.drawable.cooked_fries;
+
             default:
                 return 0;
         }

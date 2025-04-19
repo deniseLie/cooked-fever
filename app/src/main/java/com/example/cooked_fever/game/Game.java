@@ -36,7 +36,7 @@ public class Game {
     private int screenHeight;
 
 //    private int coins = 0;
-    private final long GAME_DURATION_MS = 3600000; // 1 hour
+    private final long GAME_DURATION_MS = 60000; // 1 hour
     private long gameStartTime = System.currentTimeMillis();
     private boolean isGameOver = false;
     private boolean isGameStarted = false;
@@ -303,91 +303,120 @@ public class Game {
 
     public void release(MotionEvent event) {
         if (draggedFoodItem != null) {
-            Log.d("droppedItem" ,"droppedItem: " + draggedFoodItem.getFoodItemName());
+            Log.d("droppedItem", "Dropped: " + draggedFoodItem.getFoodItemName());
 
-            // Check if food drop on valid customer, customer food served
+            // 1. Try to serve customer
             Customer customer = customerManager.handleTouch(event);
             if (customer != null) {
-                Boolean validReceive = customerManager.receiveItem(customer, draggedFoodItem);
+                boolean validReceive = customerManager.receiveItem(customer, draggedFoodItem);
                 if (validReceive) {
                     foodItemManager.removeFoodItem(draggedFoodItem);
+
+                    // Reward coin for correctly served item
+                    coinManager.collectCoin(1);
+
+                    // Extra coin animation for fully served customer
                     if (customer.isServed()) {
-                        Coin newCoin = coinManager.addNewCoins(context, customer.id, customer.getX(), customer.getReward());
+                        Coin newCoin = coinManager.addNewCoins(
+                                context,
+                                customer.id,
+                                customer.getX(),
+                                customer.getReward()
+                        );
                         coinManager.addCoin(newCoin);
                     }
 
-//                    coins += customer.getReward();
-
-                    // If cola, make a new drink
+                    // Resume cola machine if needed
                     if (draggedFoodItem.getFoodItemName().equals("Cola")) {
                         applianceManager.resumeColaMachine();
                     }
-                }
 
-                // Set item not dragged anymore
-                applianceManager.doTrash(applianceManager.getApplianceAtCoord((int)draggedFoodItem.getOriginalX(), (int)draggedFoodItem.getOriginalY()));
-                draggedFoodItem.setItemPosition(draggedFoodItem.getOriginalX(), draggedFoodItem.getOriginalY());
-                draggedFoodItem.stopDrag();
-                draggedFoodItem = null;
-                return;
+                    // Clean up old appliance
+                    Appliance oldAppliance = applianceManager.getApplianceAtCoord(
+                            (int) draggedFoodItem.getOriginalX(),
+                            (int) draggedFoodItem.getOriginalY()
+                    );
+                    applianceManager.doTrash(oldAppliance);
+
+                    draggedFoodItem.stopDrag();
+                    draggedFoodItem = null;
+                    return;
+                }
             }
-            // Trash
+
+            // 2. Trash Bin
             Appliance appliance = applianceManager.handleTouch(event);
             if (appliance != null) {
                 if (applianceManager.isTrash(appliance)) {
-                    Log.d("Game" ,"Trashed: " + draggedFoodItem.getFoodItemName());
-                    applianceManager.doTrash(applianceManager.getApplianceAtCoord((int)draggedFoodItem.getOriginalX(), (int)draggedFoodItem.getOriginalY()));
+                    Log.d("Game", "Trashed: " + draggedFoodItem.getFoodItemName());
+
+                    applianceManager.doTrash(applianceManager.getApplianceAtCoord(
+                            (int) draggedFoodItem.getOriginalX(),
+                            (int) draggedFoodItem.getOriginalY()
+                    ));
+
                     if (draggedFoodItem.getFoodItemName().equals("Cola")) {
                         applianceManager.resumeColaMachine();
                     }
+
                     foodItemManager.removeFoodItem(draggedFoodItem);
                     coinManager.deductCoin(1);
                     Log.d("Game", "Coins after trashing: " + coinManager.getCollectedCoins());
+
                     draggedFoodItem.stopDrag();
                     draggedFoodItem = null;
                     return;
-                } else if (appliance instanceof FoodWarmer) {
-                    Boolean isWarm = applianceManager.keepWarm(draggedFoodItem, (FoodWarmer) appliance);
-                    if (isWarm) { // Successful placing -> Empty old
-                        applianceManager.doTrash(applianceManager.getApplianceAtCoord((int)draggedFoodItem.getOriginalX(), (int)draggedFoodItem.getOriginalY()));
+                }
+
+                // 3. Food Warmer
+                else if (appliance instanceof FoodWarmer) {
+                    boolean isWarm = applianceManager.keepWarm(draggedFoodItem, (FoodWarmer) appliance);
+
+                    if (isWarm) {
+                        applianceManager.doTrash(applianceManager.getApplianceAtCoord(
+                                (int) draggedFoodItem.getOriginalX(),
+                                (int) draggedFoodItem.getOriginalY()
+                        ));
                         draggedFoodItem.setItemOriginalPosition(draggedFoodItem.getX(), draggedFoodItem.getY());
-                    } else { // Failed placing -> Reset position
+                    } else {
                         draggedFoodItem.setItemPosition(draggedFoodItem.getOriginalX(), draggedFoodItem.getOriginalY());
                     }
-                    // Stop drag
+
                     draggedFoodItem.stopDrag();
                     draggedFoodItem = null;
                     return;
                 }
             }
 
-            // Handle food combination
+            // 4. Combination (e.g., Patty + Bun)
             boolean combinationSucceeded = false;
             String draggedFoodName = draggedFoodItem.getFoodItemName();
 
             if (draggedFoodName.equals("Patty") || draggedFoodName.equals("Sausage")) {
-
-                // Check if the player dragged to combine
                 FoodItem targetItem = foodItemManager.findOtherItemAtTouch(event, draggedFoodItem);
 
                 if (targetItem != null && targetItem != draggedFoodItem && !draggedFoodItem.getIsBadlyCooked()) {
-                    // Attempt combination and check success
                     combinationSucceeded = foodItemManager.combine(draggedFoodItem, targetItem);
-                    applianceManager.doTrash(applianceManager.getApplianceAtCoord((int)draggedFoodItem.getOriginalX(), (int)draggedFoodItem.getOriginalY()));
+
+                    if (combinationSucceeded) {
+                        applianceManager.doTrash(applianceManager.getApplianceAtCoord(
+                                (int) draggedFoodItem.getOriginalX(),
+                                (int) draggedFoodItem.getOriginalY()
+                        ));
+                    }
                 }
             }
 
-            // Reset position if no valid interaction occurred
+            // 5. Reset position if not used
             if (!combinationSucceeded) {
                 draggedFoodItem.setItemPosition(draggedFoodItem.getOriginalX(), draggedFoodItem.getOriginalY());
             }
 
             draggedFoodItem.stopDrag();
             draggedFoodItem = null;
-
-//            invalidate();  // Refresh the canvas after release
         }
     }
+
 
     private boolean isValidDropLocation(FoodItem draggedFoodItem, float x, float y) {
         // Define the valid region (e.g., a specific area on the screen, like an appliance area)
