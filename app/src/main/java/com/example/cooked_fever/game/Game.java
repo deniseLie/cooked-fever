@@ -43,6 +43,8 @@ public class Game {
 
     private final Context context;
 
+    private RectF restartButtonBounds = new RectF();
+
     // Managers
     private final ApplianceManager applianceManager;
     private final FoodSourceManager foodSourceManager;
@@ -83,6 +85,19 @@ public class Game {
         foodSourceManager.clear();  // optional: if you had one before
         foodSourceManager.setup(screenHeight);
         customerManager.setScreenWidth(width);
+    }
+
+
+    public int getCustomersFulfilled() {
+        return customerManager.getCustomersFulfilled();
+    }
+
+    public int getCustomersMissed() {
+        return customerManager.getCustomersMissed();
+    }
+
+    public int getCollectedCoins() {
+        return coinManager.getCollectedCoins();
     }
 
     public void update() {
@@ -132,7 +147,7 @@ public class Game {
             foodItemManager.draw(canvas, context);
             coinManager.draw(canvas, context);
 
-            if (isGameStarted) {
+            if (isGameStarted && !isGameOver) {
                 // Timer logic
                 long elapsed = (System.currentTimeMillis() - gameStartTime) / 1000;
                 int totalSeconds = (int)(GAME_DURATION_MS / 1000);
@@ -170,17 +185,7 @@ public class Game {
                 canvas.drawText("Rating: " + rating + " star(s)", 30, 180, textPaint);
             }
 
-            if (isGameOver) {
-                canvas.drawText("Game Over!", 30, 240, textPaint);
-                canvas.drawText("Final Rating: " + getRating() + " star(s)", 30, 300, textPaint);
-                canvas.drawText("Total Coins: " + coinManager.getCollectedCoins(), 30, 360, textPaint);
 
-                Paint restartText = new Paint();
-                restartText.setColor(Color.WHITE);
-                restartText.setTextSize(60f);
-                restartText.setTextAlign(Paint.Align.CENTER);
-                canvas.drawText("Tap to Restart", screenWidth / 2f, screenHeight / 2f + 100, restartText);
-            }
         });
     }
 
@@ -336,7 +341,9 @@ public class Game {
                             (int) draggedFoodItem.getOriginalX(),
                             (int) draggedFoodItem.getOriginalY()
                     );
-                    applianceManager.doTrash(oldAppliance);
+                    if (oldAppliance != null) {
+                        applianceManager.doTrash(oldAppliance);
+                    }
 
                     draggedFoodItem.stopDrag();
                     draggedFoodItem = null;

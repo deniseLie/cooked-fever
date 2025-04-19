@@ -32,12 +32,25 @@ public class CustomerManager {
 
     private int screenWidth = 1080;
     // Constructor
-
+    private int customersFulfilled = 0;
+    private int customersMissed = 0;
     public CustomerManager(Context context, int screenWidth) {
         this.context = context;
         this.screenWidth = screenWidth;
     }
 
+    public int getCustomersFulfilled() {
+        return customersFulfilled;
+    }
+
+    public int getCustomersMissed() {
+        return customersMissed;
+    }
+
+    public void resetStats() {
+        customersFulfilled = 0;
+        customersMissed = 0;
+    }
     public void setScreenWidth(int width) {
         this.screenWidth = width;
     }
@@ -61,15 +74,22 @@ public class CustomerManager {
             executor.execute(customer::update);
         }
 
-        // Remove customers who have left and update slot info
+        // Collect customers to remove safely
+        List<Customer> toRemove = new ArrayList<>();
+
         for (Customer c : customers) {
             if (c.shouldLeave()) {
+                if (c.isServed()) {
+                    customersFulfilled++;
+                } else {
+                    customersMissed++;
+                }
                 customerSlots[c.getSlotIndex()] = false;
+                toRemove.add(c);
             }
         }
 
-        // Actually remove them (safe with CopyOnWriteArrayList)
-        customers.removeIf(Customer::shouldLeave);
+        customers.removeAll(toRemove);
 
         // Spawn new customer every 5 seconds and have enough space
         if (now - lastCustomerSpawn >= 5000 && customers.size() < MAX_CUSTOMER) {
@@ -102,14 +122,14 @@ public class CustomerManager {
 
     // Reset customer
     public void reset() {
-        executor.shutdownNow();  // cleanup old one
-        executor = Executors.newFixedThreadPool(2); // create a new one
+        executor.shutdownNow();
+        executor = Executors.newFixedThreadPool(2);
 
         customers.clear();
-        for (int i = 0; i < customerSlots.length; i++) {
-            customerSlots[i] = false;
-        }
-        this.lastCustomerSpawn = System.currentTimeMillis();
+        Arrays.fill(customerSlots, false);
+        lastCustomerSpawn = System.currentTimeMillis();
+
+        resetStats();
     }
 
     // Spawn customer

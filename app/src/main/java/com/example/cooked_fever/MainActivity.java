@@ -7,6 +7,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.util.Log;
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -64,8 +65,22 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void showRestartOverlay() {
-        int starCount = gameView.getGame().getRating(); // implement this method
+        int starCount = gameView.getGame().getRating();
         setStars(starCount);
+
+        // Now you can call the accessors
+        int fulfilled = gameView.getGame().getCustomersFulfilled();
+        int missed = gameView.getGame().getCustomersMissed();
+        int coins = gameView.getGame().getCollectedCoins();
+
+        TextView statsFulfilled = findViewById(R.id.stats_fulfilled);
+        TextView statsMissed = findViewById(R.id.stats_missed);
+        TextView statsCoins = findViewById(R.id.stats_coins);
+
+        statsFulfilled.setText("Customers Fulfilled: " + fulfilled);
+        statsMissed.setText("Customers Missed: " + missed);
+        statsCoins.setText("Total Coins: " + coins);
+
         restartOverlay.setVisibility(View.VISIBLE);
     }
 
