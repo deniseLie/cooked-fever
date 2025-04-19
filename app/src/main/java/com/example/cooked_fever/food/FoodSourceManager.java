@@ -58,7 +58,6 @@ public class FoodSourceManager {
         int sausageX = 2150; // under Pan right column
         int y = screenHeight - 150; // below appliances
 
-        addFoodSource(100, y, "Cola");
         addFoodSource(burgerX, y, "BurgerBun");
         addFoodSource(hotdogX, y, "HotdogBun");
         addFoodSource(pattyX, y, "Patty");
