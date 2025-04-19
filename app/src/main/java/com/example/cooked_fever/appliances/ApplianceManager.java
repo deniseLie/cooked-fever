@@ -91,7 +91,20 @@ public class ApplianceManager {
                 appliances.add(new Pan(context, x, y, width, height, i, type));
             }
 
+            // Add 2 Pans: 1 column x 2 rows
+            int warmWidth = 200;
+            int warmHeight = 100;
+            appliances.add(new FoodWarmer(context, 1750,420, warmWidth, warmHeight, 0));
+            appliances.add(new FoodWarmer(context, 1950, 420, warmWidth, warmHeight, 1));
 
+            int fryMakerWidth = 200;
+            int fryMakerHeight = 100;
+            appliances.add(new FryMaker(context, 300,500, fryMakerWidth, fryMakerHeight, 0));
+
+            int fryHolderWidth = 200;
+            int fryHolderHeight = 100;
+            appliances.add(new FryHolder(context, 300,700, fryHolderWidth, fryHolderHeight, 0));
+            appliances.add(new FryHolder(context, 300, 800, fryHolderWidth, fryHolderHeight, 1));
             Log.d("Appliance Manager", "Finished initializing appliances");
         }
     }
@@ -116,6 +129,17 @@ public class ApplianceManager {
 
         for (Appliance appliance : snapshot) {
             appliance.draw(canvas);
+        }
+    }
+
+    public void reset() {
+        List<Appliance> snapshot;
+        synchronized (appliances) {
+            snapshot = new ArrayList<>(appliances);
+        }
+
+        for (Appliance appliance : snapshot) {
+            appliance.reset();
         }
     }
 
@@ -148,29 +172,26 @@ public class ApplianceManager {
         }
         return null;
     }
+
+    // TrashBin
     public Boolean isTrash(Appliance appliance) {
         return appliance instanceof TrashBin;
     }
 
     public void doTrash(Appliance appliance) {
-        if (appliance instanceof Pan) {
-            Pan pan = (Pan) appliance;
-            pan.takeFood();
-        } else if (appliance instanceof TableTop) {
-            TableTop tableTop = (TableTop) appliance;
-            tableTop.takeFood();
-        }
-    }
+        appliance.takeFood();
 
-    public void reset() {
-        List<Appliance> snapshot;
-        synchronized (appliances) {
-            snapshot = new ArrayList<>(appliances);
-        }
-
-        for (Appliance appliance : snapshot) {
-            appliance.reset();
-        }
+//        if (appliance instanceof Pan) {
+//            Pan pan = (Pan) appliance;
+//            pan.takeFood();
+//        } else if (appliance instanceof TableTop) {
+//            TableTop tableTop = (TableTop) appliance;
+//            tableTop.takeFood();
+//        } else if (appliance instanceof FoodWarmer) {
+//            FoodWarmer foodWarmer = (FoodWarmer) appliance;
+//            foodWarmer.takeFood();
+//        }
+        Log.d("ApplianceManager", "Trash from: " + appliance);
     }
 
     // GET METHOD
@@ -178,6 +199,7 @@ public class ApplianceManager {
         return appliances;
     }
 
+    // Cola stuff
     public Boolean checkColaMachine() {
         List<Appliance> snapshot;
         synchronized (appliances) {
@@ -187,10 +209,10 @@ public class ApplianceManager {
         for (Appliance appliance : snapshot) {
             if (appliance instanceof CocaColaMaker) {
                 boolean status = ((CocaColaMaker) appliance).hasDrinkReady();
-                if (status) {
-                    ((CocaColaMaker) appliance).serving();
-                }
-                Log.d("ApplianceManager", "checkColaMachine: " + status);
+//                if (status) {
+//                    ((CocaColaMaker) appliance).serving();
+//                }
+//                Log.d("ApplianceManager", "checkColaMachine: " + status);
                 return status;
             }
         }
@@ -237,6 +259,7 @@ public class ApplianceManager {
         return null;
     }
 
+    // Checking space
     public Boolean hasTableSpace(FoodItem foodItem) {
         if (!(foodItem.getFoodItemName().equals("BurgerBun") ||
                 foodItem.getFoodItemName().equals("HotdogBun"))) {
@@ -293,7 +316,62 @@ public class ApplianceManager {
         return true;
     }
 
-    // Assign Food Item to appliance
+    // Food Warmer
+    public Boolean keepWarm(FoodItem foodItem, FoodWarmer foodWarmer) {
+        return foodWarmer.placeFood(foodItem);
+    }
+
+    // Fry stuff
+    public Boolean checkFryMaker(FryMaker fryMaker) {
+        return fryMaker.isReady();
+    }
+    public Boolean isEmptyFryHolder() {
+        List<Appliance> snapshot;
+        synchronized (appliances) {
+            snapshot = new ArrayList<>(appliances);
+        }
+        int counter = 0;
+        for (Appliance appliance : snapshot) {
+            if (appliance instanceof FryHolder) {
+                FryHolder fryHolder = (FryHolder) appliance;
+                Log.d("ApplianceManager", "" + fryHolder);
+                Log.d("ApplianceManager", "status: " + fryHolder.isEmpty());
+                if (fryHolder.isEmpty()) {
+                    counter++;
+                }
+            }
+        }
+        return counter > 0 ? true : false;
+    }
+
+    public void startFrying(Appliance appliance) {
+        if (appliance instanceof FryMaker) {
+            FryMaker fryMaker = (FryMaker) appliance;
+            fryMaker.makeFries();
+        }
+    }
+    public void stopFrying (Appliance appliance) {
+        if (appliance instanceof FryMaker) {
+            FryMaker fryMaker = (FryMaker) appliance;
+            fryMaker.reset();
+        }
+    }
+    public FryMaker getFryMaker() {
+        List<Appliance> snapshot;
+        synchronized (appliances) {
+            snapshot = new ArrayList<>(appliances);
+        }
+
+        for (Appliance appliance : snapshot) {
+            if (appliance instanceof FryMaker) {
+                FryMaker fryMaker = (FryMaker) appliance;
+                return fryMaker;
+            }
+        }
+        return null;
+    }
+
+    // Auto assign Food Item to appliance
     public void assign(FoodItem foodItem) {
         String foodItemName = foodItem.getFoodItemName();
 
@@ -303,7 +381,7 @@ public class ApplianceManager {
         }
 
         for (Appliance appliance : snapshot) {
-            Log.d("AppliManager", "aap" + appliance);
+//            Log.d("AppliManager", "aap" + appliance);
 
             // Burger -> Tabletop
             if (foodItemName.equals("BurgerBun") || foodItemName.equals("HotdogBun")) {
@@ -328,6 +406,17 @@ public class ApplianceManager {
 
                         break;
                     }
+                }
+            }
+
+            if (foodItemName.equals("Fries")) {
+                if (appliance instanceof FryHolder) {
+                    FryHolder fryHolder = (FryHolder) appliance;
+                    if (fryHolder.isEmpty()) {
+                        fryHolder.placeFood(foodItem, fryHolder.getX(), fryHolder.getY());
+                        break;
+                    }
+
                 }
             }
         }

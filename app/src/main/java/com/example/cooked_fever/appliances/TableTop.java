@@ -46,7 +46,16 @@ public class TableTop implements Appliance {
 
     @Override
     public boolean onClick(int x, int y) {
-        return hitbox.contains(x, y) && currentItem != null;
+
+//        Log.d("TableTop", "Table " + x);
+        if (hitbox.contains(x, y)) {
+            if (currentItem != null) {
+//                takeFood(); // Take the food when tapped
+//                Log.d("TableTop" ,"currentItem: " + currentItem);
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override
@@ -78,10 +87,14 @@ public class TableTop implements Appliance {
     public FoodItem peekFood() {
         return currentItem;
     }
-
+    @Override
     public FoodItem takeFood() {
         FoodItem taken = currentItem;
+//        Log.d("TableTop", "currentItem isEmpty? " + isEmpty());
         currentItem = null;
+//        Log.d("TableTop", "isEmpty? " + isEmpty());
+//        Log.d("TableTop" ,"item taken: " + taken.getFoodItemName());
+//        Log.d("TableTop" ,"x: " + taken.getX() + " y: " + taken.getY());
         return taken;
     }
 

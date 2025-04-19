@@ -3,6 +3,8 @@ package com.example.cooked_fever.appliances;
 import android.graphics.Canvas;
 import android.graphics.Rect;
 
+import com.example.cooked_fever.food.FoodItem;
+
 public interface Appliance {
     void update();
     void draw(Canvas canvas);
@@ -12,4 +14,5 @@ public interface Appliance {
     Rect getHitbox();
 
     void reset();
+    FoodItem takeFood();
 }

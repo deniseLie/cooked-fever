@@ -5,6 +5,8 @@ import android.graphics.*;
 import android.util.Log;
 import com.example.cooked_fever.R;
 
+import com.example.cooked_fever.food.FoodItem;
+
 public class TrashBin implements Appliance {
     private float x, y;
     private final Rect hitbox;
@@ -69,5 +71,10 @@ public class TrashBin implements Appliance {
     @Override
     public void reset() {
         // Nothing to reset for now
+    }
+
+    @Override
+    public FoodItem takeFood() {
+        return null;
     }
 }
