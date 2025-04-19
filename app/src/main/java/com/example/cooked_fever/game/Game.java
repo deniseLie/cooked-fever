@@ -35,8 +35,8 @@ public class Game {
     private int screenWidth;
     private int screenHeight;
 
-    private int coins = 0;
-    private final long GAME_DURATION_MS = 40000; // 1 hour
+//    private int coins = 0;
+    private final long GAME_DURATION_MS = 3600000; // 1 hour
     private long gameStartTime = System.currentTimeMillis();
     private boolean isGameOver = false;
     private boolean isGameStarted = false;
@@ -102,6 +102,21 @@ public class Game {
         // Managers update
         customerManager.update(now);
         applianceManager.update();
+        if (applianceManager.checkColaMachine()) { // drinkReady
+            foodItemManager.addFoodItem(new FoodItem(context, 200, screenHeight - 315, "Cola"));
+            applianceManager.pauseColaMachine();
+        }
+        FryMaker fryMaker = applianceManager.getFryMaker();
+        if (applianceManager.checkFryMaker(fryMaker)) { // readyFries
+            Log.d("Game", "Fries are ready");
+            while (applianceManager.isEmptyFryHolder()) {
+                FoodItem foodItem = new FoodItem(context, 300, screenHeight - 500, "Fries");
+                applianceManager.assign(foodItem);
+                foodItemManager.addFoodItem(foodItem);
+            }
+            Log.d("Game", "Fries are done");
+            applianceManager.stopFrying(fryMaker);
+        }
     }
 
     public void draw() {
@@ -158,7 +173,7 @@ public class Game {
             if (isGameOver) {
                 canvas.drawText("Game Over!", 30, 240, textPaint);
                 canvas.drawText("Final Rating: " + getRating() + " star(s)", 30, 300, textPaint);
-                canvas.drawText("Total Coins: " + coins, 30, 360, textPaint);
+                canvas.drawText("Total Coins: " + coinManager.getCollectedCoins(), 30, 360, textPaint);
 
                 Paint restartText = new Paint();
                 restartText.setColor(Color.WHITE);
@@ -172,6 +187,7 @@ public class Game {
     public void click(MotionEvent event) {
         float x = event.getX();
         float y = event.getY();
+        Log.d("Game", "x: " + x + " y: " + y);
 
         FoodItem foodItem = foodItemManager.handleTouch(event);
         if (foodItem != null && foodItem.isDraggable()) {
@@ -190,14 +206,14 @@ public class Game {
             Log.d("Game-Click", "Serve Customer");
             customer.serveItem("Cola"); // Assuming you’ll implement this method
 
-            Coin newCoin = coinManager.addNewCoins(context, customer.id, customer.getX(), 1500, customer.getReward());
+            Coin newCoin = coinManager.addNewCoins(context, customer.id, customer.getX(), customer.getReward());
             coinManager.addCoin(newCoin);
             return;
         }
 
         Coin coinCollected = coinManager.handleTouch(event);
         if (coinCollected != null) {
-            coins += coinCollected.getCoinAmount();
+            coinManager.collectCoin(coinCollected.getCoinAmount());
             coinManager.removeCoin(coinCollected);
             coinCollected = null;
             return;
@@ -214,20 +230,20 @@ public class Game {
 
             // Cola Interaction
             if (foodItem.getFoodItemName().equals("Cola")) {
-                if (applianceManager.checkColaMachine()) {
-                    Log.d("Game-Click" ,"checkColaMachine: " + foodItem.getFoodItemName());
-                    foodItem.prepareFoodItem();
-                    Log.d("Game-Click" ,"foodItem ready: " + foodItem.getFoodItemName());
-                    // Set the dragged food item
-                    draggedFoodItem = foodItem;
-                    Log.d("Game-Click" ,"Drag picked up: " + draggedFoodItem.getFoodItemName());
-                    offsetX = x - foodItem.getX();  // Calculate offset to drag smoothly
-                    offsetY = y - foodItem.getY();
-                    applianceManager.pauseColaMachine();
-                    foodItemManager.addFoodItem(foodItem);
-//                draggedFoodItem.startDrag();
-                    return; // Stop checking other food items once we've found the one being dragged
-                }
+//                if (applianceManager.checkColaMachine()) {
+//                    Log.d("Game-Click" ,"checkColaMachine: " + foodItem.getFoodItemName());
+//                    foodItem.prepareFoodItem();
+//                    Log.d("Game-Click" ,"foodItem ready: " + foodItem.getFoodItemName());
+//                    // Set the dragged food item
+//                    draggedFoodItem = foodItem;
+//                    Log.d("Game-Click" ,"Drag picked up: " + draggedFoodItem.getFoodItemName());
+//                    offsetX = x - foodItem.getX();  // Calculate offset to drag smoothly
+//                    offsetY = y - foodItem.getY();
+//                    applianceManager.pauseColaMachine();
+//                    foodItemManager.addFoodItem(foodItem);
+////                draggedFoodItem.startDrag();
+//                    return; // Stop checking other food items once we've found the one being dragged
+//                }
 
             // Other Food Item Interaction
             } else {
@@ -249,20 +265,39 @@ public class Game {
         }
 
         // Appliance interaction
-        applianceManager.handleTouch(event);
+        Appliance appliance = applianceManager.handleTouch(event);
+        if (appliance != null) {
+            if (appliance instanceof CocaColaMaker) {
+                CocaColaMaker colaMachine = (CocaColaMaker) appliance;
+                if (colaMachine.hasDrinkReady()) { // Checks if ready
+//                    applianceManager.doColaReady() // Play sound to signify ready?
+                    // ??? Idk what to do now since it auto spawns
+                } else {
+                    // Reflect error message?
+//                    applianceManager.doColaNotReady() // Play sound to signal not ready
+                }
+                colaMachine = null;
+            } else if (appliance instanceof FryMaker) {
+                Log.d("Game", "Frymaker");
+                FryMaker fryMaker = (FryMaker) appliance;
+                if (applianceManager.isEmptyFryHolder()) {
+                    applianceManager.startFrying(fryMaker);
+                }
+            }
+            appliance = null;
+            return;
+        }
+
     }
 
     public void drag(MotionEvent event) {
-
         // Ensure there’s a food item being dragged
         if (draggedFoodItem != null) {
             // Calculate the new position for the dragged food item based on mouse/finger movement
-//            applianceManager.pauseColaMachine();
 //            Log.d("draggedItem" ,"draggedItem: " + draggedFoodItem.getFoodItemName());
             float newX = event.getX() - offsetX;  // Adjust for initial click offset
             float newY = event.getY() - offsetY;
             draggedFoodItem.setItemPosition(newX, newY);  // Update the food item’s position
-//            invalidate();  // Redraw the canvas to update the new position of the food item
         }
     }
 
@@ -276,8 +311,11 @@ public class Game {
                 Boolean validReceive = customerManager.receiveItem(customer, draggedFoodItem);
                 if (validReceive) {
                     foodItemManager.removeFoodItem(draggedFoodItem);
-                    Coin newCoin = coinManager.addNewCoins(context, customer.id, customer.getX(), 1000, customer.getReward());
-                    coinManager.addCoin(newCoin);
+                    if (customer.isServed()) {
+                        Coin newCoin = coinManager.addNewCoins(context, customer.id, customer.getX(), customer.getReward());
+                        coinManager.addCoin(newCoin);
+                    }
+
 //                    coins += customer.getReward();
 
                     // If cola, make a new drink
@@ -287,6 +325,7 @@ public class Game {
                 }
 
                 // Set item not dragged anymore
+                applianceManager.doTrash(applianceManager.getApplianceAtCoord((int)draggedFoodItem.getOriginalX(), (int)draggedFoodItem.getOriginalY()));
                 draggedFoodItem.setItemPosition(draggedFoodItem.getOriginalX(), draggedFoodItem.getOriginalY());
                 draggedFoodItem.stopDrag();
                 draggedFoodItem = null;
@@ -304,6 +343,18 @@ public class Game {
                     foodItemManager.removeFoodItem(draggedFoodItem);
                     deductCoin(1);
                     Log.d("Game", "Coins after trashing: " + coins);
+                    draggedFoodItem.stopDrag();
+                    draggedFoodItem = null;
+                    return;
+                } else if (appliance instanceof FoodWarmer) {
+                    Boolean isWarm = applianceManager.keepWarm(draggedFoodItem, (FoodWarmer) appliance);
+                    if (isWarm) { // Successful placing -> Empty old
+                        applianceManager.doTrash(applianceManager.getApplianceAtCoord((int)draggedFoodItem.getOriginalX(), (int)draggedFoodItem.getOriginalY()));
+                        draggedFoodItem.setItemOriginalPosition(draggedFoodItem.getX(), draggedFoodItem.getY());
+                    } else { // Failed placing -> Reset position
+                        draggedFoodItem.setItemPosition(draggedFoodItem.getOriginalX(), draggedFoodItem.getOriginalY());
+                    }
+                    // Stop drag
                     draggedFoodItem.stopDrag();
                     draggedFoodItem = null;
                     return;
@@ -352,8 +403,9 @@ public class Game {
 
 
     public int getRating(){
-        if (coins >= 20 ) return 3;
-        else if (coins >= 10 ) return 2;
+        int coinsCollected = coinManager.getCollectedCoins();
+        if (coinsCollected >= 20 ) return 3;
+        else if (coinsCollected >= 10 ) return 2;
         else return 1;
     }
 
@@ -365,7 +417,7 @@ public class Game {
         this.gameStartTime = System.currentTimeMillis();
         this.lastUpdateTime = System.currentTimeMillis();
         this.isGameOver = false;
-        this.coins = 0;
+//        this.coins = 0;
 
         // reset managers
         customerManager.reset();

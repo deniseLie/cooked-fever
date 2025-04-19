@@ -9,23 +9,12 @@ public class FoodSourceManager {
 
     private final List<FoodSource> sources = new ArrayList<>();
 
-    public FoodSourceManager() {
-        // constructor does nothing now
-    }
-
-    public void setup(int screenHeight) {
-        sources.clear();
-        int burgerX = 1050;   // under TableTop left column
-        int hotdogX = 1350;  // under TableTop right column
-        int pattyX = 1850;   // under Pan left column
-        int sausageX = 2150; // under Pan right column
-        int y = screenHeight - 150; // below appliances
-
-        addFoodSource(100, y, "Cola");
-        addFoodSource(burgerX, y, "BurgerBun");
-        addFoodSource(hotdogX, y, "HotdogBun");
-        addFoodSource(pattyX, y, "Patty");
-        addFoodSource(sausageX, y, "Sausage");
+    public FoodSourceManager(int screenWidth, int screenHeight) {
+        addFoodSource(1050, screenHeight - 650, "BurgerBun");
+        addFoodSource(1350, screenHeight - 650, "HotdogBun");
+        addFoodSource(1900, screenHeight - 650, "Patty");
+        addFoodSource(2200, screenHeight - 650, "Sausage");
+//        addFoodSource(400,screenHeight - 550, "Cola");
     }
 
     public void addFoodSource(int x, int y, String name) {

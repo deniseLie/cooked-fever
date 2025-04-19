@@ -19,7 +19,7 @@ public class CustomerManager {
     private final int CUSTOMER_SPACING = 220;
     private final int START_X = 200;
     private final int CUSTOMER_Y = 200;
-    private final String[] availableMenu = {"Cola", "Burger", "Hotdog"};
+    private final String[] availableMenu = {"Cola", "Burger", "Hotdog", "Fries"};
 
     private final List<Customer> customers = new CopyOnWriteArrayList<>();
     private boolean[] customerSlots = new boolean[MAX_CUSTOMER];
