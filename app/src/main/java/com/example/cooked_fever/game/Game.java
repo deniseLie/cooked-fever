@@ -70,7 +70,7 @@ public class Game {
         textPaint.setColor(Color.WHITE);
         textPaint.setTextSize(48f);
         textPaint.setAntiAlias(true);
-        this.foodSourceManager = new FoodSourceManager();
+        this.foodSourceManager = new FoodSourceManager(screenWidth, screenHeight);
     }
 
     public void resize(int width, int height) {
@@ -165,7 +165,7 @@ public class Game {
                 // Stats
                 List<Customer> customers = customerManager.getCustomerList();
                 canvas.drawText("Customers: " + customers.size(), 30, 60, textPaint);
-                canvas.drawText("Coins: " + coins, 30, 120, textPaint);
+                canvas.drawText("Coins: " + coinManager.getCollectedCoins(), 30, 120, textPaint);
                 int rating = getRating();
                 canvas.drawText("Rating: " + rating + " star(s)", 30, 180, textPaint);
             }
@@ -341,8 +341,8 @@ public class Game {
                         applianceManager.resumeColaMachine();
                     }
                     foodItemManager.removeFoodItem(draggedFoodItem);
-                    deductCoin(1);
-                    Log.d("Game", "Coins after trashing: " + coins);
+                    coinManager.deductCoin(1);
+                    Log.d("Game", "Coins after trashing: " + coinManager.getCollectedCoins());
                     draggedFoodItem.stopDrag();
                     draggedFoodItem = null;
                     return;
@@ -409,9 +409,9 @@ public class Game {
         else return 1;
     }
 
-    public void deductCoin(int amount) {
-        coins = Math.max(0, coins - amount);
-    }
+//    public void deductCoin(int amount) {
+//        coins = Math.max(0, coins - amount);
+//    }
     public void restart(){
         this.isGameStarted = true;
         this.gameStartTime = System.currentTimeMillis();

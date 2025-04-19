@@ -50,4 +50,18 @@ public class FoodSourceManager {
             source.reset();
         }
     }
+    public void setup(int screenHeight) {
+        sources.clear();
+        int burgerX = 1050;   // under TableTop left column
+        int hotdogX = 1350;  // under TableTop right column
+        int pattyX = 1850;   // under Pan left column
+        int sausageX = 2150; // under Pan right column
+        int y = screenHeight - 150; // below appliances
+
+        addFoodSource(100, y, "Cola");
+        addFoodSource(burgerX, y, "BurgerBun");
+        addFoodSource(hotdogX, y, "HotdogBun");
+        addFoodSource(pattyX, y, "Patty");
+        addFoodSource(sausageX, y, "Sausage");
+    }
 }
