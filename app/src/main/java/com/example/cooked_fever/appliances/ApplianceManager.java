@@ -27,7 +27,7 @@ public class ApplianceManager {
     private void initializeAppliances() {
         synchronized (appliances) {
             appliances.clear();
-            Log.d("Appliance Manager", "Initializing");
+            Log.d("ApplianceManager", "Initializing");
 
             // Add Coca cola maker
             appliances.add(new CocaColaMaker(context, 200, screenHeight - 300));
@@ -76,7 +76,7 @@ public class ApplianceManager {
             int fryHolderHeight = 100;
             appliances.add(new FryHolder(context, 300,700, fryHolderWidth, fryHolderHeight, 0));
             appliances.add(new FryHolder(context, 300, 800, fryHolderWidth, fryHolderHeight, 1));
-            Log.d("Appliance Manager", "Finished initializing appliances");
+            Log.d("ApplianceManager", "Finished initializing appliances");
         }
     }
 
@@ -138,6 +138,7 @@ public class ApplianceManager {
 
         for (Appliance appliance : snapshot) {
             if (appliance.onClick(x, y)) {
+
                 return appliance;
             }
         }
@@ -150,17 +151,6 @@ public class ApplianceManager {
     }
     public void doTrash(Appliance appliance) {
         appliance.takeFood();
-
-//        if (appliance instanceof Pan) {
-//            Pan pan = (Pan) appliance;
-//            pan.takeFood();
-//        } else if (appliance instanceof TableTop) {
-//            TableTop tableTop = (TableTop) appliance;
-//            tableTop.takeFood();
-//        } else if (appliance instanceof FoodWarmer) {
-//            FoodWarmer foodWarmer = (FoodWarmer) appliance;
-//            foodWarmer.takeFood();
-//        }
         Log.d("ApplianceManager", "Trash from: " + appliance);
     }
 
@@ -179,10 +169,6 @@ public class ApplianceManager {
         for (Appliance appliance : snapshot) {
             if (appliance instanceof CocaColaMaker) {
                 boolean status = ((CocaColaMaker) appliance).hasDrinkReady();
-//                if (status) {
-//                    ((CocaColaMaker) appliance).serving();
-//                }
-//                Log.d("ApplianceManager", "checkColaMachine: " + status);
                 return status;
             }
         }
@@ -213,6 +199,35 @@ public class ApplianceManager {
                 return;
             }
         }
+    }
+
+    public float getColaMachineX() {
+        List<Appliance> snapshot;
+        synchronized (appliances) {
+            snapshot = new ArrayList<>(appliances);
+        }
+
+        for (Appliance appliance : snapshot) {
+            if (appliance instanceof CocaColaMaker) {
+                CocaColaMaker colaMachine = (CocaColaMaker) appliance;
+                return colaMachine.getHitbox().exactCenterX();
+            }
+        }
+        return 0;
+    }
+    public float getColaMachineY() {
+        List<Appliance> snapshot;
+        synchronized (appliances) {
+            snapshot = new ArrayList<>(appliances);
+        }
+
+        for (Appliance appliance : snapshot) {
+            if (appliance instanceof CocaColaMaker) {
+                CocaColaMaker colaMachine = (CocaColaMaker) appliance;
+                return colaMachine.getHitbox().exactCenterY();
+            }
+        }
+        return 0;
     }
 
     public FoodItem getTableItem() {
@@ -304,7 +319,6 @@ public class ApplianceManager {
         for (Appliance appliance : snapshot) {
             if (appliance instanceof FryHolder) {
                 FryHolder fryHolder = (FryHolder) appliance;
-                Log.d("ApplianceManager", "" + fryHolder);
                 Log.d("ApplianceManager", "status: " + fryHolder.isEmpty());
                 if (fryHolder.isEmpty()) {
                     counter++;
@@ -351,7 +365,6 @@ public class ApplianceManager {
         }
 
         for (Appliance appliance : snapshot) {
-//            Log.d("AppliManager", "aap" + appliance);
 
             // Burger -> Tabletop
             if (foodItemName.equals("BurgerBun") || foodItemName.equals("HotdogBun")) {
@@ -359,7 +372,7 @@ public class ApplianceManager {
                     TableTop tableTop = (TableTop) appliance;
                     if (tableTop.accepts(foodItemName) && tableTop.isEmpty()) {
                         tableTop.placeFood(foodItem, tableTop.getX(), tableTop.getY());
-                        Log.d("Game", "Placed " + foodItemName + " on TableTop " + tableTop.getId());
+                        Log.d("ApplianceManager", "Placed " + foodItemName + " on TableTop " + tableTop.getId());
                         break;
                     }
                 }
@@ -371,7 +384,7 @@ public class ApplianceManager {
                     Pan pan = (Pan) appliance;
                     if (pan.accepts(foodItemName) && pan.isEmpty()) {
                         pan.placeFood(foodItem, pan.getX(), pan.getY());
-                        Log.d("Game", "Placed " + foodItemName + " on Pan " + pan.getId());
+                        Log.d("ApplianceManager", "Placed " + foodItemName + " on Pan " + pan.getId());
                         break;
                     }
                 }
