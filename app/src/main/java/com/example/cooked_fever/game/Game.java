@@ -410,8 +410,10 @@ public class Game {
                         Appliance originalAppliance = applianceManager.getApplianceAtCoord((int)draggedFoodItem.getOriginalX(), (int)draggedFoodItem.getOriginalY());
 //                        Log.d("Game", "Trash from" + originalAppliance);
                         applianceManager.doTrash(originalAppliance);
-                        draggedFoodItem.setItemPosition(draggedFoodItem.getX(), draggedFoodItem.getY());
-                        draggedFoodItem.setItemOriginalPosition(draggedFoodItem.getX(), draggedFoodItem.getY());
+
+                        FoodWarmer foodWarmer = (FoodWarmer) appliance;
+//                        draggedFoodItem.setItemPosition(foodWarmer.getX(), foodWarmer.getY());
+                        draggedFoodItem.setItemOriginalPosition(foodWarmer.getX(), foodWarmer.getY());
                     } else { // Failed placing -> Reset position
                         draggedFoodItem.setItemPosition(draggedFoodItem.getOriginalX(), draggedFoodItem.getOriginalY());
                     }

@@ -84,7 +84,7 @@ public class FoodWarmer implements Appliance{
         switch (foodItem.getFoodItemName()){
             case "Patty":
             case "Sausage":
-//                foodItem.setItemPosition(x, y);
+                foodItem.setItemPosition(x, y);
 //                foodItem.setItemOriginalPosition(x, y);
                 currentItem = foodItem;
                 return true;
