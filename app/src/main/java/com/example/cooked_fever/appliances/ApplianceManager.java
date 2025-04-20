@@ -318,6 +318,7 @@ public class ApplianceManager {
             if (appliance instanceof Pan) {
                 Pan pan = (Pan) appliance;
                 if (pan.accepts(foodItem.getFoodItemName()) && !pan.isEmpty()) {
+                    Log.d("ApplianceManager", "" + pan + " " + pan.isEmpty());
                     counter++;
                 }
             }
@@ -332,7 +333,7 @@ public class ApplianceManager {
 
     // Food Warmer
     public Boolean keepWarm(FoodItem foodItem, FoodWarmer foodWarmer) {
-        return foodWarmer.placeFood(foodItem);
+        return foodWarmer.placeFood(foodItem, foodWarmer.getX(), foodWarmer.getY());
     }
 
     // Fry stuff

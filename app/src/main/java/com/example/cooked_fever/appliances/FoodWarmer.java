@@ -78,10 +78,14 @@ public class FoodWarmer implements Appliance{
     }
 
     // GET METHOD
-    public Boolean placeFood(FoodItem foodItem) {
+    public Boolean placeFood(FoodItem foodItem, float x, float y) {
+        if (currentItem != null) return false;
+
         switch (foodItem.getFoodItemName()){
             case "Patty":
             case "Sausage":
+//                foodItem.setItemPosition(x, y);
+//                foodItem.setItemOriginalPosition(x, y);
                 currentItem = foodItem;
                 return true;
 //                break;

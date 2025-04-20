@@ -42,9 +42,9 @@ public class FryHolder implements Appliance{
         this.y = (float) y + (float)(height / 2);
         currentItem = null;
 
-        textPaint.setColor(Color.BLACK);
-        textPaint.setTextSize(28f);
-        textPaint.setAntiAlias(true);
+//        textPaint.setColor(Color.BLACK);
+//        textPaint.setTextSize(28f);
+//        textPaint.setAntiAlias(true);
 
         // Load the pan image
         foodWarmerBitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.plate);

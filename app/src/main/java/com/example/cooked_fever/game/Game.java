@@ -128,7 +128,7 @@ public class Game {
             Log.d("Game", "update: drinkReady");
             float colaX = applianceManager.getColaMachineX();
             float colaY = applianceManager.getColaMachineY();
-            FoodItem colaDrink = new FoodItem(context, colaX+40, colaY-70, "Cola");
+            FoodItem colaDrink = new FoodItem(context, colaX+60, colaY-160, "Cola");
             colaDrink.setIsPrepared(true);
             foodItemManager.addFoodItem(colaDrink);
             applianceManager.pauseColaMachine();
@@ -273,7 +273,7 @@ public class Game {
 
             // Initialize food item
             foodItem = foodItemManager.createFoodItem(source.getX(), source.getY(), source.getFoodSourceName());
-            Log.d("Game-Click" ,"foodItem created: " + foodItem.getFoodItemName());
+//            Log.d("Game-Click" ,"foodItem created: " + foodItem.getFoodItemName());
 
             // Cola Interaction
             if (foodItem.getFoodItemName().equals("Cola")) {
@@ -358,6 +358,9 @@ public class Game {
                     // If cola, make a new drink
                     if (draggedFoodItem.getFoodItemName().equals("Cola")) {
                         applianceManager.resumeColaMachine();
+                        draggedFoodItem.stopDrag();
+                        draggedFoodItem = null;
+                        return;
                     }
 
                     // Clean up old appliance
@@ -366,6 +369,7 @@ public class Game {
                             (int) draggedFoodItem.getOriginalY()
                     );
                     if (oldAppliance != null) {
+                        Log.d("Game", "Crash" + draggedFoodItem);
                         applianceManager.doTrash(oldAppliance);
                     }
 //                    draggedFoodItem.setItemPosition(draggedFoodItem.getOriginalX(), draggedFoodItem.getOriginalY());
@@ -380,17 +384,20 @@ public class Game {
             if (appliance != null) {
                 if (applianceManager.isTrash(appliance)) {
                     Log.d("Game", "Trashed: " + draggedFoodItem.getFoodItemName());
+                    foodItemManager.removeFoodItem(draggedFoodItem);
 
+                    if (draggedFoodItem.getFoodItemName().equals("Cola")) {
+                        applianceManager.resumeColaMachine();
+                        draggedFoodItem.stopDrag();
+                        draggedFoodItem = null;
+                        return;
+                    }
                     applianceManager.doTrash(applianceManager.getApplianceAtCoord(
                             (int) draggedFoodItem.getOriginalX(),
                             (int) draggedFoodItem.getOriginalY()
                     ));
 
-                    if (draggedFoodItem.getFoodItemName().equals("Cola")) {
-                        applianceManager.resumeColaMachine();
-                    }
 
-                    foodItemManager.removeFoodItem(draggedFoodItem);
                     coinManager.deductCoin(1);
                     Log.d("Game", "Coins after trashing: " + coinManager.getCollectedCoins());
 
@@ -400,7 +407,10 @@ public class Game {
                 } else if (appliance instanceof FoodWarmer) {
                     Boolean isWarm = applianceManager.keepWarm(draggedFoodItem, (FoodWarmer) appliance);
                     if (isWarm) { // Successful placing -> Empty old
-                        applianceManager.doTrash(applianceManager.getApplianceAtCoord((int)draggedFoodItem.getOriginalX(), (int)draggedFoodItem.getOriginalY()));
+                        Appliance originalAppliance = applianceManager.getApplianceAtCoord((int)draggedFoodItem.getOriginalX(), (int)draggedFoodItem.getOriginalY());
+//                        Log.d("Game", "Trash from" + originalAppliance);
+                        applianceManager.doTrash(originalAppliance);
+                        draggedFoodItem.setItemPosition(draggedFoodItem.getX(), draggedFoodItem.getY());
                         draggedFoodItem.setItemOriginalPosition(draggedFoodItem.getX(), draggedFoodItem.getY());
                     } else { // Failed placing -> Reset position
                         draggedFoodItem.setItemPosition(draggedFoodItem.getOriginalX(), draggedFoodItem.getOriginalY());

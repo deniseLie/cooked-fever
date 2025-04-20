@@ -203,6 +203,10 @@ public class FoodItem {
             int bitmapSize = getBitmapSize(foodItemName);
             int width = (int) (bitmapSize * 1.2f);  // 20% wider
             int height = bitmapSize;
+            if (this.getFoodItemName().equals("Cola")) {
+                width = (int) (bitmapSize * 1.6f);
+                height = (int) (bitmapSize * 1.4f);
+            }
 
             Bitmap scaled = Bitmap.createScaledBitmap(bitmap, width, height, false);
             canvas.drawBitmap(scaled, x - bitmapSize / 2f, y - bitmapSize / 2f, null);
