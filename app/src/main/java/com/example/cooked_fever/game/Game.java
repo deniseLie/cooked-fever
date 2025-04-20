@@ -210,11 +210,11 @@ public class Game {
                 canvas.drawText(remaining + "s", cx, cy + 12, timerText);
 
                 // Stats
-                List<Customer> customers = customerManager.getCustomerList();
-                canvas.drawText("Customers: " + customers.size(), 30, 60, textPaint);
-                canvas.drawText("Coins: " + coinManager.getCollectedCoins(), 30, 120, textPaint);
-                int rating = getRating();
-                canvas.drawText("Rating: " + rating + " star(s)", 30, 180, textPaint);
+//                List<Customer> customers = customerManager.getCustomerList();
+//                canvas.drawText("Customers: " + customers.size(), 30, 60, textPaint);
+//                canvas.drawText("Coins: " + coinManager.getCollectedCoins(), 30, 120, textPaint);
+//                int rating = getRating();
+//                canvas.drawText("Rating: " + rating + " star(s)", 30, 180, textPaint);
             }
 
 //            if (isGameOver) {
