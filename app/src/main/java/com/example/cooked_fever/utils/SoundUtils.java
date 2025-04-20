@@ -5,10 +5,15 @@ import android.media.AudioAttributes;
 import android.media.SoundPool;
 import android.media.MediaPlayer;
 import android.util.Log;
+import android.os.*;
 
 import com.example.cooked_fever.R;
 
 public class SoundUtils {
+
+    private static HandlerThread bgmThread;
+    private static Handler bgmHandler;
+
 
     private static SoundPool soundPool;
     private static boolean soundsLoaded = false;
@@ -109,23 +114,59 @@ public class SoundUtils {
         playRandom(angry1Sound, angry2Sound);
     }
     public static void startBGM(Context context) {
-        if (bgmPlayer == null) {
-            bgmPlayer = MediaPlayer.create(context, R.raw.bgm);
-            bgmPlayer.setLooping(true);
+        if (bgmPlayer != null && bgmPlayer.isPlaying()) return;
 
-            bgmPlayer.setVolume(0.2f, 0.2f); // adjust if needed
-            bgmPlayer.start();
-        } else if (!bgmPlayer.isPlaying()) {
-            bgmPlayer.start();
+        if (bgmThread == null) {
+            bgmThread = new HandlerThread("BGMThread");
+            bgmThread.start();
+            bgmHandler = new Handler(bgmThread.getLooper());
         }
+
+        bgmHandler.post(() -> {
+            if (bgmPlayer == null) {
+                bgmPlayer = MediaPlayer.create(context, R.raw.bgm);
+                bgmPlayer.setLooping(true);
+                bgmPlayer.setVolume(0.2f, 0.2f);
+            }
+
+            if (!bgmPlayer.isPlaying()) {
+                bgmPlayer.start();
+            }
+        });
+
+//        if (bgmPlayer == null) {
+//            bgmPlayer = MediaPlayer.create(context, R.raw.bgm);
+//            bgmPlayer.setLooping(true);
+//
+//            bgmPlayer.setVolume(0.2f, 0.2f); // adjust if needed
+//            bgmPlayer.start();
+//        } else if (!bgmPlayer.isPlaying()) {
+//            bgmPlayer.start();
+//        }
     }
 
     public static void stopBGM() {
-        if (bgmPlayer != null && bgmPlayer.isPlaying()) {
-            bgmPlayer.stop();
-            bgmPlayer.release();
-            bgmPlayer = null;
+        if (bgmHandler != null) {
+            bgmHandler.post(() -> {
+                if (bgmPlayer != null) {
+                    if (bgmPlayer.isPlaying()) bgmPlayer.stop();
+                    bgmPlayer.release();
+                    bgmPlayer = null;
+                }
+            });
         }
+
+        if (bgmThread != null) {
+            bgmThread.quitSafely();
+            bgmThread = null;
+            bgmHandler = null;
+        }
+
+//        if (bgmPlayer != null && bgmPlayer.isPlaying()) {
+//            bgmPlayer.stop();
+//            bgmPlayer.release();
+//            bgmPlayer = null;
+//        }
     }
 
 
