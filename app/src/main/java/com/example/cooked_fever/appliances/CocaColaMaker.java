@@ -27,7 +27,7 @@ public class CocaColaMaker implements Appliance {
     private boolean servingCola = false;
     private boolean servedCola = false;
     private long refillStartTime;
-    private final int refillDuration = 10000; // 10 seconds
+    private final int refillDuration = 6000; // 10 seconds
 
     private final Context context;
 
@@ -225,15 +225,15 @@ public class CocaColaMaker implements Appliance {
 //        canvas.drawText("Cola Maker", hitbox.left + 30, hitbox.top + 40, text);
 
         // Draw status
-        text.setTextSize(28f);
-        if (preparingCola) {
-            canvas.drawText("Preparing", hitbox.left + 30, hitbox.bottom - 10, text);
-        } else if (readyCola) {
-            canvas.drawText("Ready", hitbox.left + 40, hitbox.bottom - 10, text);
-        } else if (servingCola) {
-            canvas.drawText("Serving", hitbox.left + 60, hitbox.bottom - 10, text);
-        } else { // hasGlass && !isFilling && !isFilled
-            canvas.drawText("Returning Glass", hitbox.left + 60, hitbox.bottom - 10, text); // Serving complete
-        }
+//        text.setTextSize(28f);
+//        if (preparingCola) {
+//            canvas.drawText("Preparing", hitbox.left + 30, hitbox.bottom - 10, text);
+//        } else if (readyCola) {
+//            canvas.drawText("Ready", hitbox.left + 40, hitbox.bottom - 10, text);
+//        } else if (servingCola) {
+//            canvas.drawText("Serving", hitbox.left + 60, hitbox.bottom - 10, text);
+//        } else { // hasGlass && !isFilling && !isFilled
+//            canvas.drawText("Returning Glass", hitbox.left + 60, hitbox.bottom - 10, text); // Serving complete
+//        }
     }
 }

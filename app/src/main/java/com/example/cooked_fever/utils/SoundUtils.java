@@ -58,7 +58,7 @@ public class SoundUtils {
         angry1Sound = soundPool.load(context, R.raw.angry_1, 1);
         angry2Sound = soundPool.load(context, R.raw.angry_2, 1);
         dingSound = soundPool.load(context, R.raw.ding, 1);
-        waterSound = soundPool.load(context, R.raw.water_pour, 1);
+        waterSound = soundPool.load(context, R.raw.cokerefill, 1);
         fizzSound = soundPool.load(context, R.raw.fizz, 1);
 
         soundsLoaded = true;

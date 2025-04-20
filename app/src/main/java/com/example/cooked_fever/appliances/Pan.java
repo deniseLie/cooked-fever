@@ -44,9 +44,9 @@ public class Pan implements Appliance {
         this.x = (float) x + (float)(width / 2);
         this.y = (float) y + (float)(height / 2);
     
-        textPaint.setColor(Color.BLACK);
-        textPaint.setTextSize(28f);
-        textPaint.setAntiAlias(true);
+//        textPaint.setColor(Color.BLACK);
+//        textPaint.setTextSize(28f);
+//        textPaint.setAntiAlias(true);
     
         // Load the pan image
         panBitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.pan);
@@ -69,14 +69,14 @@ public class Pan implements Appliance {
         }
 
         // Food status
-        String status = "Empty";
-        if (currentItem != null) {
-            if (isCooking) status = "Cooking " + acceptedFood;
-            else if (isBurnt) status = "Burnt " + acceptedFood;
-            else status = "Cooked " + acceptedFood;
-        }
+//        String status = "Empty";
+//        if (currentItem != null) {
+//            if (isCooking) status = "Cooking " + acceptedFood;
+//            else if (isBurnt) status = "Burnt " + acceptedFood;
+//            else status = "Cooked " + acceptedFood;
+//        }
 
-        canvas.drawText(status, hitbox.left + 10, hitbox.top + 60, textPaint);
+//        canvas.drawText(status, hitbox.left + 10, hitbox.top + 60, textPaint);
     }
 
     @Override
