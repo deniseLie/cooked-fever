@@ -34,7 +34,7 @@ public class Coin {
         this.originalY = y;
         this.coinAmount = coinAmount;
 
-        Log.d("Coin", "Created coins: " + this.coinAmount);
+//        Log.d("Coin", "Created coins: " + this.coinAmount);
 
         // Load bitmap based on item name
         int resId = 0;

@@ -33,7 +33,7 @@ public class FoodItem {
         this.foodItemName = foodItemName;
         this.isPrepared = false;
         this.isBadlyCooked = false;
-        Log.d("FoodItemCreation", "Created a new FoodItem: " + this.foodItemName);
+//        Log.d("FoodItemCreation", "Created a new FoodItem: " + this.foodItemName);
 
         // Load bitmap based on item name
         int resId = getDrawableResourceId();

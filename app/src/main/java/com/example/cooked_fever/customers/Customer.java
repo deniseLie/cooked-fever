@@ -101,15 +101,15 @@ public class Customer {
         if (isServed) return false;
 
         for (FoodOrder order : orderList) {
-            Log.d("CustomerServe", "Checking: " + order.getItemName() + " vs " + itemName);
+//            Log.d("CustomerServe", "Checking: " + order.getItemName() + " vs " + itemName);
             if (order.getItemName().equals(itemName) && !order.isPrepared()) {
-                Log.d("CustomerServe", "Accepted: " + itemName);
+//                Log.d("CustomerServe", "Accepted: " + itemName);
                 order.prepare();
                 return true;
             }
         }
 
-        Log.d("CustomerServe", "Rejected: " + itemName);
+//        Log.d("CustomerServe", "Rejected: " + itemName);
         return false;
     }
 
