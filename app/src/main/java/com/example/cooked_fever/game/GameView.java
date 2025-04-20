@@ -17,7 +17,6 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
     private Game game;
     private GameThread gameThread;
 
-    private String LOG_TAG = this.getClass().getSimpleName();
 
     private Runnable onReadyCallback;
 
@@ -27,26 +26,24 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
     public GameView(Context context, AttributeSet attrs) {
         super(context, attrs);
-        this.game = new Game(context, this::sendNotification, this::useCanvas);
+        this.game = new Game(context, this::useCanvas);
         init(context);
     }
 
     public GameView(Context context) {
         super(context);
-        this.game = new Game(context, this::sendNotification, this::useCanvas);
+        this.game = new Game(context, this::useCanvas);
         init(context);
     }
 
     @SuppressLint("ClickableViewAccessibility")
     private void init(Context context) {
-//        Log.d("GameView", "Initializing GameView");
         setKeepScreenOn(true);
         getHolder().addCallback(this);
         setFocusable(View.FOCUSABLE);
 
         // On touch listener
         setOnTouchListener((view, event) -> {
-//            Log.d("TouchEvent", "Action: " + event.getAction());
 
             if (game.isGameOver()) {
                 if (event.getAction() == MotionEvent.ACTION_DOWN) {
@@ -68,7 +65,6 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
                     );
 
                     if (restartRect.contains(touchX, touchY)) {
-//                        Log.d("GameView", "Restarting game...");
                         game.restart();
                     }
                 }
@@ -91,9 +87,6 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
     public Game getGame() {
         return game;
-    }
-    private void sendNotification() {
-        NotificationPublisher.showNotification(getContext());
     }
 
     private boolean useCanvas(final Consumer<Canvas> onDraw) {
