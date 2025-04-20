@@ -158,12 +158,12 @@ public class CocaColaMaker implements Appliance {
 
     @Override
     public void reset() {
-        executor.shutdownNow(); // Stop background threads
         preparingCola = true;
         readyCola = false;
         servingCola = false;
         servedCola = false;
         this.refillStartTime = 0;
+        executor.shutdownNow(); // Stop background threads
     }
 
     @Override

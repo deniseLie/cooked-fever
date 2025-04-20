@@ -110,6 +110,6 @@ public class FryHolder implements Appliance{
 
     @Override
     public void reset() {
-
+        currentItem = null;
     }
 }
