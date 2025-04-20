@@ -28,13 +28,13 @@ public class CoinManager {
 
     public Coin addNewCoins(Context context, int customerID, float x, int coinAmount) {
         Coin newCoin = new Coin(context, customerID, x, 400, coinAmount);
-        Log.d("CoinManager", "Created: coin" + customerID + " amt: " + coinAmount);
+//        Log.d("CoinManager", "Created: coin" + customerID + " amt: " + coinAmount);
         return newCoin;
     }
     public void addCoin (Coin coin) {
         synchronized(uncollectedCoinList) {
             uncollectedCoinList.add(coin);
-            Log.d("CoinManager" ,"coin added: " + coin.getCoinID() + " amt: " + coin.getCoinAmount());
+//            Log.d("CoinManager" ,"coin added: " + coin.getCoinID() + " amt: " + coin.getCoinAmount());
         }
     }
     public void removeCoin (Coin coin) {

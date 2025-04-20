@@ -97,7 +97,7 @@ public class SoundUtils {
         if (soundsLoaded) soundPool.play(waterSound, 1, 1, 0, 0, 1);
     }
     public static void playFizz() {
-        Log.d("SoundUtils", "Fizz");
+//        Log.d("SoundUtils", "Fizz");
         if (soundsLoaded) soundPool.play(fizzSound, 1, 1, 0, 0, 1);
     }
 

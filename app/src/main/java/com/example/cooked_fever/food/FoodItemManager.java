@@ -25,14 +25,14 @@ public class FoodItemManager {
         if (foodItemName.equals("Cola")) {
             newFoodItem.prepareFoodItem();
         }
-        Log.d("foodItemCreated" ,"foodItem: " + foodItemName);
+//        Log.d("foodItemCreated" ,"foodItem: " + foodItemName);
         return newFoodItem;
     }
 
     public void addFoodItem(FoodItem foodItem) {
         synchronized(createdFoodItems) {
             createdFoodItems.add(foodItem);
-            Log.d("foodItemList" ,"foodItem added: " + foodItem.getFoodItemName());
+//            Log.d("foodItemList" ,"foodItem added: " + foodItem.getFoodItemName());
         }
     }
 
@@ -65,7 +65,7 @@ public class FoodItemManager {
 
             foodItem2.setFoodItemName("Burger");
             removeFoodItem(foodItem1); // Remove the bun or patty used
-            Log.d("Combine", "Created Burger from Patty + Bun");
+//            Log.d("Combine", "Created Burger from Patty + Bun");
             success = true;
 
             // Sausage + Hotdog Bun = Hotdog
@@ -73,7 +73,7 @@ public class FoodItemManager {
 
             foodItem2.setFoodItemName("Hotdog");
             removeFoodItem(foodItem1); // Remove the bun or sausage used
-            Log.d("Combine", "Created Hotdog from Sausage + Bun");
+//            Log.d("Combine", "Created Hotdog from Sausage + Bun");
             success = true;
         }
 

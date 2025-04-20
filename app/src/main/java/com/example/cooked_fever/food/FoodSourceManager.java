@@ -33,7 +33,7 @@ public class FoodSourceManager {
     public FoodSource getTouchedSource(float touchX, float touchY) {
         for (FoodSource source : sources) {
             if (source.isTouched(touchX, touchY)) {
-                Log.d("FoodSourceManager", "source: " + source.getFoodSourceName());
+//                Log.d("FoodSourceManager", "source: " + source.getFoodSourceName());
                 return source;
             }
         }
