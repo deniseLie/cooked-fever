@@ -1,7 +1,6 @@
 package com.example.cooked_fever.food;
 
 import android.graphics.*;
-import android.util.Log;
 import android.content.*;
 import com.example.cooked_fever.R;
 import com.example.cooked_fever.utils.SoundUtils;
@@ -11,16 +10,12 @@ public class FoodItem {
     private String foodItemName;
     private Boolean isPrepared;
     private Boolean isBadlyCooked;
-
     private final Rect hitbox;
     private float x, y;
     private float originalX, originalY;
     private boolean isDragged = false; // Track if the item is being dragged
     private boolean isDraggable = true; // Track whether item allow being dragged
-
     private final Paint paint = new Paint();
-    private final Paint text = new Paint();
-
 
     // Constructor
     public FoodItem (Context context, float x, float y, String foodItemName) {
@@ -33,12 +28,8 @@ public class FoodItem {
         this.foodItemName = foodItemName;
         this.isPrepared = false;
         this.isBadlyCooked = false;
-//        Log.d("FoodItemCreation", "Created a new FoodItem: " + this.foodItemName);
-
-        // Load bitmap based on item name
-        int resId = getDrawableResourceId();
     }
-    // Sound initializer
+
     // Getter
     public String getFoodItemName () {return this.foodItemName;}
     public Boolean getIsPrepared() {return this.isPrepared;}
@@ -80,9 +71,7 @@ public class FoodItem {
     }
     public void setDraggable(Boolean draggable) {isDraggable = draggable;}
 
-    public void playSizzleSound() {
-        SoundUtils.playSizzle();
-    }
+    public void playSizzleSound() {SoundUtils.playSizzle();}
 
     // Interaction
     public boolean onClick(float clickX, float clickY) {
@@ -129,60 +118,6 @@ public class FoodItem {
                 return R.drawable.patty_raw;
         }
     }
-    
-    // Draw
-//     public void draw(Canvas canvas) {
-// //        Log.d("drawItem" ,"cola drawn: " + this.getFoodItemName());
-// //        Log.d("Location" ,"x: " + this.getX() + " y: " + this.getY());
-//         Paint paint = new Paint();
-//         switch (this.getFoodItemName()) {
-//             case "Cola":
-//                 paint.setColor(Color.RED);
-//                 Log.d("FoodItem" ,"cola drawn: " + this.getFoodItemName());
-// //                canvas.drawCircle(x, y, 50, paint);
-//                 break;
-//             case "HotdogBun":
-//                 paint.setColor(Color.RED);
-// //                canvas.drawOval(x + 6, y - 10, x - 6, y + 10, paint);
-//                 break;
-//             case "BurgerBun":
-//                 paint.setColor(Color.rgb(210, 140, 60));
-// //                canvas.drawCircle(x, y, 50, paint);
-//                 break;
-//             case "Patty":
-//                 paint.setColor(Color.rgb(90, 50, 30));
-// //                canvas.drawCircle(x, y, 50, paint);
-//                 break;
-//             case "Sausage":
-//                 paint.setColor(Color.rgb(235, 100, 120));
-// //                canvas.drawOval(x + 6, y - 10, x - 6, y + 10, paint);
-//                 break;
-//             case "Burger":
-//                 paint.setColor(Color.rgb(235, 180, 85));
-// //                canvas.drawOval(x + 6, y - 10, x - 6, y + 10, paint);
-//                 break;
-//             case "Hotdog":
-//                 paint.setColor(Color.rgb(200, 50, 50));
-// //                canvas.drawOval(x + 6, y - 10, x - 6, y + 10, paint);
-//                 break;
-//         }
-
-//         if (bitmap != null) {
-//             Bitmap scaled = Bitmap.createScaledBitmap(bitmap, 100, 100, false);
-//             canvas.drawBitmap(scaled, x - 50, y - 50, null);
-//         } else {
-//             canvas.drawCircle(x, y, 50, paint); // fallback
-//         }
-        
-//         Paint text = new Paint();
-//         text.setColor(Color.BLACK);
-//         text.setTextSize(32f);
-//         text.setAntiAlias(true);
-
-//         canvas.drawText(this.foodItemName, x - 60, y + 80, text);
-//         canvas.drawText("Status: " + this.isPrepared, x - 60, y + 100, text);  // Adjust y position (y + 80)
-//         canvas.drawText("Cooked: " + (this.isBadlyCooked ? "Badly" : "Well"), x - 60, y + 120, text);  // Adjust y position (y + 120)
-//     }
 
     private int getBitmapSize(String name) {
         if (name.equals("Patty") || name.equals("Sausage")) {
@@ -193,7 +128,6 @@ public class FoodItem {
         }
         return 100;
     }
-
 
     public void draw(Canvas canvas, Context context) {
         int resId = getDrawableResourceId();
@@ -215,14 +149,5 @@ public class FoodItem {
             paint.setColor(Color.GRAY);
             canvas.drawCircle(x, y, 50, paint);
         }
-
-//        Paint text = new Paint();
-//        text.setColor(Color.BLACK);
-//        text.setTextSize(32f);
-//        text.setAntiAlias(true);
-//
-//        canvas.drawText(this.foodItemName, x - 60, y + 80, text);
-//        canvas.drawText("Status: " + this.isPrepared, x - 60, y + 100, text);
-//        canvas.drawText("Cooked: " + (this.isBadlyCooked ? "Badly" : "Well"), x - 60, y + 120, text);
     }
 }

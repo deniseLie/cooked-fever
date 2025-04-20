@@ -1,22 +1,10 @@
 package com.example.cooked_fever.customers;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.ColorMatrix;
-import android.graphics.ColorMatrixColorFilter;
-import android.graphics.Paint;
-import android.graphics.Rect;
-import android.graphics.RectF;
-import android.util.Log;
+import android.graphics.*;
 import com.example.cooked_fever.utils.SoundUtils;
-
-
 import com.example.cooked_fever.R;
 import com.example.cooked_fever.food.FoodOrder;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,16 +23,9 @@ public class Customer {
     private int slotIndex = -1;
     private final Rect hitbox;
     private int reward;
-
     private boolean hasReacted = false;
-
-
     private Bitmap sprite;
-
     private final Context context;
-
-    // Log
-    private final String LOG_TAG = this.getClass().getSimpleName();
 
     public Customer(Context context, float x, float y, List<String> foodItems) {
         this.context = context;
@@ -101,15 +82,11 @@ public class Customer {
         if (isServed) return false;
 
         for (FoodOrder order : orderList) {
-//            Log.d("CustomerServe", "Checking: " + order.getItemName() + " vs " + itemName);
             if (order.getItemName().equals(itemName) && !order.isPrepared()) {
-//                Log.d("CustomerServe", "Accepted: " + itemName);
                 order.prepare();
                 return true;
             }
         }
-
-//        Log.d("CustomerServe", "Rejected: " + itemName);
         return false;
     }
 
@@ -124,18 +101,12 @@ public class Customer {
         return allPrepared;
     }
 
-    public void setSlotIndex(int index) {
-        this.slotIndex = index;
-    }
+    public void setSlotIndex(int index) {this.slotIndex = index;}
 
-    public int getSlotIndex() {
-        return this.slotIndex;
-    }
+    public int getSlotIndex() {return this.slotIndex;}
 
     // Leave if served or no more patience
-    public boolean shouldLeave() {
-        return isServed || patience <= 0;
-    }
+    public boolean shouldLeave() {return isServed || patience <= 0;}
 
     private void leave() {
         isServed = true;
@@ -145,15 +116,9 @@ public class Customer {
         }
     }
 
-    public Rect getHitbox() {
-        return hitbox;
-    }
-    public float getX() {
-        return x;
-    }
-    public float getY() {
-        return y;
-    }
+    public Rect getHitbox() {return hitbox;}
+    public float getX() {return x;}
+    public float getY() {return y;}
     public boolean isCustomerHitbox(int touchX, int touchY) {
         float spriteScale = 1.2f;
         int spriteWidth = (int) (sprite.getWidth() * spriteScale);
@@ -185,9 +150,6 @@ public class Customer {
 
     // Draw Customer
     public void draw(Canvas canvas) {
-//        Paint paint = new Paint();
-//        Log.d("CustomerDraw", "Drawing at x=" + x + " | sprite width=" + sprite.getWidth());
-
         // Draw the sprite (scaled)
         if (sprite != null) {
             float scale = 1.2f;
@@ -200,8 +162,7 @@ public class Customer {
             canvas.drawBitmap(scaled, spriteX, spriteY, null);
         }
 
-
-        // NEW: draw order bubble
+        // Draw order bubble
         drawOrderBubble(canvas);
     }
     private void drawOrderBubble(Canvas canvas) {
@@ -285,7 +246,6 @@ public class Customer {
         canvas.drawRect(barX, barTop, barX + barWidth, barBottom, outlinePaint);
     }
 
-
     private int getDrawableResourceId(String name) {
         switch (name) {
             case "Burger":
@@ -296,7 +256,6 @@ public class Customer {
                 return R.drawable.cup_filled;
             case "Fries":
                 return R.drawable.cooked_fries;
-
             default:
                 return 0;
         }

@@ -1,20 +1,11 @@
 package com.example.cooked_fever.customers;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
-import android.util.Log;
+import android.graphics.*;
 import android.view.MotionEvent;
-
 import com.example.cooked_fever.R;
 import com.example.cooked_fever.utils.SoundUtils;
-import com.example.cooked_fever.food.FoodItem;
-
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class CoinManager {
     private List<Coin> uncollectedCoinList = new ArrayList<>();
@@ -28,36 +19,32 @@ public class CoinManager {
 
     public Coin addNewCoins(Context context, int customerID, float x, int coinAmount) {
         Coin newCoin = new Coin(context, customerID, x, 400, coinAmount);
-//        Log.d("CoinManager", "Created: coin" + customerID + " amt: " + coinAmount);
         return newCoin;
     }
     public void addCoin (Coin coin) {
         synchronized(uncollectedCoinList) {
             uncollectedCoinList.add(coin);
-//            Log.d("CoinManager" ,"coin added: " + coin.getCoinID() + " amt: " + coin.getCoinAmount());
         }
     }
     public void removeCoin (Coin coin) {
         synchronized(uncollectedCoinList) {
             uncollectedCoinList.remove(coin);
-
-            // Clear references
             coin = null;
         }
     }
+
     public void collectCoin(int amount) {
         collectedCoins += amount;
         SoundUtils.playCoin();
     }
+
     public Coin handleTouch(MotionEvent event) {
         synchronized(uncollectedCoinList) {
             float x = event.getX();
             float y = event.getY();
             for (Coin coin : uncollectedCoinList) {
                 if (coin.onClick(x, y)) {  // Check if the click is within the bounds of the food item
-
-//                    SoundUtils.playCoin();
-                    return coin; // Return food item
+                    return coin;
                 }
             }
             return null;
@@ -70,7 +57,7 @@ public class CoinManager {
     public void draw(Canvas canvas, Context context) {
         synchronized(uncollectedCoinList) {
             for (Coin coin : uncollectedCoinList) {
-                coin.draw(canvas, context); // Draw each food item
+                coin.draw(canvas, context); // Draw each item
             }
         }
         float barWidth = 30;
@@ -82,10 +69,10 @@ public class CoinManager {
         Paint barBackground = new Paint();
         barBackground.setColor((Color.YELLOW));
         canvas.drawRect(barLeft - 50, barTop - 7, barLeft+barLength+20, barTop+37, barBackground);
-
         Paint fullBar = new Paint();
         fullBar.setColor((Color.BLUE));
         canvas.drawRect(barLeft, barTop , barLeft+barLength, barTop+barWidth, fullBar);
+
         // Draw Coin stack
         Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.coin_stack);
         if (bitmap != null) {
@@ -97,6 +84,7 @@ public class CoinManager {
             paint.setColor(Color.YELLOW);
             canvas.drawCircle(barLeft, barTop, 50, paint);
         }
+
         // Draw progress bar
         Paint progressBar = new Paint();
         progressBar.setColor(Color.GREEN);
@@ -119,9 +107,4 @@ public class CoinManager {
         collectedCoins = 0;
         uncollectedCoinList.clear();
     }
-
-//    public void reset() {
-//        uncollectedCoinList.clear(); // or however you're tracking floating coins
-//    }
-
 }

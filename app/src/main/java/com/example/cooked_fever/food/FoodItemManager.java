@@ -2,13 +2,8 @@ package com.example.cooked_fever.food;
 
 import android.content.Context;
 import android.graphics.*;
-import android.util.Log;
 import android.view.MotionEvent;
-import android.content.*;
 import java.util.*;
-
-import com.example.cooked_fever.appliances.Appliance;
-import com.example.cooked_fever.food.*;
 
 // Tracks existing food
 // Creates food
@@ -25,14 +20,12 @@ public class FoodItemManager {
         if (foodItemName.equals("Cola")) {
             newFoodItem.prepareFoodItem();
         }
-//        Log.d("foodItemCreated" ,"foodItem: " + foodItemName);
         return newFoodItem;
     }
 
     public void addFoodItem(FoodItem foodItem) {
         synchronized(createdFoodItems) {
             createdFoodItems.add(foodItem);
-//            Log.d("foodItemList" ,"foodItem added: " + foodItem.getFoodItemName());
         }
     }
 
@@ -43,10 +36,6 @@ public class FoodItemManager {
             // Clear references
             foodItem = null;
         }
-    }
-
-    public void setFoodPosition (FoodItem foodItem, float x, float y) {
-        foodItem.setItemPosition(x, y);
     }
 
     // Combine two food items
@@ -65,7 +54,6 @@ public class FoodItemManager {
 
             foodItem2.setFoodItemName("Burger");
             removeFoodItem(foodItem1); // Remove the bun or patty used
-//            Log.d("Combine", "Created Burger from Patty + Bun");
             success = true;
 
             // Sausage + Hotdog Bun = Hotdog
@@ -73,7 +61,6 @@ public class FoodItemManager {
 
             foodItem2.setFoodItemName("Hotdog");
             removeFoodItem(foodItem1); // Remove the bun or sausage used
-//            Log.d("Combine", "Created Hotdog from Sausage + Bun");
             success = true;
         }
 
@@ -88,7 +75,6 @@ public class FoodItemManager {
             for (FoodItem foodItem : createdFoodItems) {
                 if (foodItem.onClick(x, y)) {  // Check if the click is within the bounds of the food item
                     return foodItem; // Return food item
-
                 }
             }
             return null;

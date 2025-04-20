@@ -3,12 +3,8 @@ package com.example.cooked_fever.customers;
 import android.content.Context;
 import android.graphics.*;
 import android.view.*;
-import android.util.Log;
-
 import java.util.*;
 import java.util.concurrent.*;
-
-import com.example.cooked_fever.appliances.*;
 import com.example.cooked_fever.food.*;
 
 
@@ -16,20 +12,14 @@ public class CustomerManager {
 
     // Customer Static Variables
     private final int MAX_CUSTOMER = 5;
-    private final int CUSTOMER_SPACING = 220;
-    private final int START_X = 200;
     private final int CUSTOMER_Y = 250;
     private final String[] availableMenu = {"Cola", "Burger", "Hotdog", "Fries"};
-
     private final List<Customer> customers = new CopyOnWriteArrayList<>();
     private boolean[] customerSlots = new boolean[MAX_CUSTOMER];
     private long lastCustomerSpawn = System.currentTimeMillis();
-
     private final Random random = new Random();
-    private final String LOG_TAG = this.getClass().getSimpleName();
     private ExecutorService executor = Executors.newFixedThreadPool(4); // For background updates
     private Context context;
-
     private int screenWidth = 1080;
     // Constructor
     private int customersFulfilled = 0;
@@ -51,14 +41,10 @@ public class CustomerManager {
         customersFulfilled = 0;
         customersMissed = 0;
     }
-    public void setScreenWidth(int width) {
-        this.screenWidth = width;
-    }
+    public void setScreenWidth(int width) {this.screenWidth = width;}
 
     // GET
-    public List<Customer> getCustomerList() {
-        return customers;
-    }
+    public List<Customer> getCustomerList() {return customers;}
 
     // METHOD
     public Boolean receiveItem (Customer customer, FoodItem foodItem) {

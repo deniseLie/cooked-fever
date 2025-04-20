@@ -2,8 +2,6 @@ package com.example.cooked_fever.food;
 
 import android.content.Context;
 import android.graphics.*;
-import android.util.Log;
-
 import java.util.*;
 
 public class FoodSourceManager {
@@ -33,10 +31,6 @@ public class FoodSourceManager {
             }
         }
         return null;
-    }
-
-    public List<FoodSource> getSources() {
-        return sources;
     }
 
     public void clear() {
