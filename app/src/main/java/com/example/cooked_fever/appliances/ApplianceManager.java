@@ -3,12 +3,8 @@ package com.example.cooked_fever.appliances;
 import android.content.Context;
 import android.graphics.*;
 import android.view.MotionEvent;
-import android.util.Log;
-import android.content.*;
 import java.util.*;
-
 import com.example.cooked_fever.food.*;
-import com.example.cooked_fever.utils.SoundUtils;
 
 public class ApplianceManager {
 
@@ -17,7 +13,6 @@ public class ApplianceManager {
     private int screenHeight;
     private final Context context;
 
-    private final String LOG_TAG = this.getClass().getSimpleName();
     public ApplianceManager(Context context, int screenWidth, int screenHeight) {
         this.context = context;
         this.screenWidth = screenWidth;
@@ -28,7 +23,6 @@ public class ApplianceManager {
     private void initializeAppliances() {
         synchronized (appliances) {
             appliances.clear();
-//            Log.d("ApplianceManager", "Initializing");
 
             // Add Coca cola maker
             appliances.add(new CocaColaMaker(context, 50, screenHeight - 450));
@@ -180,7 +174,6 @@ public class ApplianceManager {
     }
     public void doTrash(Appliance appliance) {
         appliance.takeFood();
-//        Log.d("ApplianceManager", "Trash from: " + appliance);
     }
 
     // GET METHOD
@@ -188,7 +181,7 @@ public class ApplianceManager {
         return appliances;
     }
 
-    // Cola stuff
+    // Cola methods
     public Boolean checkColaMachine() {
         List<Appliance> snapshot;
         synchronized (appliances) {
@@ -259,25 +252,10 @@ public class ApplianceManager {
         return 0;
     }
 
-    public FoodItem getTableItem() {
-        List<Appliance> snapshot;
-        synchronized (appliances) {
-            snapshot = new ArrayList<>(appliances);
-        }
-
-        for (Appliance appliance : snapshot) {
-            if (appliance instanceof TableTop) {
-                return ((TableTop) appliance).peekFood();
-            }
-        }
-        return null;
-    }
-
-    // Checking space
+    // Check availability in table and pan
     public Boolean hasTableSpace(FoodItem foodItem) {
         if (!(foodItem.getFoodItemName().equals("BurgerBun") ||
                 foodItem.getFoodItemName().equals("HotdogBun"))) {
-//            Log.d("ApplianceManager", "Rejected: " + foodItem.getFoodItemName());
             return false;
         }
 
@@ -296,7 +274,6 @@ public class ApplianceManager {
                 }
             }
             if (counter == 3) {
-//                Log.d("ApplianceManager", "Table full");
                 return false;
             }
         }
@@ -318,12 +295,10 @@ public class ApplianceManager {
             if (appliance instanceof Pan) {
                 Pan pan = (Pan) appliance;
                 if (pan.accepts(foodItem.getFoodItemName()) && !pan.isEmpty()) {
-//                    Log.d("ApplianceManager", "" + pan + " " + pan.isEmpty());
                     counter++;
                 }
             }
             if (counter == 3) {
-//                Log.d("ApplianceManager", "Pan full");
                 return false;
             }
         }
@@ -336,7 +311,7 @@ public class ApplianceManager {
         return foodWarmer.placeFood(foodItem, foodWarmer.getX(), foodWarmer.getY());
     }
 
-    // Fry stuff
+    // FryMaker methods
     public Boolean checkFryMaker(FryMaker fryMaker) {
         return fryMaker.isReady();
     }
@@ -349,15 +324,13 @@ public class ApplianceManager {
         for (Appliance appliance : snapshot) {
             if (appliance instanceof FryHolder) {
                 FryHolder fryHolder = (FryHolder) appliance;
-//                Log.d("ApplianceManager", "status: " + fryHolder.isEmpty());
                 if (fryHolder.isEmpty()) {
                     counter++;
                 }
             }
         }
-        return counter > 0 ? true : false;
+        return counter > 0;
     }
-
     public void startFrying(Appliance appliance) {
         if (appliance instanceof FryMaker) {
             FryMaker fryMaker = (FryMaker) appliance;
@@ -385,7 +358,7 @@ public class ApplianceManager {
         return null;
     }
 
-    // Auto assign Food Item to appliance
+    // Auto assign Food Item to appliances: Table, Pan, FryHolder
     public void assign(FoodItem foodItem) {
         String foodItemName = foodItem.getFoodItemName();
 
@@ -402,9 +375,6 @@ public class ApplianceManager {
                     TableTop tableTop = (TableTop) appliance;
                     if (tableTop.accepts(foodItemName) && tableTop.isEmpty()) {
                         tableTop.placeFood(foodItem, tableTop.getX() - 10, tableTop.getY() - 20);
-//                        Log.d("Game", "Placed " + foodItemName + " on TableTop " + tableTop.getId());
-//                        tableTop.placeFood(foodItem, tableTop.getX(), tableTop.getY());
-//                        Log.d("ApplianceManager", "Placed " + foodItemName + " on TableTop " + tableTop.getId());
                         break;
                     }
                 }
@@ -416,8 +386,7 @@ public class ApplianceManager {
                     Pan pan = (Pan) appliance;
                     if (pan.accepts(foodItemName) && pan.isEmpty()) {
                         pan.placeFood(foodItem, pan.getX() - 10, pan.getY() - 45);
-                        foodItem.playSizzleSound();      // you’ll add this helper below
-//                        Log.d("ApplianceManager", "Placed " + foodItemName + " on Pan " + pan.getId());
+                        foodItem.playSizzleSound();
                         break;
                     }
                 }

@@ -2,16 +2,12 @@ package com.example.cooked_fever.appliances;
 
 import android.content.Context;
 import android.graphics.*;
-import android.util.Log;
 import com.example.cooked_fever.R;
-
 import com.example.cooked_fever.food.FoodItem;
 
 public class TrashBin implements Appliance {
     private float x, y;
     private final Rect hitbox;
-
-    private final Paint text = new Paint();
     private final Bitmap trashBitmap;
 
     public TrashBin(Context context, int x, int y) {
@@ -19,16 +15,10 @@ public class TrashBin implements Appliance {
         this.y = y;
         this.hitbox = new Rect(x - 20, y - 20, x + 220, y + 220); // 200 + padding
         this.trashBitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.trash_can);
-
-        text.setColor(Color.BLACK);
-        text.setTextSize(32f);
-        text.setAntiAlias(true);
     }
 
     @Override
-    public void update() {
-        // No dynamic logic for trash
-    }
+    public void update() {}
 
     @Override
     public void draw(Canvas canvas) {
@@ -40,8 +30,6 @@ public class TrashBin implements Appliance {
             fallback.setColor(Color.RED);
             canvas.drawRect(hitbox, fallback);
         }
-
-        canvas.drawText("TrashBin", x, y + 250, text);
     }
 
     @Override
@@ -51,15 +39,6 @@ public class TrashBin implements Appliance {
 
     @Override
     public boolean onClick(int x, int y) {
-        if (hitbox.contains(x, y)) {
-//            Log.d("TrashBin", "Clicked");
-            return true;
-        }
-        return false;
-    }
-
-    public boolean isTrashBin(int x, int y) {
-//        Log.d("TrashBin", "isTrashBin " + x);
         return hitbox.contains(x, y);
     }
 
@@ -69,9 +48,7 @@ public class TrashBin implements Appliance {
     }
 
     @Override
-    public void reset() {
-        // Nothing to reset for now
-    }
+    public void reset() {}
 
     @Override
     public FoodItem takeFood() {

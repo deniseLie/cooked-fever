@@ -1,40 +1,24 @@
 package com.example.cooked_fever.appliances;
 
-import android.content.Context;
+import android.content.*;
 import android.graphics.*;
 import android.util.Log;
 import android.os.*;
 import java.util.concurrent.*;
-import android.content.*;
 import com.example.cooked_fever.R;
-
-import com.example.cooked_fever.appliances.Appliance;
 import com.example.cooked_fever.food.*;
 import com.example.cooked_fever.utils.SoundUtils;
 
 public class CocaColaMaker implements Appliance {
 
     private final Rect hitbox;
-    // Preparing = hasGlass, isFilling, !isFilled
-    // Ready = hasGlass, !isFilling, isFilled
-    // Serving = !hasGlass, !isFilling, isFilled
-    // Serving complete = hasGlass, !isFilling, !isFilled
-//    private boolean hasGlass = true;
-//    private boolean isFilling = false;
-//    private boolean isFilled = false;
     private boolean preparingCola;
     private boolean readyCola;
     private boolean servingCola;
     private boolean servedCola;
     private long refillStartTime;
     private final int refillDuration = 6000; // 10 seconds
-
     private final Context context;
-
-    private final Paint paint = new Paint();
-    private final Paint text = new Paint();
-//    private final FoodItemManager foodItemManager; // ✅ move initialization into constructor
-
     private final Bitmap spriteFilling;
     private final Bitmap spriteCupEmpty;
     private final Bitmap spriteNoCup;
@@ -52,17 +36,10 @@ public class CocaColaMaker implements Appliance {
         this.spriteCupFilled = BitmapFactory.decodeResource(context.getResources(), R.drawable.cola_machine_cup_filled);
 
         hitbox = new Rect(x, y, x + 300, y + 300);
-//        text.setColor(Color.WHITE);
-//        text.setTextSize(36f);
-//        text.setAntiAlias(true);
-//        this.foodItemManager = new FoodItemManager(context);
         preparingCola = false;
         readyCola = false;
         servingCola = false;
         servedCola = true;
-
-        // Start Filling
-//        startFilling();
     }
 
     // GET METHOD
@@ -71,9 +48,6 @@ public class CocaColaMaker implements Appliance {
         return hitbox;
     }
     @Override
-//    public boolean isReady() {
-//        return hasGlass && !isFilling && isFilled;
-//    }
     public boolean isReady() {
         return readyCola;
     }
@@ -84,24 +58,10 @@ public class CocaColaMaker implements Appliance {
     // METHOD
     @Override
     public void update() {
-        // Trigger fill when needed — this is called every frame
-//        if (hasGlass && isFilling && !isFilled) {
-//            startFilling();
-//        }
         if (servedCola) {
             servedCola = false;
             startFilling();
         }
-        if (servingCola) {
-            return;
-        }
-
-        // Trigger return glass process if needed
-        // Serving Complete
-        // DENISE PS : I DONT THINK WE NEED THIS5
-//        if (hasGlass && !isFilling && !isFilled) {
-//            returnGlass();
-//        }
     }
 
     public void startFilling() {
@@ -111,7 +71,6 @@ public class CocaColaMaker implements Appliance {
 
         executor.execute(() -> {
             try {
-//                Log.d("CokeMachine" ,"Filling");
                 Thread.sleep(refillDuration); // Simulate filling time
 
                 // Once done, update the UI thread
@@ -122,7 +81,6 @@ public class CocaColaMaker implements Appliance {
                 });
             } catch (InterruptedException e) {
                 e.printStackTrace();
-//                Log.d("CokeMachine" ,"Coke Spilled: " + e.toString());
             }
         });
     }
@@ -131,14 +89,13 @@ public class CocaColaMaker implements Appliance {
         // Handle serving the drink asynchronously.
         executor.execute(() -> {
             try {
-//                Log.d("CokeMachine", "Serving");
                 // Simulate the serving process (no delay here in a real case)
                 uiHandler.post(() -> {
                     readyCola = false;
                     servingCola = true;
                 });
             } catch (Exception e) {
-//                Log.d("CokeMachine", "Error while serving: " + e.toString());
+                Log.d("CokeMachine", "Error while serving: " + e.toString());
             }
         });
     }
@@ -149,15 +106,7 @@ public class CocaColaMaker implements Appliance {
 
     @Override
     public boolean onClick(int x, int y) {
-        if (hitbox.contains(x, y)) {
-//            if (isReady()) {
-//                serving();
-                return true;
-//            } else {
-//                return false;
-//            }
-        }
-        return false;
+        return hitbox.contains(x, y);
     }
 
     @Override
@@ -167,7 +116,6 @@ public class CocaColaMaker implements Appliance {
         servingCola = false;
         servedCola = true;
         this.refillStartTime = 0;
-//        executor.shutdownNow(); // Stop background threads
     }
 
     @Override

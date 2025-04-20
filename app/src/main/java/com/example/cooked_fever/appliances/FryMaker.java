@@ -1,58 +1,38 @@
 package com.example.cooked_fever.appliances;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.Rect;
-import android.os.Handler;
-import android.os.Looper;
-import android.util.Log;
-import com.example.cooked_fever.utils.SoundUtils;
-
+import android.graphics.*;
+import android.os.*;
 import com.example.cooked_fever.R;
 import com.example.cooked_fever.food.FoodItem;
 import com.example.cooked_fever.utils.SoundUtils;
-
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class FryMaker implements Appliance{
     private static final ExecutorService executor = Executors.newCachedThreadPool(); // Shared pool
     private static final Handler uiHandler = new Handler(Looper.getMainLooper());
-
     private int id;
     private final Rect hitbox;
-//    private String acceptedFood; // "Patty" or "Sausage"
     private Boolean isCooking;
     private Boolean readyFries;
     private final int fryingDuration = 3000; // 10 seconds
-
     private float x, y;
     private final Paint paint = new Paint();
     private final Paint textPaint = new Paint();
-
     private final Context context;
     private final Bitmap frying;
     private final Bitmap fryOff;
-//    private final Bitmap fryDone;
 
 
     public FryMaker (Context context, int x, int y, int width, int height, int index) {
         this.context = context;
         this.hitbox = new Rect(x, y, x + width, y + height);
-//        this.acceptedFood = acceptedFood;
         this.id = index;
         this.x = (float) x + (float)(width / 2);
         this.y = (float) y + (float)(height / 2);
         isCooking = false;
         readyFries = false;
-
-        textPaint.setColor(Color.BLACK);
-        textPaint.setTextSize(28f);
-        textPaint.setAntiAlias(true);
 
         // Load the pan image
         frying = BitmapFactory.decodeResource(context.getResources(), R.drawable.machine__frying);
@@ -64,20 +44,15 @@ public class FryMaker implements Appliance{
     public void update() {}
 
     @Override
-    public boolean isReady() {
-        return readyFries;
-    }
+    public boolean isReady() {return readyFries;}
 
     @Override
-    public boolean onClick(int x, int y) {
-        return hitbox.contains(x, y) && !isCooking;
-    }
+    public boolean onClick(int x, int y) {return hitbox.contains(x, y) && !isCooking;}
 
     // GET METHOD
     public void makeFries() {
         isCooking = true;
         SoundUtils.playSizzle();
-//        Log.d("FryMaker", "cooking status: " + isCooking);
         executor.execute(() -> {
             try {
                 Thread.sleep(fryingDuration); // Simulate frying time
@@ -86,8 +61,6 @@ public class FryMaker implements Appliance{
                     isCooking = false;
                     readyFries = true;
                     SoundUtils.playDing();
-//                    Log.d("FryMaker", "cooking status: " + isCooking);
-//                    Log.d("FryMaker", "Fries status: " + readyFries);
                 });
             } catch (InterruptedException e) {
                 e.printStackTrace();

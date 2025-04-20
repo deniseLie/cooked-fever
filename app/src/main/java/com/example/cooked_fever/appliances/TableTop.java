@@ -2,8 +2,6 @@ package com.example.cooked_fever.appliances;
 
 import android.content.Context;
 import android.graphics.*;
-import android.util.Log;
-
 import com.example.cooked_fever.R;
 import com.example.cooked_fever.food.FoodItem;
 
@@ -14,7 +12,6 @@ public class TableTop implements Appliance {
     private final String acceptedFood;
     private FoodItem currentItem = null;
     private float x, y;
-
     private final Paint textPaint = new Paint();
     private final Bitmap tabletopBitmap;
 
@@ -43,25 +40,16 @@ public class TableTop implements Appliance {
         }
     }
 
-
     @Override
     public boolean onClick(int x, int y) {
-
-//        Log.d("TableTop", "Table " + x);
         if (hitbox.contains(x, y)) {
-            if (currentItem != null) {
-//                takeFood(); // Take the food when tapped
-//                Log.d("TableTop" ,"currentItem: " + currentItem);
-                return true;
-            }
+            return currentItem != null;
         }
         return false;
     }
 
     @Override
     public Rect getHitbox() { return hitbox; }
-
-    public int getId() { return id; }
     public float getX() { return x; }
     public float getY() { return y; }
 
@@ -84,17 +72,10 @@ public class TableTop implements Appliance {
         this.currentItem = foodItem;
     }
 
-    public FoodItem peekFood() {
-        return currentItem;
-    }
     @Override
     public FoodItem takeFood() {
         FoodItem taken = currentItem;
-//        Log.d("TableTop", "currentItem isEmpty? " + isEmpty());
         currentItem = null;
-//        Log.d("TableTop", "isEmpty? " + isEmpty());
-//        Log.d("TableTop" ,"item taken: " + taken.getFoodItemName());
-//        Log.d("TableTop" ,"x: " + taken.getX() + " y: " + taken.getY());
         return taken;
     }
 

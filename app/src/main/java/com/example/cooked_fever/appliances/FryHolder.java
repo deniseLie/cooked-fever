@@ -1,50 +1,26 @@
 package com.example.cooked_fever.appliances;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.Rect;
-import android.os.Handler;
-import android.os.Looper;
-import android.util.Log;
-
+import android.graphics.*;
 import com.example.cooked_fever.R;
 import com.example.cooked_fever.food.FoodItem;
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-
 public class FryHolder implements Appliance{
-    private static final ExecutorService executor = Executors.newCachedThreadPool(); // Shared pool
-    private static final Handler uiHandler = new Handler(Looper.getMainLooper());
-
     private int id;
     private final Rect hitbox;
-    //    private String acceptedFood; // "Patty" or "Sausage"
     private FoodItem currentItem;
-
     private float x, y;
     private final Paint paint = new Paint();
-    private final Paint textPaint = new Paint();
-
     private final Context context;
     private final Bitmap foodWarmerBitmap;
 
     public FryHolder (Context context, int x, int y, int width, int height, int index) {
         this.context = context;
         this.hitbox = new Rect(x, y, x + width, y + height);
-//        this.acceptedFood = acceptedFood;
         this.id = index;
         this.x = (float) x + (float)(width / 2);
         this.y = (float) y + (float)(height / 2);
         currentItem = null;
-
-//        textPaint.setColor(Color.BLACK);
-//        textPaint.setTextSize(28f);
-//        textPaint.setAntiAlias(true);
 
         // Load the pan image
         foodWarmerBitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.plate);
@@ -57,7 +33,6 @@ public class FryHolder implements Appliance{
 
     @Override
     public void draw(Canvas canvas) {
-// Pan base
         if (foodWarmerBitmap != null) {
             Bitmap scaledPan = Bitmap.createScaledBitmap(foodWarmerBitmap, hitbox.width(), hitbox.height(), false);
             canvas.drawBitmap(scaledPan, hitbox.left, hitbox.top, null);
