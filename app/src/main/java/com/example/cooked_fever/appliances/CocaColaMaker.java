@@ -22,10 +22,10 @@ public class CocaColaMaker implements Appliance {
 //    private boolean hasGlass = true;
 //    private boolean isFilling = false;
 //    private boolean isFilled = false;
-    private boolean preparingCola = true;
-    private boolean readyCola = false;
-    private boolean servingCola = false;
-    private boolean servedCola = false;
+    private boolean preparingCola;
+    private boolean readyCola;
+    private boolean servingCola;
+    private boolean servedCola;
     private long refillStartTime;
     private final int refillDuration = 6000; // 10 seconds
 
@@ -52,13 +52,17 @@ public class CocaColaMaker implements Appliance {
         this.spriteCupFilled = BitmapFactory.decodeResource(context.getResources(), R.drawable.cola_machine_cup_filled);
 
         hitbox = new Rect(x, y, x + 300, y + 300);
-        text.setColor(Color.WHITE);
-        text.setTextSize(36f);
-        text.setAntiAlias(true);
+//        text.setColor(Color.WHITE);
+//        text.setTextSize(36f);
+//        text.setAntiAlias(true);
 //        this.foodItemManager = new FoodItemManager(context);
+        preparingCola = false;
+        readyCola = false;
+        servingCola = false;
+        servedCola = true;
 
         // Start Filling
-        startFilling();
+//        startFilling();
     }
 
     // GET METHOD
@@ -158,12 +162,12 @@ public class CocaColaMaker implements Appliance {
 
     @Override
     public void reset() {
-        preparingCola = true;
+        preparingCola = false;
         readyCola = false;
         servingCola = false;
-        servedCola = false;
+        servedCola = true;
         this.refillStartTime = 0;
-        executor.shutdownNow(); // Stop background threads
+//        executor.shutdownNow(); // Stop background threads
     }
 
     @Override
@@ -171,13 +175,6 @@ public class CocaColaMaker implements Appliance {
 
     @Override
     public void draw(Canvas canvas) {
-        // Draw machine body with rounded rectangle
-//        paint.setColor(Color.DKGRAY);
-//        canvas.drawRoundRect(
-//                hitbox.left, hitbox.top, hitbox.right, hitbox.bottom,
-//                20f, 20f, paint
-//        );
-
         // Draw glass area
         Rect glassRect = new Rect(hitbox.left + 60, hitbox.top + 100, hitbox.right - 60, hitbox.bottom - 30);
 
@@ -210,30 +207,5 @@ public class CocaColaMaker implements Appliance {
 
             canvas.drawBitmap(flipped, drawX, drawY, null);
         }
-
-
-        // Draw outline of glass
-//        Paint border = new Paint();
-//        border.setColor(Color.WHITE);
-//        border.setStyle(Paint.Style.STROKE);
-//        border.setStrokeWidth(4f);
-//        canvas.drawRect(glassRect, border);
-
-        // Draw label "Cola Machine"
-//        text.setColor(Color.WHITE);
-//        text.setTextSize(36f);
-//        canvas.drawText("Cola Maker", hitbox.left + 30, hitbox.top + 40, text);
-
-        // Draw status
-//        text.setTextSize(28f);
-//        if (preparingCola) {
-//            canvas.drawText("Preparing", hitbox.left + 30, hitbox.bottom - 10, text);
-//        } else if (readyCola) {
-//            canvas.drawText("Ready", hitbox.left + 40, hitbox.bottom - 10, text);
-//        } else if (servingCola) {
-//            canvas.drawText("Serving", hitbox.left + 60, hitbox.bottom - 10, text);
-//        } else { // hasGlass && !isFilling && !isFilled
-//            canvas.drawText("Returning Glass", hitbox.left + 60, hitbox.bottom - 10, text); // Serving complete
-//        }
     }
 }
