@@ -94,7 +94,6 @@ public class Game {
         customerManager.setScreenWidth(width);
     }
 
-
     public int getCustomersFulfilled() {
         return customerManager.getCustomersFulfilled();
     }
@@ -208,26 +207,7 @@ public class Game {
                 timerText.setTextAlign(Paint.Align.CENTER);
                 timerText.setAntiAlias(true);
                 canvas.drawText(remaining + "s", cx, cy + 12, timerText);
-
-                // Stats
-//                List<Customer> customers = customerManager.getCustomerList();
-//                canvas.drawText("Customers: " + customers.size(), 30, 60, textPaint);
-//                canvas.drawText("Coins: " + coinManager.getCollectedCoins(), 30, 120, textPaint);
-//                int rating = getRating();
-//                canvas.drawText("Rating: " + rating + " star(s)", 30, 180, textPaint);
             }
-
-//            if (isGameOver) {
-//                canvas.drawText("Game Over!", 30, 240, textPaint);
-//                canvas.drawText("Final Rating: " + getRating() + " star(s)", 30, 300, textPaint);
-//                canvas.drawText("Total Coins: " + coinManager.getCollectedCoins(), 30, 360, textPaint);
-//
-//                Paint restartText = new Paint();
-//                restartText.setColor(Color.WHITE);
-//                restartText.setTextSize(60f);
-//                restartText.setTextAlign(Paint.Align.CENTER);
-//                canvas.drawText("Tap to Restart", screenWidth / 2f, screenHeight / 2f + 100, restartText);
-//            }
         });
     }
 
@@ -246,17 +226,6 @@ public class Game {
 
             return; // Stop checking other food items once we've found the one being dragged
         }
-
-        // Customer interaction
-//        Customer customer = customerManager.handleTouch(event);
-//        if (customer != null) {
-////            Log.d("Game-Click", "Serve Customer");
-//            customer.serveItem("Cola"); // Assuming you’ll implement this method
-//
-//            Coin newCoin = coinManager.addNewCoins(context, customer.id, customer.getX(), customer.getReward());
-//            coinManager.addCoin(newCoin);
-//            return;
-//        }
 
         Coin coinCollected = coinManager.handleTouch(event);
         if (coinCollected != null) {
@@ -472,7 +441,6 @@ public class Game {
         return 16; // ~60fps
     }
 
-
     public int getRating(){
         int coinsCollected = coinManager.getCollectedCoins();
         if (coinsCollected >= 20 ) return 3;
@@ -480,9 +448,6 @@ public class Game {
         else return 1;
     }
 
-//    public void deductCoin(int amount) {
-//        coins = Math.max(0, coins - amount);
-//    }
     public void restart(){
         this.isGameStarted = true;
         this.gameStartTime = System.currentTimeMillis();

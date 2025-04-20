@@ -13,11 +13,6 @@ public class FoodSourceManager {
 
     public FoodSourceManager(Context context, int screenWidth, int screenHeight) {
         this.context = context;
-//        addFoodSource(1000, screenHeight - 600, "BurgerBun");
-//        addFoodSource(1540, screenHeight - 600, "HotdogBun");
-//        addFoodSource(2200, screenHeight - 650, "Patty");
-//        addFoodSource(2400, screenHeight - 650, "Sausage");
-//        addFoodSource(400,screenHeight - 550, "Cola");
     }
 
     public void addFoodSource(int x, int y, String name) {
