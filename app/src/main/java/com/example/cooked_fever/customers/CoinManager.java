@@ -12,7 +12,6 @@ import android.view.MotionEvent;
 import com.example.cooked_fever.R;
 import com.example.cooked_fever.utils.SoundUtils;
 import com.example.cooked_fever.food.FoodItem;
-import com.example.cooked_fever.utils.SoundUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -57,7 +56,7 @@ public class CoinManager {
             for (Coin coin : uncollectedCoinList) {
                 if (coin.onClick(x, y)) {  // Check if the click is within the bounds of the food item
 
-                    SoundUtils.playCoin();
+//                    SoundUtils.playCoin();
                     return coin; // Return food item
                 }
             }
