@@ -4,6 +4,7 @@ import android.content.Context;
 import android.media.AudioAttributes;
 import android.media.SoundPool;
 import android.media.MediaPlayer;
+import android.util.Log;
 
 import com.example.cooked_fever.R;
 
@@ -96,6 +97,7 @@ public class SoundUtils {
         if (soundsLoaded) soundPool.play(waterSound, 1, 1, 0, 0, 1);
     }
     public static void playFizz() {
+        Log.d("SoundUtils", "Fizz");
         if (soundsLoaded) soundPool.play(fizzSound, 1, 1, 0, 0, 1);
     }
 

@@ -128,7 +128,7 @@ public class Game {
             Log.d("Game", "update: drinkReady");
             float colaX = applianceManager.getColaMachineX();
             float colaY = applianceManager.getColaMachineY();
-            FoodItem colaDrink = new FoodItem(context, colaX+30, colaY-100, "Cola");
+            FoodItem colaDrink = new FoodItem(context, colaX+40, colaY-70, "Cola");
             colaDrink.setIsPrepared(true);
             foodItemManager.addFoodItem(colaDrink);
             applianceManager.pauseColaMachine();
