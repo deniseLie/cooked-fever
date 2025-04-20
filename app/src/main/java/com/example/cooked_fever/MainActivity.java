@@ -40,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         SoundUtils.init(getApplicationContext());
 
-        Log.d("MainActivity", "onCreate called");
+//        Log.d("MainActivity", "onCreate called");
 
         gameView = findViewById(R.id.game_view);
         mainMenu = findViewById(R.id.main_menu);
