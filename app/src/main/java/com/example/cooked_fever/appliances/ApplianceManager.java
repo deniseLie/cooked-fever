@@ -30,7 +30,7 @@ public class ApplianceManager {
             Log.d("ApplianceManager", "Initializing");
 
             // Add Coca cola maker
-            appliances.add(new CocaColaMaker(context, 200, screenHeight - 500));
+            appliances.add(new CocaColaMaker(context, 50, screenHeight - 450));
             appliances.add(new TrashBin(context, 60, screenHeight - 200));
 
             // Add 6 TableTops: 2 columns x 3 rows
@@ -91,20 +91,20 @@ public class ApplianceManager {
                 appliances.add(new Pan(context, x, y, width, height, i, type));
             }
 
-            // Add 2 Pans: 1 column x 2 rows
+            // Add 2 FoodWarmer: 1 column x 2 rows
             int warmWidth = 200;
             int warmHeight = 100;
-            appliances.add(new FoodWarmer(context, 1750,420, warmWidth, warmHeight, 0));
-            appliances.add(new FoodWarmer(context, 1950, 420, warmWidth, warmHeight, 1));
+            appliances.add(new FoodWarmer(context, 2100,630, warmWidth, warmHeight, 0));
+            appliances.add(new FoodWarmer(context, 2170, 730, warmWidth, warmHeight, 1));
 
             int fryMakerWidth = 200;
-            int fryMakerHeight = 100;
-            appliances.add(new FryMaker(context, 300,500, fryMakerWidth, fryMakerHeight, 0));
+            int fryMakerHeight = 200;
+            appliances.add(new FryMaker(context, 700,500, fryMakerWidth, fryMakerHeight, 0));
 
             int fryHolderWidth = 200;
             int fryHolderHeight = 100;
-            appliances.add(new FryHolder(context, 300,700, fryHolderWidth, fryHolderHeight, 0));
-            appliances.add(new FryHolder(context, 300, 800, fryHolderWidth, fryHolderHeight, 1));
+            appliances.add(new FryHolder(context, 700,700, fryHolderWidth, fryHolderHeight, 0));
+            appliances.add(new FryHolder(context, 700, 800, fryHolderWidth, fryHolderHeight, 1));
             Log.d("ApplianceManager", "Finished initializing appliances");
         }
     }

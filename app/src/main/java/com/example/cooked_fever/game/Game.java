@@ -128,7 +128,9 @@ public class Game {
             Log.d("Game", "update: drinkReady");
             float colaX = applianceManager.getColaMachineX();
             float colaY = applianceManager.getColaMachineY();
-            foodItemManager.addFoodItem(new FoodItem(context, colaX, colaY, "Cola"));
+            FoodItem colaDrink = new FoodItem(context, colaX+30, colaY-100, "Cola");
+            colaDrink.setIsPrepared(true);
+            foodItemManager.addFoodItem(colaDrink);
             applianceManager.pauseColaMachine();
         }
         FryMaker fryMaker = applianceManager.getFryMaker();
@@ -231,7 +233,7 @@ public class Game {
     public void click(MotionEvent event) {
         float x = event.getX();
         float y = event.getY();
-//        Log.d("Game", "x: " + x + " y: " + y);
+        Log.d("Game", "x: " + x + " y: " + y);
 
         FoodItem foodItem = foodItemManager.handleTouch(event);
         if (foodItem != null && foodItem.isDraggable()) {

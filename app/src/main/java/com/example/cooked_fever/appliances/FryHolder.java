@@ -47,7 +47,7 @@ public class FryHolder implements Appliance{
         textPaint.setAntiAlias(true);
 
         // Load the pan image
-        foodWarmerBitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.food_warmer);
+        foodWarmerBitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.plate);
     }
 
     @Override

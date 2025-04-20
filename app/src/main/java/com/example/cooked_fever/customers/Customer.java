@@ -186,7 +186,7 @@ public class Customer {
     // Draw Customer
     public void draw(Canvas canvas) {
         Paint paint = new Paint();
-        Log.d("CustomerDraw", "Drawing at x=" + x + " | sprite width=" + sprite.getWidth());
+//        Log.d("CustomerDraw", "Drawing at x=" + x + " | sprite width=" + sprite.getWidth());
 
         // Draw the sprite (scaled)
         if (sprite != null) {

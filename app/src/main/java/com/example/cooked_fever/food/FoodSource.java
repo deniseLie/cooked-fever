@@ -17,7 +17,7 @@ public class FoodSource {
     private final Paint text = new Paint();
 
     public FoodSource(Context context, int x, int y, String foodSourceName) {
-        hitbox = new Rect(x - 50, y - 50, x + 50, y + 50);
+//        hitbox = new Rect(x - 50, y - 50, x + 50, y + 50);
         this.x = x;
         this.y = y;
         this.foodSourceName = foodSourceName;
@@ -37,7 +37,8 @@ public class FoodSource {
             this.hitbox = new Rect(left, top, right, bottom);
         } else {
             // fallback default hitbox if sprite failed to load
-            this.hitbox = new Rect(x - 50, y - 50, x + 50, y + 50);
+//            this.hitbox = new Rect(x - 50, y - 50, x + 50, y + 50);
+            hitbox = new Rect(x - 50, y - 50, x + 50, y + 50);
         }
     }
 
