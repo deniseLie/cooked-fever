@@ -104,7 +104,10 @@ public class Game {
         customerManager.update(now);
         applianceManager.update();
         if (applianceManager.checkColaMachine()) { // drinkReady
-            foodItemManager.addFoodItem(new FoodItem(context, 200, screenHeight - 315, "Cola"));
+            Log.d("Game", "update: drinkReady");
+            float colaX = applianceManager.getColaMachineX();
+            float colaY = applianceManager.getColaMachineY();
+            foodItemManager.addFoodItem(new FoodItem(context, colaX, colaY, "Cola"));
             applianceManager.pauseColaMachine();
         }
         FryMaker fryMaker = applianceManager.getFryMaker();
@@ -176,7 +179,7 @@ public class Game {
     public void click(MotionEvent event) {
         float x = event.getX();
         float y = event.getY();
-        Log.d("Game", "x: " + x + " y: " + y);
+//        Log.d("Game", "x: " + x + " y: " + y);
 
         FoodItem foodItem = foodItemManager.handleTouch(event);
         if (foodItem != null && foodItem.isDraggable()) {
@@ -192,7 +195,7 @@ public class Game {
         // Customer interaction
         Customer customer = customerManager.handleTouch(event);
         if (customer != null) {
-            Log.d("Game-Click", "Serve Customer");
+//            Log.d("Game-Click", "Serve Customer");
             customer.serveItem("Cola"); // Assuming you’ll implement this method
 
             Coin newCoin = coinManager.addNewCoins(context, customer.id, customer.getX(), customer.getReward());
@@ -219,20 +222,6 @@ public class Game {
 
             // Cola Interaction
             if (foodItem.getFoodItemName().equals("Cola")) {
-//                if (applianceManager.checkColaMachine()) {
-//                    Log.d("Game-Click" ,"checkColaMachine: " + foodItem.getFoodItemName());
-//                    foodItem.prepareFoodItem();
-//                    Log.d("Game-Click" ,"foodItem ready: " + foodItem.getFoodItemName());
-//                    // Set the dragged food item
-//                    draggedFoodItem = foodItem;
-//                    Log.d("Game-Click" ,"Drag picked up: " + draggedFoodItem.getFoodItemName());
-//                    offsetX = x - foodItem.getX();  // Calculate offset to drag smoothly
-//                    offsetY = y - foodItem.getY();
-//                    applianceManager.pauseColaMachine();
-//                    foodItemManager.addFoodItem(foodItem);
-////                draggedFoodItem.startDrag();
-//                    return; // Stop checking other food items once we've found the one being dragged
-//                }
 
             // Other Food Item Interaction
             } else {
@@ -283,7 +272,6 @@ public class Game {
         // Ensure there’s a food item being dragged
         if (draggedFoodItem != null) {
             // Calculate the new position for the dragged food item based on mouse/finger movement
-//            Log.d("draggedItem" ,"draggedItem: " + draggedFoodItem.getFoodItemName());
             float newX = event.getX() - offsetX;  // Adjust for initial click offset
             float newY = event.getY() - offsetY;
             draggedFoodItem.setItemPosition(newX, newY);  // Update the food item’s position
