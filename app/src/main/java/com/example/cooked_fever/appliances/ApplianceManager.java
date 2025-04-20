@@ -28,7 +28,7 @@ public class ApplianceManager {
     private void initializeAppliances() {
         synchronized (appliances) {
             appliances.clear();
-            Log.d("ApplianceManager", "Initializing");
+//            Log.d("ApplianceManager", "Initializing");
 
             // Add Coca cola maker
             appliances.add(new CocaColaMaker(context, 50, screenHeight - 450));
@@ -106,7 +106,7 @@ public class ApplianceManager {
             int fryHolderHeight = 100;
             appliances.add(new FryHolder(context, 700,700, fryHolderWidth, fryHolderHeight, 0));
             appliances.add(new FryHolder(context, 660, 800, fryHolderWidth, fryHolderHeight, 1));
-            Log.d("ApplianceManager", "Finished initializing appliances");
+//            Log.d("ApplianceManager", "Finished initializing appliances");
         }
     }
 
@@ -180,7 +180,7 @@ public class ApplianceManager {
     }
     public void doTrash(Appliance appliance) {
         appliance.takeFood();
-        Log.d("ApplianceManager", "Trash from: " + appliance);
+//        Log.d("ApplianceManager", "Trash from: " + appliance);
     }
 
     // GET METHOD
@@ -277,7 +277,7 @@ public class ApplianceManager {
     public Boolean hasTableSpace(FoodItem foodItem) {
         if (!(foodItem.getFoodItemName().equals("BurgerBun") ||
                 foodItem.getFoodItemName().equals("HotdogBun"))) {
-            Log.d("ApplianceManager", "Rejected: " + foodItem.getFoodItemName());
+//            Log.d("ApplianceManager", "Rejected: " + foodItem.getFoodItemName());
             return false;
         }
 
@@ -296,7 +296,7 @@ public class ApplianceManager {
                 }
             }
             if (counter == 3) {
-                Log.d("ApplianceManager", "Table full");
+//                Log.d("ApplianceManager", "Table full");
                 return false;
             }
         }
@@ -318,12 +318,12 @@ public class ApplianceManager {
             if (appliance instanceof Pan) {
                 Pan pan = (Pan) appliance;
                 if (pan.accepts(foodItem.getFoodItemName()) && !pan.isEmpty()) {
-                    Log.d("ApplianceManager", "" + pan + " " + pan.isEmpty());
+//                    Log.d("ApplianceManager", "" + pan + " " + pan.isEmpty());
                     counter++;
                 }
             }
             if (counter == 3) {
-                Log.d("ApplianceManager", "Pan full");
+//                Log.d("ApplianceManager", "Pan full");
                 return false;
             }
         }
@@ -349,7 +349,7 @@ public class ApplianceManager {
         for (Appliance appliance : snapshot) {
             if (appliance instanceof FryHolder) {
                 FryHolder fryHolder = (FryHolder) appliance;
-                Log.d("ApplianceManager", "status: " + fryHolder.isEmpty());
+//                Log.d("ApplianceManager", "status: " + fryHolder.isEmpty());
                 if (fryHolder.isEmpty()) {
                     counter++;
                 }
@@ -404,7 +404,7 @@ public class ApplianceManager {
                         tableTop.placeFood(foodItem, tableTop.getX() - 10, tableTop.getY() - 20);
 //                        Log.d("Game", "Placed " + foodItemName + " on TableTop " + tableTop.getId());
 //                        tableTop.placeFood(foodItem, tableTop.getX(), tableTop.getY());
-                        Log.d("ApplianceManager", "Placed " + foodItemName + " on TableTop " + tableTop.getId());
+//                        Log.d("ApplianceManager", "Placed " + foodItemName + " on TableTop " + tableTop.getId());
                         break;
                     }
                 }
@@ -417,7 +417,7 @@ public class ApplianceManager {
                     if (pan.accepts(foodItemName) && pan.isEmpty()) {
                         pan.placeFood(foodItem, pan.getX() - 10, pan.getY() - 45);
                         foodItem.playSizzleSound();      // you’ll add this helper below
-                        Log.d("ApplianceManager", "Placed " + foodItemName + " on Pan " + pan.getId());
+//                        Log.d("ApplianceManager", "Placed " + foodItemName + " on Pan " + pan.getId());
                         break;
                     }
                 }

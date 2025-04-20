@@ -52,14 +52,14 @@ public class TrashBin implements Appliance {
     @Override
     public boolean onClick(int x, int y) {
         if (hitbox.contains(x, y)) {
-            Log.d("TrashBin", "Clicked");
+//            Log.d("TrashBin", "Clicked");
             return true;
         }
         return false;
     }
 
     public boolean isTrashBin(int x, int y) {
-        Log.d("TrashBin", "isTrashBin " + x);
+//        Log.d("TrashBin", "isTrashBin " + x);
         return hitbox.contains(x, y);
     }
 

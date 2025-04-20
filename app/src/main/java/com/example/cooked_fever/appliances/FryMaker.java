@@ -77,7 +77,7 @@ public class FryMaker implements Appliance{
     public void makeFries() {
         isCooking = true;
         SoundUtils.playSizzle();
-        Log.d("FryMaker", "cooking status: " + isCooking);
+//        Log.d("FryMaker", "cooking status: " + isCooking);
         executor.execute(() -> {
             try {
                 Thread.sleep(fryingDuration); // Simulate frying time
@@ -86,8 +86,8 @@ public class FryMaker implements Appliance{
                     isCooking = false;
                     readyFries = true;
                     SoundUtils.playDing();
-                    Log.d("FryMaker", "cooking status: " + isCooking);
-                    Log.d("FryMaker", "Fries status: " + readyFries);
+//                    Log.d("FryMaker", "cooking status: " + isCooking);
+//                    Log.d("FryMaker", "Fries status: " + readyFries);
                 });
             } catch (InterruptedException e) {
                 e.printStackTrace();

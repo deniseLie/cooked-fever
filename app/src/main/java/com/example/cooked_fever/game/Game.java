@@ -125,7 +125,7 @@ public class Game {
         customerManager.update(now);
         applianceManager.update();
         if (applianceManager.checkColaMachine()) { // drinkReady
-            Log.d("Game", "update: drinkReady");
+//            Log.d("Game", "update: drinkReady");
             float colaX = applianceManager.getColaMachineX();
             float colaY = applianceManager.getColaMachineY();
             FoodItem colaDrink = new FoodItem(context, colaX+60, colaY-160, "Cola");
@@ -135,13 +135,13 @@ public class Game {
         }
         FryMaker fryMaker = applianceManager.getFryMaker();
         if (applianceManager.checkFryMaker(fryMaker)) { // readyFries
-            Log.d("Game", "Fries are ready");
+//            Log.d("Game", "Fries are ready");
             while (applianceManager.isEmptyFryHolder()) {
                 FoodItem foodItem = new FoodItem(context, 300, screenHeight - 500, "Fries");
                 applianceManager.assign(foodItem);
                 foodItemManager.addFoodItem(foodItem);
             }
-            Log.d("Game", "Fries are done");
+//            Log.d("Game", "Fries are done");
             applianceManager.stopFrying(fryMaker);
         }
     }
@@ -234,12 +234,12 @@ public class Game {
     public void click(MotionEvent event) {
         float x = event.getX();
         float y = event.getY();
-        Log.d("Game", "x: " + x + " y: " + y);
+//        Log.d("Game", "x: " + x + " y: " + y);
 
         FoodItem foodItem = foodItemManager.handleTouch(event);
         if (foodItem != null && foodItem.isDraggable()) {
             draggedFoodItem = foodItem;  // Set the dragged food item
-            Log.d("Game-Click" ,"item picked up: " + draggedFoodItem.getFoodItemName());
+//            Log.d("Game-Click" ,"item picked up: " + draggedFoodItem.getFoodItemName());
             offsetX = x - foodItem.getX();  // Calculate offset to drag smoothly
             offsetY = y - foodItem.getY();
 //                draggedFoodItem.startDrag();
@@ -269,7 +269,7 @@ public class Game {
         // Food Source interaction
         FoodSource source = foodSourceManager.getTouchedSource(x, y);
         if (source != null) {
-            Log.d("Game-Click", "FoodSource clicked: " + source.getFoodSourceName());
+//            Log.d("Game-Click", "FoodSource clicked: " + source.getFoodSourceName());
 
             // Initialize food item
             foodItem = foodItemManager.createFoodItem(source.getX(), source.getY(), source.getFoodSourceName());
@@ -287,7 +287,7 @@ public class Game {
                     // Take Food Item -> Tagged to an appliance -> Assigns foodItem to a slot
                     applianceManager.assign(foodItem);
 //                    foodItemManager.addFoodItem(foodItem);
-                    Log.d("Game-Click" ,"appliance source: " + foodItem.getFoodItemName());
+//                    Log.d("Game-Click" ,"appliance source: " + foodItem.getFoodItemName());
                     foodItemManager.addFoodItem(foodItem);
                     return;
                 }
@@ -311,7 +311,7 @@ public class Game {
                 }
                 colaMachine = null;
             } else if (appliance instanceof FryMaker) {
-                Log.d("Game", "Frymaker");
+//                Log.d("Game", "Frymaker");
                 FryMaker fryMaker = (FryMaker) appliance;
                 if (applianceManager.isEmptyFryHolder()) {
                     applianceManager.startFrying(fryMaker);
@@ -335,7 +335,7 @@ public class Game {
 
     public void release(MotionEvent event) {
         if (draggedFoodItem != null) {
-            Log.d("droppedItem", "Dropped: " + draggedFoodItem.getFoodItemName());
+//            Log.d("droppedItem", "Dropped: " + draggedFoodItem.getFoodItemName());
 
             // Check if food drop on valid customer, customer food served
             Customer customer = customerManager.handleTouch(event);
@@ -369,7 +369,7 @@ public class Game {
                             (int) draggedFoodItem.getOriginalY()
                     );
                     if (oldAppliance != null) {
-                        Log.d("Game", "Crash" + draggedFoodItem);
+//                        Log.d("Game", "Crash" + draggedFoodItem);
                         applianceManager.doTrash(oldAppliance);
                     }
 //                    draggedFoodItem.setItemPosition(draggedFoodItem.getOriginalX(), draggedFoodItem.getOriginalY());
@@ -383,7 +383,7 @@ public class Game {
             Appliance appliance = applianceManager.handleTouch(event);
             if (appliance != null) {
                 if (applianceManager.isTrash(appliance)) {
-                    Log.d("Game", "Trashed: " + draggedFoodItem.getFoodItemName());
+//                    Log.d("Game", "Trashed: " + draggedFoodItem.getFoodItemName());
                     foodItemManager.removeFoodItem(draggedFoodItem);
 
                     if (draggedFoodItem.getFoodItemName().equals("Cola")) {
@@ -399,7 +399,7 @@ public class Game {
 
 
                     coinManager.deductCoin(1);
-                    Log.d("Game", "Coins after trashing: " + coinManager.getCollectedCoins());
+//                    Log.d("Game", "Coins after trashing: " + coinManager.getCollectedCoins());
 
                     draggedFoodItem.stopDrag();
                     draggedFoodItem = null;

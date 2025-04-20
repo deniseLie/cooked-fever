@@ -162,7 +162,7 @@ public class Pan implements Appliance {
     public FoodItem takeFood() {
         if (isReady()) {
             FoodItem item = currentItem;
-            Log.d("Pan", "Removing: " + currentItem.getFoodItemName());
+//            Log.d("Pan", "Removing: " + currentItem.getFoodItemName());
             currentItem = null;
             return item;
         }

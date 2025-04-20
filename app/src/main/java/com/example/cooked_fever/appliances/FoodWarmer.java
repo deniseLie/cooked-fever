@@ -90,7 +90,7 @@ public class FoodWarmer implements Appliance{
                 return true;
 //                break;
             default:
-                Log.d("FoodWarmer", "Not valid item: " + foodItem.getFoodItemName());
+//                Log.d("FoodWarmer", "Not valid item: " + foodItem.getFoodItemName());
                 currentItem = null;
                 return false;
         }

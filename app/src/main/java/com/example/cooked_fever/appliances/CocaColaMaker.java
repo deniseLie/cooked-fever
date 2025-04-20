@@ -107,7 +107,7 @@ public class CocaColaMaker implements Appliance {
 
         executor.execute(() -> {
             try {
-                Log.d("CokeMachine" ,"Filling");
+//                Log.d("CokeMachine" ,"Filling");
                 Thread.sleep(refillDuration); // Simulate filling time
 
                 // Once done, update the UI thread
@@ -118,7 +118,7 @@ public class CocaColaMaker implements Appliance {
                 });
             } catch (InterruptedException e) {
                 e.printStackTrace();
-                Log.d("CokeMachine" ,"Coke Spilled: " + e.toString());
+//                Log.d("CokeMachine" ,"Coke Spilled: " + e.toString());
             }
         });
     }
@@ -127,14 +127,14 @@ public class CocaColaMaker implements Appliance {
         // Handle serving the drink asynchronously.
         executor.execute(() -> {
             try {
-                Log.d("CokeMachine", "Serving");
+//                Log.d("CokeMachine", "Serving");
                 // Simulate the serving process (no delay here in a real case)
                 uiHandler.post(() -> {
                     readyCola = false;
                     servingCola = true;
                 });
             } catch (Exception e) {
-                Log.d("CokeMachine", "Error while serving: " + e.toString());
+//                Log.d("CokeMachine", "Error while serving: " + e.toString());
             }
         });
     }
