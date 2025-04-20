@@ -29,6 +29,7 @@ public class CocaColaMaker implements Appliance {
     private long refillStartTime;
     private final int refillDuration = 6000; // 10 seconds
 
+
     private final Context context;
 
     private final Paint paint = new Paint();

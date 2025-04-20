@@ -26,7 +26,6 @@ import com.example.cooked_fever.R;
 
 public class Game {
 
-    private final Runnable sendNotification;
     private final Consumer<Consumer<Canvas>> canvasUser;
 
     private final Paint customerPaint = new Paint();
@@ -60,9 +59,8 @@ public class Game {
     private FoodItem draggedFoodItem = null;  // Track which food item is being dragged
     private float offsetX, offsetY;  // Track where the user clicked on the food item to ensure smooth dragging
 
-    public Game(Context context, Runnable sendNotification, Consumer<Consumer<Canvas>> canvasUser) {
+    public Game(Context context, Consumer<Consumer<Canvas>> canvasUser) {
         this.context = context;
-        this.sendNotification = sendNotification;
         this.canvasUser = canvasUser;
 
         // Initialize managers
@@ -113,7 +111,6 @@ public class Game {
         if (now - gameStartTime >= GAME_DURATION_MS) {
             isGameOver = true;
             Log.d("Game", "Game over!");
-            sendNotification.run();  // Optional: trigger game-end notification
             return;
         }
 

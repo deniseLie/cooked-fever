@@ -33,11 +33,8 @@ public class SoundUtils {
     private static int angry2Sound;
 
     private static int dingSound;
-
     private static int waterSound;
-
     private static int fizzSound;
-
 
     public static void init(Context context) {
         if (soundPool != null) return;
@@ -133,16 +130,6 @@ public class SoundUtils {
                 bgmPlayer.start();
             }
         });
-
-//        if (bgmPlayer == null) {
-//            bgmPlayer = MediaPlayer.create(context, R.raw.bgm);
-//            bgmPlayer.setLooping(true);
-//
-//            bgmPlayer.setVolume(0.2f, 0.2f); // adjust if needed
-//            bgmPlayer.start();
-//        } else if (!bgmPlayer.isPlaying()) {
-//            bgmPlayer.start();
-//        }
     }
 
     public static void stopBGM() {
@@ -161,14 +148,7 @@ public class SoundUtils {
             bgmThread = null;
             bgmHandler = null;
         }
-
-//        if (bgmPlayer != null && bgmPlayer.isPlaying()) {
-//            bgmPlayer.stop();
-//            bgmPlayer.release();
-//            bgmPlayer = null;
-//        }
     }
-
 
     private static void playRandom(int sound1, int sound2) {
         if (soundsLoaded) {
