@@ -26,6 +26,13 @@ public class SoundUtils {
     private static int angry1Sound;
     private static int angry2Sound;
 
+    private static int dingSound;
+
+    private static int waterSound;
+
+    private static int fizzSound;
+
+
     public static void init(Context context) {
         if (soundPool != null) return;
 
@@ -50,6 +57,9 @@ public class SoundUtils {
         happy2Sound = soundPool.load(context, R.raw.happy_2, 1);
         angry1Sound = soundPool.load(context, R.raw.angry_1, 1);
         angry2Sound = soundPool.load(context, R.raw.angry_2, 1);
+        dingSound = soundPool.load(context, R.raw.ding, 1);
+        waterSound = soundPool.load(context, R.raw.water_pour, 1);
+        fizzSound = soundPool.load(context, R.raw.fizz, 1);
 
         soundsLoaded = true;
     }
@@ -76,6 +86,17 @@ public class SoundUtils {
 
     public static void playThankYou() {
         if (soundsLoaded) soundPool.play(thankYouSound, 1, 1, 0, 0, 1);
+    }
+
+    public static void playDing() {
+        if (soundsLoaded) soundPool.play(dingSound, 1, 1, 0, 0, 1);
+    }
+
+    public static void playWater() {
+        if (soundsLoaded) soundPool.play(waterSound, 1, 1, 0, 0, 1);
+    }
+    public static void playFizz() {
+        if (soundsLoaded) soundPool.play(fizzSound, 1, 1, 0, 0, 1);
     }
 
     public static void playHappy() {

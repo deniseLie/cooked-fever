@@ -13,6 +13,7 @@ import android.util.Log;
 
 import com.example.cooked_fever.R;
 import com.example.cooked_fever.food.FoodItem;
+import com.example.cooked_fever.utils.SoundUtils;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -76,6 +77,7 @@ public class FryMaker implements Appliance{
     // GET METHOD
     public void makeFries() {
         isCooking = true;
+        SoundUtils.playSizzle();
         Log.d("FryMaker", "cooking status: " + isCooking);
         executor.execute(() -> {
             try {
@@ -84,6 +86,7 @@ public class FryMaker implements Appliance{
                 uiHandler.post(() -> {
                     isCooking = false;
                     readyFries = true;
+                    SoundUtils.playDing();
                     Log.d("FryMaker", "cooking status: " + isCooking);
                     Log.d("FryMaker", "Fries status: " + readyFries);
                 });

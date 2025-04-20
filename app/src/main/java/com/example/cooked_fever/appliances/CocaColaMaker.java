@@ -10,6 +10,7 @@ import com.example.cooked_fever.R;
 
 import com.example.cooked_fever.appliances.Appliance;
 import com.example.cooked_fever.food.*;
+import com.example.cooked_fever.utils.SoundUtils;
 
 public class CocaColaMaker implements Appliance {
 
@@ -100,7 +101,9 @@ public class CocaColaMaker implements Appliance {
     }
 
     public void startFilling() {
+
         preparingCola = true;
+        SoundUtils.playWater();
 
         executor.execute(() -> {
             try {
@@ -111,6 +114,7 @@ public class CocaColaMaker implements Appliance {
                 uiHandler.post(() -> {
                     preparingCola = false;
                     readyCola = true;
+                    SoundUtils.playFizz();
                 });
             } catch (InterruptedException e) {
                 e.printStackTrace();
