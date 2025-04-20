@@ -10,6 +10,7 @@ import android.graphics.Rect;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
+import com.example.cooked_fever.utils.SoundUtils;
 
 import com.example.cooked_fever.R;
 import com.example.cooked_fever.food.FoodItem;
@@ -59,9 +60,7 @@ public class FryMaker implements Appliance{
     }
 
     @Override
-    public void update() {
-
-    }
+    public void update() {}
 
     @Override
     public boolean isReady() {
@@ -76,6 +75,7 @@ public class FryMaker implements Appliance{
     // GET METHOD
     public void makeFries() {
         isCooking = true;
+        SoundUtils.playSizzle();
         Log.d("FryMaker", "cooking status: " + isCooking);
         executor.execute(() -> {
             try {

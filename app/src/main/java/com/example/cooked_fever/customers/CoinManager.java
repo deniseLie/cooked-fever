@@ -1,12 +1,16 @@
 package com.example.cooked_fever.customers;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.util.Log;
 import android.view.MotionEvent;
 
+import com.example.cooked_fever.R;
+import com.example.cooked_fever.utils.SoundUtils;
 import com.example.cooked_fever.food.FoodItem;
 
 import java.util.ArrayList;
@@ -23,7 +27,7 @@ public class CoinManager {
     }
 
     public Coin addNewCoins(Context context, int customerID, float x, int coinAmount) {
-        Coin newCoin = new Coin(context, customerID, x, 500, coinAmount);
+        Coin newCoin = new Coin(context, customerID, x, 400, coinAmount);
         Log.d("CoinManager", "Created: coin" + customerID + " amt: " + coinAmount);
         return newCoin;
     }
@@ -43,6 +47,7 @@ public class CoinManager {
     }
     public void collectCoin(int amount) {
         collectedCoins += amount;
+        SoundUtils.playCoin();
     }
     public Coin handleTouch(MotionEvent event) {
         synchronized(uncollectedCoinList) {
@@ -66,19 +71,42 @@ public class CoinManager {
                 coin.draw(canvas, context); // Draw each food item
             }
         }
+        float barWidth = 30;
+        float barLength = 1000;
+        float barLeft = 800;
+        float barTop = 90;
+
+        // Behind the Bar
+        Paint barBackground = new Paint();
+        barBackground.setColor((Color.YELLOW));
+        canvas.drawRect(barLeft - 50, barTop - 7, barLeft+barLength+20, barTop+37, barBackground);
 
         Paint fullBar = new Paint();
-        fullBar.setColor((Color.RED));
-        canvas.drawRect(700, 90 , 1700, 120, fullBar);
-
-        // Draw patience bar
+        fullBar.setColor((Color.BLUE));
+        canvas.drawRect(barLeft, barTop , barLeft+barLength, barTop+barWidth, fullBar);
+        // Draw Coin stack
+        Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.coin_stack);
+        if (bitmap != null) {
+            Bitmap scaled = Bitmap.createScaledBitmap(bitmap, 80, 80, false);
+            canvas.drawBitmap(scaled, barLeft-75, barTop-35, null);
+        } else {
+            // fallback if bitmap can't load
+            Paint paint = new Paint();
+            paint.setColor(Color.YELLOW);
+            canvas.drawCircle(barLeft, barTop, 50, paint);
+        }
+        // Draw progress bar
         Paint progressBar = new Paint();
-        progressBar.setColor(Color.YELLOW);
-        float barWidth = Math.max(0, (float) collectedCoins / 48) * 1000;
-        barWidth = barWidth >= 1000 ? 1000 : barWidth;
-        canvas.drawRect(700, 90 , 700 + barWidth, 120, progressBar);
+        progressBar.setColor(Color.GREEN);
+        float barProgressLength = Math.max(0, (float) collectedCoins / 48) * 1000;
+        barProgressLength = barProgressLength >= 1000 ? 1000 : barProgressLength;
+        canvas.drawRect(barLeft, barTop , barLeft + barProgressLength, barTop+30, progressBar);
 
-
+        Paint text = new Paint();
+        text.setColor(Color.YELLOW);
+        text.setTextSize(32f);
+        text.setAntiAlias(true);
+        canvas.drawText("" + collectedCoins, barLeft+50, barTop+25, text);
     }
 
     public int getCollectedCoins() {

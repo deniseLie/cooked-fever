@@ -68,8 +68,8 @@ public class Coin {
     }
 
     public void draw(Canvas canvas, Context context) {
-        int resId = R.drawable.coin_stack;
-        Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(), resId);
+//        int resId = R.drawable.coin_stack;
+        Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.coin_stack);
 
         if (bitmap != null) {
             Bitmap scaled = Bitmap.createScaledBitmap(bitmap, 100, 100, false);
@@ -80,13 +80,13 @@ public class Coin {
             canvas.drawCircle(x, y, 50, paint);
         }
 
-        Paint text = new Paint();
-        text.setColor(Color.BLACK);
-        text.setTextSize(32f);
-        text.setAntiAlias(true);
-
-        canvas.drawText(this.coinID, x - 60, y + 80, text);
-        canvas.drawText("Amount: " + this.coinAmount, x - 60, y + 100, text);
+//        Paint text = new Paint();
+//        text.setColor(Color.BLACK);
+//        text.setTextSize(32f);
+//        text.setAntiAlias(true);
+//
+//        canvas.drawText(this.coinID, x - 60, y + 80, text);
+//        canvas.drawText("Amount: " + this.coinAmount, x - 60, y + 100, text);
     }
 
 

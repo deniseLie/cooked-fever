@@ -18,29 +18,28 @@ public class FoodSource {
     private final Paint paint = new Paint();
     private final Paint text = new Paint();
 
-public FoodSource(Context context, int x, int y, String foodSourceName) {
-    this.x = x;
-    this.y = y;
-    this.foodSourceName = foodSourceName;
+    public FoodSource(Context context, int x, int y, String foodSourceName) {
+        this.x = x;
+        this.y = y;
+        this.foodSourceName = foodSourceName;
 
-    sprite = BitmapFactory.decodeResource(context.getResources(), loadSprite(context, foodSourceName));
+        sprite = BitmapFactory.decodeResource(context.getResources(), loadSprite(context, foodSourceName));
 
-    if (sprite != null) {
-        int targetSize = 200; // or try 80 if still too large
-        sprite = Bitmap.createScaledBitmap(sprite, targetSize, targetSize, true);
+        if (sprite != null) {
+            int targetSize = 200; // or try 80 if still too large
+            sprite = Bitmap.createScaledBitmap(sprite, targetSize, targetSize, true);
 
-        // Position hitbox based on new size
-        int left = x - targetSize / 2;
-        int top = y - targetSize / 2;
-        int right = left + targetSize;
-        int bottom = top + targetSize;
-        this.hitbox = new Rect(left, top, right, bottom);
-    } else {
-        // fallback hitbox
-        this.hitbox = new Rect(x - 50, y - 50, x + 50, y + 50);
+            // Position hitbox based on new size
+            int left = x - targetSize / 2;
+            int top = y - targetSize / 2;
+            int right = left + targetSize;
+            int bottom = top + targetSize;
+            this.hitbox = new Rect(left, top, right, bottom);
+        } else {
+            // fallback hitbox
+            this.hitbox = new Rect(x - 50, y - 50, x + 50, y + 50);
+        }
     }
-}
-
 
     private int loadSprite(Context context, String foodName) {
         int resId;
@@ -73,8 +72,15 @@ public FoodSource(Context context, int x, int y, String foodSourceName) {
     public float getY() { return y; }
 
     public void draw(Canvas canvas, Context context) {
+//        Paint paint = new Paint();
+//        paint.setColor(Color.RED);
+//        canvas.drawRect(this.hitbox, paint);
         if (sprite != null) {
             canvas.drawBitmap(sprite, x - sprite.getWidth() / 2f, y - sprite.getHeight() / 2f, null);
+        } else {
+//            // fallback if bitmap can't load
+            paint.setColor(Color.GRAY);
+            canvas.drawCircle(x, y, 50, paint);
         }
     }
 

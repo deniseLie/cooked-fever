@@ -8,6 +8,7 @@ import android.content.*;
 import java.util.*;
 
 import com.example.cooked_fever.food.*;
+import com.example.cooked_fever.utils.SoundUtils;
 
 public class ApplianceManager {
 
@@ -99,12 +100,12 @@ public class ApplianceManager {
 
             int fryMakerWidth = 200;
             int fryMakerHeight = 200;
-            appliances.add(new FryMaker(context, 700,500, fryMakerWidth, fryMakerHeight, 0));
+            appliances.add(new FryMaker(context, 730,500, fryMakerWidth, fryMakerHeight, 0));
 
             int fryHolderWidth = 200;
             int fryHolderHeight = 100;
             appliances.add(new FryHolder(context, 700,700, fryHolderWidth, fryHolderHeight, 0));
-            appliances.add(new FryHolder(context, 700, 800, fryHolderWidth, fryHolderHeight, 1));
+            appliances.add(new FryHolder(context, 660, 800, fryHolderWidth, fryHolderHeight, 1));
             Log.d("ApplianceManager", "Finished initializing appliances");
         }
     }

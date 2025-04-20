@@ -212,13 +212,13 @@ public class FoodItem {
             canvas.drawCircle(x, y, 50, paint);
         }
 
-        Paint text = new Paint();
-        text.setColor(Color.BLACK);
-        text.setTextSize(32f);
-        text.setAntiAlias(true);
-
-        canvas.drawText(this.foodItemName, x - 60, y + 80, text);
-        canvas.drawText("Status: " + this.isPrepared, x - 60, y + 100, text);
-        canvas.drawText("Cooked: " + (this.isBadlyCooked ? "Badly" : "Well"), x - 60, y + 120, text);
+//        Paint text = new Paint();
+//        text.setColor(Color.BLACK);
+//        text.setTextSize(32f);
+//        text.setAntiAlias(true);
+//
+//        canvas.drawText(this.foodItemName, x - 60, y + 80, text);
+//        canvas.drawText("Status: " + this.isPrepared, x - 60, y + 100, text);
+//        canvas.drawText("Cooked: " + (this.isBadlyCooked ? "Badly" : "Well"), x - 60, y + 120, text);
     }
 }

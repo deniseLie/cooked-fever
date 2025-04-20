@@ -13,11 +13,10 @@ public class FoodSourceManager {
 
     public FoodSourceManager(Context context, int screenWidth, int screenHeight) {
         this.context = context;
-
-        addFoodSource(1050, screenHeight - 650, "BurgerBun");
-        addFoodSource(1350, screenHeight - 650, "HotdogBun");
-        addFoodSource(1900, screenHeight - 650, "Patty");
-        addFoodSource(2200, screenHeight - 650, "Sausage");
+//        addFoodSource(1000, screenHeight - 600, "BurgerBun");
+//        addFoodSource(1540, screenHeight - 600, "HotdogBun");
+//        addFoodSource(2200, screenHeight - 650, "Patty");
+//        addFoodSource(2400, screenHeight - 650, "Sausage");
 //        addFoodSource(400,screenHeight - 550, "Cola");
     }
 
@@ -56,11 +55,11 @@ public class FoodSourceManager {
     }
     public void setup(int screenHeight) {
         sources.clear();
-        int burgerX = 1050;   // under TableTop left column
-        int hotdogX = 1350;  // under TableTop right column
-        int pattyX = 1850;   // under Pan left column
-        int sausageX = 2150; // under Pan right column
-        int y = screenHeight - 150; // below appliances
+        int burgerX = 1150;   // under TableTop left column
+        int hotdogX = 1500;  // under TableTop right column
+        int pattyX = 2000;   // under Pan left column
+        int sausageX = 2350; // under Pan right column
+        int y = screenHeight - 100; // below appliances
 
         addFoodSource(burgerX, y, "BurgerBun");
         addFoodSource(hotdogX, y, "HotdogBun");

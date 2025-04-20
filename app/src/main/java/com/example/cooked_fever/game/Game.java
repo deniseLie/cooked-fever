@@ -151,6 +151,7 @@ public class Game {
             if (canvas == null) return;
 
             canvas.drawColor(Color.DKGRAY); // Background
+            customerManager.draw(canvas);
 
             // Draw the background image scaled
             if (kitchenTableBitmap != null) {
@@ -173,7 +174,7 @@ public class Game {
 
             // Managers draw
             foodSourceManager.draw(canvas, context);
-            customerManager.draw(canvas);
+
             applianceManager.draw(canvas);
             foodItemManager.draw(canvas, context);
             coinManager.draw(canvas, context);
@@ -247,15 +248,15 @@ public class Game {
         }
 
         // Customer interaction
-        Customer customer = customerManager.handleTouch(event);
-        if (customer != null) {
-//            Log.d("Game-Click", "Serve Customer");
-            customer.serveItem("Cola"); // Assuming you’ll implement this method
-
-            Coin newCoin = coinManager.addNewCoins(context, customer.id, customer.getX(), customer.getReward());
-            coinManager.addCoin(newCoin);
-            return;
-        }
+//        Customer customer = customerManager.handleTouch(event);
+//        if (customer != null) {
+////            Log.d("Game-Click", "Serve Customer");
+//            customer.serveItem("Cola"); // Assuming you’ll implement this method
+//
+//            Coin newCoin = coinManager.addNewCoins(context, customer.id, customer.getX(), customer.getReward());
+//            coinManager.addCoin(newCoin);
+//            return;
+//        }
 
         Coin coinCollected = coinManager.handleTouch(event);
         if (coinCollected != null) {
