@@ -31,12 +31,12 @@ public class ApplianceManager {
 
             // Add Coca cola maker
             appliances.add(new CocaColaMaker(context, 50, screenHeight - 450));
-            appliances.add(new TrashBin(context, 60, screenHeight - 200));
+            appliances.add(new TrashBin(context, 60, screenHeight - 150));
 
             // Add 6 TableTops: 2 columns x 3 rows
-            int baseY = screenHeight - 530;
+            int baseY = screenHeight - 500;
             int rowGap = 180;
-            int leftX = 900;
+            int leftX = 980;
 
             for (int i = 0; i < 6; i++) {
                 int row = i % 3;
@@ -65,7 +65,7 @@ public class ApplianceManager {
             // Add 6 Pans: 2 columns x 3 rows
             int panBaseY = screenHeight - 500;
             int panRowGap = 180;
-            leftX = 1700;
+            leftX = 1800;
 
             for (int i = 0; i < 6; i++) {
                 int row = i % 3;
@@ -94,8 +94,8 @@ public class ApplianceManager {
             // Add 2 FoodWarmer: 1 column x 2 rows
             int warmWidth = 200;
             int warmHeight = 100;
-            appliances.add(new FoodWarmer(context, 2100,630, warmWidth, warmHeight, 0));
-            appliances.add(new FoodWarmer(context, 2170, 730, warmWidth, warmHeight, 1));
+            appliances.add(new FoodWarmer(context, 2250,630, warmWidth, warmHeight, 0));
+            appliances.add(new FoodWarmer(context, 2320, 730, warmWidth, warmHeight, 1));
 
             int fryMakerWidth = 200;
             int fryMakerHeight = 200;

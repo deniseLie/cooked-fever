@@ -172,7 +172,7 @@ public class Game {
 
 
             // Managers draw
-            foodSourceManager.draw(canvas);
+            foodSourceManager.draw(canvas, context);
             customerManager.draw(canvas);
             applianceManager.draw(canvas);
             foodItemManager.draw(canvas, context);

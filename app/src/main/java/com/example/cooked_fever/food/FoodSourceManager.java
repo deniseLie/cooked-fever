@@ -25,9 +25,9 @@ public class FoodSourceManager {
         sources.add(new FoodSource(context, x, y, name));
     }
 
-    public void draw(Canvas canvas) {
+    public void draw(Canvas canvas, Context context) {
         for (FoodSource source : sources) {
-            source.draw(canvas);
+            source.draw(canvas, context);
         }
     }
 
