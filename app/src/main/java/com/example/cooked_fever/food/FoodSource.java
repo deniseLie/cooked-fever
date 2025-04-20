@@ -17,6 +17,7 @@ public class FoodSource {
     private final Paint text = new Paint();
 
     public FoodSource(Context context, int x, int y, String foodSourceName) {
+        hitbox = new Rect(x - 50, y - 50, x + 50, y + 50);
         this.x = x;
         this.y = y;
         this.foodSourceName = foodSourceName;
@@ -72,22 +73,16 @@ public class FoodSource {
     public float getY() { return y; }
 
     public void draw(Canvas canvas) {
-        if (sprite != null) {
-            // Scale the sprite to a smaller size
-            int targetWidth = (int)(sprite.getWidth() * 0.09);   // scale to 40%
-            int targetHeight = (int)(sprite.getHeight() * 0.09); // scale to 40%
+        Paint paint = new Paint();
+        paint.setColor(Color.GREEN);
+        canvas.drawCircle(x, y, 50, paint);
 
-            Bitmap scaledSprite = Bitmap.createScaledBitmap(sprite, targetWidth, targetHeight, true);
+        Paint text = new Paint();
+        text.setColor(Color.BLACK);
+        text.setTextSize(32f);
+        text.setAntiAlias(true);
 
-            canvas.drawBitmap(scaledSprite, x - targetWidth / 2f, y - targetHeight / 2f + 40, null);
-        } else {
-            paint.setColor(Color.GREEN);
-            canvas.drawCircle(x, y, 50, paint);
-        }
-//        text.setColor(Color.BLACK);
-//        text.setTextSize(32f);
-//        text.setAntiAlias(true);
-//        canvas.drawText(this.foodSourceName, x - 60, y + 80, text);
+        canvas.drawText(this.foodSourceName, x - 60, y + 80, text);
     }
 
 

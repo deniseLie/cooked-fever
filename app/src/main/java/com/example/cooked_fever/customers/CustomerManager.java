@@ -1,5 +1,6 @@
 package com.example.cooked_fever.customers;
 
+import android.content.Context;
 import android.graphics.*;
 import android.view.*;
 import android.util.Log;
@@ -27,9 +28,31 @@ public class CustomerManager {
     private final Random random = new Random();
     private final String LOG_TAG = this.getClass().getSimpleName();
     private ExecutorService executor = Executors.newFixedThreadPool(4); // For background updates
+    private Context context;
 
+    private int screenWidth = 1080;
     // Constructor
-    public CustomerManager() {
+    private int customersFulfilled = 0;
+    private int customersMissed = 0;
+    public CustomerManager(Context context, int screenWidth) {
+        this.context = context;
+        this.screenWidth = screenWidth;
+    }
+
+    public int getCustomersFulfilled() {
+        return customersFulfilled;
+    }
+
+    public int getCustomersMissed() {
+        return customersMissed;
+    }
+
+    public void resetStats() {
+        customersFulfilled = 0;
+        customersMissed = 0;
+    }
+    public void setScreenWidth(int width) {
+        this.screenWidth = width;
     }
 
     // GET
@@ -51,15 +74,22 @@ public class CustomerManager {
             executor.execute(customer::update);
         }
 
-        // Remove customers who have left and update slot info
+        // Collect customers to remove safely
+        List<Customer> toRemove = new ArrayList<>();
+
         for (Customer c : customers) {
             if (c.shouldLeave()) {
+                if (c.isServed()) {
+                    customersFulfilled++;
+                } else {
+                    customersMissed++;
+                }
                 customerSlots[c.getSlotIndex()] = false;
+                toRemove.add(c);
             }
         }
 
-        // Actually remove them (safe with CopyOnWriteArrayList)
-        customers.removeIf(Customer::shouldLeave);
+        customers.removeAll(toRemove);
 
         // Spawn new customer every 5 seconds and have enough space
         if (now - lastCustomerSpawn >= 5000 && customers.size() < MAX_CUSTOMER) {
@@ -92,39 +122,41 @@ public class CustomerManager {
 
     // Reset customer
     public void reset() {
-        executor.shutdownNow();  // cleanup old one
-        executor = Executors.newFixedThreadPool(2); // create a new one
+        executor.shutdownNow();
+        executor = Executors.newFixedThreadPool(2);
 
         customers.clear();
-        for (int i = 0; i < customerSlots.length; i++) {
-            customerSlots[i] = false;
-        }
-        this.lastCustomerSpawn = System.currentTimeMillis();
+        Arrays.fill(customerSlots, false);
+        lastCustomerSpawn = System.currentTimeMillis();
+
+        resetStats();
     }
 
     // Spawn customer
     private void spawnCustomer() {
-
-        // Get slot index
         int slotIndex = getNextAvailableSlot();
-        if (slotIndex == -1) return;    // No available slots
+        if (slotIndex == -1) return;
 
-        // Customer spawn
-        int x = START_X + slotIndex * CUSTOMER_SPACING;
+        int totalSlots = customerSlots.length;
+
+        int leftPadding = 400;
+        int rightPadding = 550; // More space on the right to avoid the timer
+
+        float usableWidth = screenWidth - leftPadding - rightPadding;
+        float spacing = usableWidth / (totalSlots - 1);  // e.g. 4 gaps for 5 customers
+        int x = (int)(leftPadding + slotIndex * spacing);
         int y = CUSTOMER_Y;
 
-        // Random number of items between 1–3
         int orderCount = 1 + random.nextInt(3);
         List<String> order = new ArrayList<>();
-
         for (int i = 0; i < orderCount; i++) {
             order.add(availableMenu[random.nextInt(availableMenu.length)]);
         }
 
-        Customer customer = new Customer(x, y, order);
-        customer.setSlotIndex(slotIndex);   // save slot index
+        Customer customer = new Customer(context, x, y, order);
+        customer.setSlotIndex(slotIndex);
         customerSlots[slotIndex] = true;
-        customers.add(customer);    // add customer
+        customers.add(customer);
     }
 
     // Draw

@@ -3,6 +3,7 @@ package com.example.cooked_fever.game;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.RectF;
 import android.view.MotionEvent;
 import android.util.Log;
 import android.content.*;
@@ -34,16 +35,19 @@ public class Game {
 
     private long lastUpdateTime = System.currentTimeMillis();
 
-    private int screenWidth = 1080;
-    private int screenHeight = 1920;
+    private int screenWidth;
+    private int screenHeight;
 
 //    private int coins = 0;
-    private final long GAME_DURATION_MS = 3600000; // 1 hour
+    private final long GAME_DURATION_MS = 60000; // 1 hour
     private long gameStartTime = System.currentTimeMillis();
     private boolean isGameOver = false;
+    private boolean isGameStarted = false;
 
     private final Context context;
     private Bitmap kitchenTableBitmap;
+
+    private RectF restartButtonBounds = new RectF();
 
     // Managers
     private final ApplianceManager applianceManager;
@@ -62,10 +66,10 @@ public class Game {
         this.canvasUser = canvasUser;
 
         // Initialize managers
+        this.customerManager = new CustomerManager(context, screenWidth);
         this.applianceManager = new ApplianceManager(context, screenWidth, screenHeight);
         this.foodSourceManager = new FoodSourceManager(context, screenWidth, screenHeight);
         this.foodItemManager = new FoodItemManager(context);
-        this.customerManager = new CustomerManager();
         this.coinManager = new CoinManager(context);
         // Pain sprites
 
@@ -79,17 +83,34 @@ public class Game {
     }
 
     public void resize(int width, int height) {
-        screenWidth = width;
-        screenHeight = height;
+        this.screenWidth = width;
+        this.screenHeight = height;
 
-        // Resize manager
+        // Rebuild with correct dimensions
         applianceManager.resize(width, height);
+
+        foodSourceManager.clear();  // optional: if you had one before
+        foodSourceManager.setup(screenHeight);
+        customerManager.setScreenWidth(width);
+    }
+
+
+    public int getCustomersFulfilled() {
+        return customerManager.getCustomersFulfilled();
+    }
+
+    public int getCustomersMissed() {
+        return customerManager.getCustomersMissed();
+    }
+
+    public int getCollectedCoins() {
+        return coinManager.getCollectedCoins();
     }
 
     public void update() {
         long now = System.currentTimeMillis();
 
-        if (isGameOver) return;
+        if (isGameOver || !isGameStarted) return;
         if (now - gameStartTime >= GAME_DURATION_MS) {
             isGameOver = true;
             Log.d("Game", "Game over!");
@@ -149,30 +170,61 @@ public class Game {
 
 
             // Managers draw
+            foodSourceManager.draw(canvas);
             customerManager.draw(canvas);
             applianceManager.draw(canvas);
-            foodSourceManager.draw(canvas);
             foodItemManager.draw(canvas, context);
             coinManager.draw(canvas, context);
 
-            List<Customer> customers = customerManager.getCustomerList();
-            canvas.drawText("Customers: " + customers.size(), 30, 60, textPaint);
-            canvas.drawText("Coins: " + coinManager.getCollectedCoins(), 30, 120, textPaint);
+            if (isGameStarted && !isGameOver) {
+                // Timer logic
+                long elapsed = (System.currentTimeMillis() - gameStartTime) / 1000;
+                int totalSeconds = (int)(GAME_DURATION_MS / 1000);
+                int remaining = Math.max(0, totalSeconds - (int) elapsed);
 
-            int rating = getRating();
-            canvas.drawText("Rating: " + rating + " star(s)", 30, 180, textPaint);
+                float radius = 90f;
+                float cx = screenWidth - 130;
+                float cy = 130;
+                RectF oval = new RectF(cx - radius, cy - radius, cx + radius, cy + radius);
 
-            if (isGameOver) {
-                canvas.drawText("Game Over!", 30, 240, textPaint);
-                canvas.drawText("Final Rating: " + getRating() + " star(s)", 30, 300, textPaint);
-                canvas.drawText("Total Coins: " + coinManager.getCollectedCoins(), 30, 360, textPaint);
+                Paint bgCircle = new Paint();
+                bgCircle.setColor(Color.DKGRAY);
+                bgCircle.setStyle(Paint.Style.STROKE);
+                bgCircle.setStrokeWidth(18f);
+                bgCircle.setAntiAlias(true);
+                canvas.drawArc(oval, 0, 360, false, bgCircle);
 
-                Paint restartText = new Paint();
-                restartText.setColor(Color.WHITE);
-                restartText.setTextSize(60f);
-                restartText.setTextAlign(Paint.Align.CENTER);
-                canvas.drawText("Tap to Restart", screenWidth / 2f, screenHeight / 2f + 100, restartText);
+                Paint arcPaint = new Paint(bgCircle);
+                arcPaint.setColor(remaining <= 10 ? Color.RED : Color.YELLOW);
+                float sweepAngle = (remaining / (float) totalSeconds) * 360f;
+                canvas.drawArc(oval, -90, sweepAngle, false, arcPaint);
+
+                Paint timerText = new Paint();
+                timerText.setColor(Color.WHITE);
+                timerText.setTextSize(48f);
+                timerText.setTextAlign(Paint.Align.CENTER);
+                timerText.setAntiAlias(true);
+                canvas.drawText(remaining + "s", cx, cy + 12, timerText);
+
+                // Stats
+                List<Customer> customers = customerManager.getCustomerList();
+                canvas.drawText("Customers: " + customers.size(), 30, 60, textPaint);
+                canvas.drawText("Coins: " + coinManager.getCollectedCoins(), 30, 120, textPaint);
+                int rating = getRating();
+                canvas.drawText("Rating: " + rating + " star(s)", 30, 180, textPaint);
             }
+
+//            if (isGameOver) {
+//                canvas.drawText("Game Over!", 30, 240, textPaint);
+//                canvas.drawText("Final Rating: " + getRating() + " star(s)", 30, 300, textPaint);
+//                canvas.drawText("Total Coins: " + coinManager.getCollectedCoins(), 30, 360, textPaint);
+//
+//                Paint restartText = new Paint();
+//                restartText.setColor(Color.WHITE);
+//                restartText.setTextSize(60f);
+//                restartText.setTextAlign(Paint.Align.CENTER);
+//                canvas.drawText("Tap to Restart", screenWidth / 2f, screenHeight / 2f + 100, restartText);
+//            }
         });
     }
 
@@ -280,7 +332,7 @@ public class Game {
 
     public void release(MotionEvent event) {
         if (draggedFoodItem != null) {
-            Log.d("droppedItem" ,"droppedItem: " + draggedFoodItem.getFoodItemName());
+            Log.d("droppedItem", "Dropped: " + draggedFoodItem.getFoodItemName());
 
             // Check if food drop on valid customer, customer food served
             Customer customer = customerManager.handleTouch(event);
@@ -288,6 +340,11 @@ public class Game {
                 Boolean validReceive = customerManager.receiveItem(customer, draggedFoodItem);
                 if (validReceive) {
                     foodItemManager.removeFoodItem(draggedFoodItem);
+
+//                    // Reward coin for correctly served item
+                    coinManager.collectCoin(1);
+
+                    // Extra coin animation for fully served customer
                     if (customer.isServed()) {
                         Coin newCoin = coinManager.addNewCoins(context, customer.id, customer.getX(), customer.getReward());
                         coinManager.addCoin(newCoin);
@@ -299,25 +356,41 @@ public class Game {
                     if (draggedFoodItem.getFoodItemName().equals("Cola")) {
                         applianceManager.resumeColaMachine();
                     }
-                }
 
-                // Set item not dragged anymore
-                applianceManager.doTrash(applianceManager.getApplianceAtCoord((int)draggedFoodItem.getOriginalX(), (int)draggedFoodItem.getOriginalY()));
-                draggedFoodItem.setItemPosition(draggedFoodItem.getOriginalX(), draggedFoodItem.getOriginalY());
-                draggedFoodItem.stopDrag();
-                draggedFoodItem = null;
-                return;
+                    // Clean up old appliance
+                    Appliance oldAppliance = applianceManager.getApplianceAtCoord(
+                            (int) draggedFoodItem.getOriginalX(),
+                            (int) draggedFoodItem.getOriginalY()
+                    );
+                    if (oldAppliance != null) {
+                        applianceManager.doTrash(oldAppliance);
+                    }
+//                    draggedFoodItem.setItemPosition(draggedFoodItem.getOriginalX(), draggedFoodItem.getOriginalY());
+                    draggedFoodItem.stopDrag();
+                    draggedFoodItem = null;
+                    return;
+                }
             }
-            // Trash
+
+            // 2. Trash Bin
             Appliance appliance = applianceManager.handleTouch(event);
             if (appliance != null) {
                 if (applianceManager.isTrash(appliance)) {
-                    Log.d("Game" ,"Trashed: " + draggedFoodItem.getFoodItemName());
-                    applianceManager.doTrash(applianceManager.getApplianceAtCoord((int)draggedFoodItem.getOriginalX(), (int)draggedFoodItem.getOriginalY()));
+                    Log.d("Game", "Trashed: " + draggedFoodItem.getFoodItemName());
+
+                    applianceManager.doTrash(applianceManager.getApplianceAtCoord(
+                            (int) draggedFoodItem.getOriginalX(),
+                            (int) draggedFoodItem.getOriginalY()
+                    ));
+
                     if (draggedFoodItem.getFoodItemName().equals("Cola")) {
                         applianceManager.resumeColaMachine();
                     }
+
                     foodItemManager.removeFoodItem(draggedFoodItem);
+                    coinManager.deductCoin(1);
+                    Log.d("Game", "Coins after trashing: " + coinManager.getCollectedCoins());
+
                     draggedFoodItem.stopDrag();
                     draggedFoodItem = null;
                     return;
@@ -336,7 +409,7 @@ public class Game {
                 }
             }
 
-            // Handle food combination
+            // 4. Combination (e.g., Patty + Bun)
             boolean combinationSucceeded = false;
             String draggedFoodName = draggedFoodItem.getFoodItemName();
 
@@ -348,22 +421,29 @@ public class Game {
                 if (targetItem != null && targetItem != draggedFoodItem && !draggedFoodItem.getIsBadlyCooked()) {
                     // Attempt combination and check success
                     combinationSucceeded = foodItemManager.combine(draggedFoodItem, targetItem);
-                    applianceManager.doTrash(applianceManager.getApplianceAtCoord((int)draggedFoodItem.getOriginalX(), (int)draggedFoodItem.getOriginalY()));
+
+                    if (combinationSucceeded) {
+                        applianceManager.doTrash(applianceManager.getApplianceAtCoord(
+                                (int) draggedFoodItem.getOriginalX(),
+                                (int) draggedFoodItem.getOriginalY()
+                        ));
+                    }
                 }
             }
 
-            // Reset position if no valid interaction occurred
+            // 5. Reset position if not used
             if (!combinationSucceeded) {
                 draggedFoodItem.setItemPosition(draggedFoodItem.getOriginalX(), draggedFoodItem.getOriginalY());
             }
 
-            applianceManager.doTrash(applianceManager.getApplianceAtCoord((int)draggedFoodItem.getOriginalX(), (int)draggedFoodItem.getOriginalY()));
+//            applianceManager.doTrash(applianceManager.getApplianceAtCoord((int)draggedFoodItem.getOriginalX(), (int)draggedFoodItem.getOriginalY()));
             draggedFoodItem.stopDrag();
             draggedFoodItem = null;
 
 //            invalidate();  // Refresh the canvas after release
         }
     }
+
 
     private boolean isValidDropLocation(FoodItem draggedFoodItem, float x, float y) {
         // Define the valid region (e.g., a specific area on the screen, like an appliance area)
@@ -384,7 +464,12 @@ public class Game {
         else if (coinsCollected >= 10 ) return 2;
         else return 1;
     }
+
+//    public void deductCoin(int amount) {
+//        coins = Math.max(0, coins - amount);
+//    }
     public void restart(){
+        this.isGameStarted = true;
         this.gameStartTime = System.currentTimeMillis();
         this.lastUpdateTime = System.currentTimeMillis();
         this.isGameOver = false;
@@ -394,6 +479,7 @@ public class Game {
         customerManager.reset();
         applianceManager.reset();
         foodSourceManager.reset();
+        foodItemManager.reset();
         coinManager.reset();
     }
     public boolean isGameOver() {

@@ -45,9 +45,26 @@ public class FoodSourceManager {
         return sources;
     }
 
+    public void clear() {
+        sources.clear();
+    }
     public void reset() {
+        // If you have a list of food sources, reset them one by one
         for (FoodSource source : sources) {
             source.reset();
         }
+    }
+    public void setup(int screenHeight) {
+        sources.clear();
+        int burgerX = 1050;   // under TableTop left column
+        int hotdogX = 1350;  // under TableTop right column
+        int pattyX = 1850;   // under Pan left column
+        int sausageX = 2150; // under Pan right column
+        int y = screenHeight - 150; // below appliances
+
+        addFoodSource(burgerX, y, "BurgerBun");
+        addFoodSource(hotdogX, y, "HotdogBun");
+        addFoodSource(pattyX, y, "Patty");
+        addFoodSource(sausageX, y, "Sausage");
     }
 }

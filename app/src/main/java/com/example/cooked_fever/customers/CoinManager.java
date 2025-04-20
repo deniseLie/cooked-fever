@@ -56,6 +56,9 @@ public class CoinManager {
             return null;
         }
     }
+    public void deductCoin(int amount) {
+        collectedCoins = Math.max(0, collectedCoins - amount);
+    }
 
     public void draw(Canvas canvas, Context context) {
         synchronized(uncollectedCoinList) {
@@ -86,5 +89,9 @@ public class CoinManager {
         collectedCoins = 0;
         uncollectedCoinList.clear();
     }
+
+//    public void reset() {
+//        uncollectedCoinList.clear(); // or however you're tracking floating coins
+//    }
 
 }

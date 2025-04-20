@@ -48,19 +48,43 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
         setOnTouchListener((view, event) -> {
             Log.d("TouchEvent", "Action: " + event.getAction());
 
-            if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                if (game.isGameOver()) {
-                    Log.d("GameView", "Restarting game...");
-                    game.restart();
-                } else {
-                    game.click(event);
+            if (game.isGameOver()) {
+                if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                    float touchX = event.getX();
+                    float touchY = event.getY();
+
+                    // Only allow interaction inside restart button bounds
+                    float centerX = getWidth() / 2f;
+                    float restartButtonY = getHeight() / 2f + 100;
+
+                    float buttonWidth = 400;
+                    float buttonHeight = 100;
+
+                    RectF restartRect = new RectF(
+                            centerX - buttonWidth / 2f,
+                            restartButtonY - buttonHeight / 2f,
+                            centerX + buttonWidth / 2f,
+                            restartButtonY + buttonHeight / 2f
+                    );
+
+                    if (restartRect.contains(touchX, touchY)) {
+                        Log.d("GameView", "Restarting game...");
+                        game.restart();
+                    }
                 }
-            } else if (event.getAction() == android.view.MotionEvent.ACTION_MOVE) {
-                game.drag(event);  // Update drag position
-            } else if (event.getAction() == android.view.MotionEvent.ACTION_UP) {
-                game.release(event);  // Handle drop
+                return true; // Block all other input while game over
             }
-            invalidate(); // Refresh the view to show updated positions
+
+            // Only allow other interactions if game is not over
+            if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                game.click(event);
+            } else if (event.getAction() == MotionEvent.ACTION_MOVE) {
+                game.drag(event);
+            } else if (event.getAction() == MotionEvent.ACTION_UP) {
+                game.release(event);
+            }
+
+            invalidate(); // Force redraw
             return true;
         });
     }
@@ -112,7 +136,8 @@ public class GameView extends SurfaceView implements SurfaceHolder.Callback {
 
     @Override
     public void surfaceChanged(final SurfaceHolder surfaceHolder, final int format, final int width, final int height) {
-        game.resize(width, height);
+        final Rect rect = getHolder().getSurfaceFrame();
+        game.resize(rect.width(), rect.height());
     }
 
     @Override

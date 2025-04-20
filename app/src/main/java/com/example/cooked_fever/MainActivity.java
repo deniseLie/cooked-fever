@@ -4,10 +4,11 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.util.Log;
 import com.example.cooked_fever.utils.SoundUtils;
-
+import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -63,11 +64,12 @@ public class MainActivity extends AppCompatActivity {
         restartButton.setOnClickListener(v -> {
             restartOverlay.setVisibility(View.GONE);
             SoundUtils.startBGM(getApplicationContext()); // just in case bgm stops after game over
-
-            gameView.setOnReady(() -> {
-                gameView.getGame().restart();
-                handler.post(checkGameOverRunnable);
-            });
+            gameView.getGame().restart();
+            handler.post(checkGameOverRunnable);
+//            gameView.setOnReady(() -> {
+//                gameView.getGame().restart();
+//                handler.post(checkGameOverRunnable);
+//            });
         });
     }
     @Override
@@ -77,6 +79,36 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void showRestartOverlay() {
+        int starCount = gameView.getGame().getRating();
+        setStars(starCount);
+
+        // Now you can call the accessors
+        int fulfilled = gameView.getGame().getCustomersFulfilled();
+        int missed = gameView.getGame().getCustomersMissed();
+        int coins = gameView.getGame().getCollectedCoins();
+
+        TextView statsFulfilled = findViewById(R.id.stats_fulfilled);
+        TextView statsMissed = findViewById(R.id.stats_missed);
+        TextView statsCoins = findViewById(R.id.stats_coins);
+
+        statsFulfilled.setText("Customers Fulfilled: " + fulfilled);
+        statsMissed.setText("Customers Missed: " + missed);
+        statsCoins.setText("Total Coins: " + coins);
+
         restartOverlay.setVisibility(View.VISIBLE);
+    }
+
+    private void setStars(int count) {
+        ImageView star1 = findViewById(R.id.star1);
+        ImageView star2 = findViewById(R.id.star2);
+        ImageView star3 = findViewById(R.id.star3);
+
+        // Use temporary drawables for now
+        int filled = android.R.drawable.btn_star_big_on;
+        int empty = android.R.drawable.btn_star_big_off;
+
+        star1.setImageResource(count >= 1 ? filled : empty);
+        star2.setImageResource(count >= 2 ? filled : empty);
+        star3.setImageResource(count >= 3 ? filled : empty);
     }
 }
