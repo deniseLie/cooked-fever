@@ -73,7 +73,7 @@ public class Game {
         this.coinManager = new CoinManager(context);
         // Pain sprites
 
-        kitchenTableBitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.kitchen_table); // 🔥 Load image
+        kitchenTableBitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.kitchen_table);
 
         customerPaint.setColor(Color.MAGENTA);
         appliancePaint.setColor(Color.BLUE);
@@ -152,7 +152,7 @@ public class Game {
 
             canvas.drawColor(Color.DKGRAY); // Background
 
-            // 🔽 Draw the background image scaled
+            // Draw the background image scaled
             if (kitchenTableBitmap != null) {
                 int canvasWidth = canvas.getWidth();
                 int canvasHeight = canvas.getHeight();
